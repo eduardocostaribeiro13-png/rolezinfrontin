@@ -14,7 +14,99 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      reservations: {
+        Row: {
+          adults: number
+          created_at: string
+          customer_city: string | null
+          customer_email: string
+          customer_name: string
+          customer_phone: string
+          customer_state: string | null
+          customer_whatsapp: string | null
+          id: string
+          installments: number | null
+          invoice_slug: string | null
+          kids: number
+          notes: string | null
+          order_nsu: string
+          paid_amount: number | null
+          paid_at: string | null
+          payment_method: string | null
+          payment_status: Database["public"]["Enums"]["payment_status"]
+          quantity: number
+          receipt_url: string | null
+          reservation_date: string
+          reservation_time: string
+          total_price: number
+          tour_name: string
+          tour_slug: string
+          transaction_nsu: string | null
+          updated_at: string
+          vehicle: string
+        }
+        Insert: {
+          adults?: number
+          created_at?: string
+          customer_city?: string | null
+          customer_email: string
+          customer_name: string
+          customer_phone: string
+          customer_state?: string | null
+          customer_whatsapp?: string | null
+          id?: string
+          installments?: number | null
+          invoice_slug?: string | null
+          kids?: number
+          notes?: string | null
+          order_nsu: string
+          paid_amount?: number | null
+          paid_at?: string | null
+          payment_method?: string | null
+          payment_status?: Database["public"]["Enums"]["payment_status"]
+          quantity: number
+          receipt_url?: string | null
+          reservation_date: string
+          reservation_time: string
+          total_price: number
+          tour_name: string
+          tour_slug: string
+          transaction_nsu?: string | null
+          updated_at?: string
+          vehicle?: string
+        }
+        Update: {
+          adults?: number
+          created_at?: string
+          customer_city?: string | null
+          customer_email?: string
+          customer_name?: string
+          customer_phone?: string
+          customer_state?: string | null
+          customer_whatsapp?: string | null
+          id?: string
+          installments?: number | null
+          invoice_slug?: string | null
+          kids?: number
+          notes?: string | null
+          order_nsu?: string
+          paid_amount?: number | null
+          paid_at?: string | null
+          payment_method?: string | null
+          payment_status?: Database["public"]["Enums"]["payment_status"]
+          quantity?: number
+          receipt_url?: string | null
+          reservation_date?: string
+          reservation_time?: string
+          total_price?: number
+          tour_name?: string
+          tour_slug?: string
+          transaction_nsu?: string | null
+          updated_at?: string
+          vehicle?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -23,7 +115,7 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      payment_status: "PENDING_PAYMENT" | "PAID" | "FAILED" | "CANCELLED"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +242,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      payment_status: ["PENDING_PAYMENT", "PAID", "FAILED", "CANCELLED"],
+    },
   },
 } as const
