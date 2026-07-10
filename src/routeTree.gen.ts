@@ -16,6 +16,9 @@ import { Route as PasseiosRouteImport } from './routes/passeios'
 import { Route as GaleriaRouteImport } from './routes/galeria'
 import { Route as ContatoRouteImport } from './routes/contato'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as PagamentoSucessoRouteImport } from './routes/pagamento.sucesso'
+import { Route as PagamentoCanceladoRouteImport } from './routes/pagamento.cancelado'
+import { Route as ApiInfinitepayWebhookRouteImport } from './routes/api/infinitepay.webhook'
 
 const SobreRoute = SobreRouteImport.update({
   id: '/sobre',
@@ -52,6 +55,21 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PagamentoSucessoRoute = PagamentoSucessoRouteImport.update({
+  id: '/pagamento/sucesso',
+  path: '/pagamento/sucesso',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PagamentoCanceladoRoute = PagamentoCanceladoRouteImport.update({
+  id: '/pagamento/cancelado',
+  path: '/pagamento/cancelado',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiInfinitepayWebhookRoute = ApiInfinitepayWebhookRouteImport.update({
+  id: '/api/infinitepay/webhook',
+  path: '/api/infinitepay/webhook',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -61,6 +79,9 @@ export interface FileRoutesByFullPath {
   '/reservar': typeof ReservarRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/sobre': typeof SobreRoute
+  '/pagamento/cancelado': typeof PagamentoCanceladoRoute
+  '/pagamento/sucesso': typeof PagamentoSucessoRoute
+  '/api/infinitepay/webhook': typeof ApiInfinitepayWebhookRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -70,6 +91,9 @@ export interface FileRoutesByTo {
   '/reservar': typeof ReservarRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/sobre': typeof SobreRoute
+  '/pagamento/cancelado': typeof PagamentoCanceladoRoute
+  '/pagamento/sucesso': typeof PagamentoSucessoRoute
+  '/api/infinitepay/webhook': typeof ApiInfinitepayWebhookRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -80,6 +104,9 @@ export interface FileRoutesById {
   '/reservar': typeof ReservarRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/sobre': typeof SobreRoute
+  '/pagamento/cancelado': typeof PagamentoCanceladoRoute
+  '/pagamento/sucesso': typeof PagamentoSucessoRoute
+  '/api/infinitepay/webhook': typeof ApiInfinitepayWebhookRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -91,6 +118,9 @@ export interface FileRouteTypes {
     | '/reservar'
     | '/sitemap.xml'
     | '/sobre'
+    | '/pagamento/cancelado'
+    | '/pagamento/sucesso'
+    | '/api/infinitepay/webhook'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -100,6 +130,9 @@ export interface FileRouteTypes {
     | '/reservar'
     | '/sitemap.xml'
     | '/sobre'
+    | '/pagamento/cancelado'
+    | '/pagamento/sucesso'
+    | '/api/infinitepay/webhook'
   id:
     | '__root__'
     | '/'
@@ -109,6 +142,9 @@ export interface FileRouteTypes {
     | '/reservar'
     | '/sitemap.xml'
     | '/sobre'
+    | '/pagamento/cancelado'
+    | '/pagamento/sucesso'
+    | '/api/infinitepay/webhook'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -119,6 +155,9 @@ export interface RootRouteChildren {
   ReservarRoute: typeof ReservarRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   SobreRoute: typeof SobreRoute
+  PagamentoCanceladoRoute: typeof PagamentoCanceladoRoute
+  PagamentoSucessoRoute: typeof PagamentoSucessoRoute
+  ApiInfinitepayWebhookRoute: typeof ApiInfinitepayWebhookRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -172,6 +211,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/pagamento/sucesso': {
+      id: '/pagamento/sucesso'
+      path: '/pagamento/sucesso'
+      fullPath: '/pagamento/sucesso'
+      preLoaderRoute: typeof PagamentoSucessoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/pagamento/cancelado': {
+      id: '/pagamento/cancelado'
+      path: '/pagamento/cancelado'
+      fullPath: '/pagamento/cancelado'
+      preLoaderRoute: typeof PagamentoCanceladoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/infinitepay/webhook': {
+      id: '/api/infinitepay/webhook'
+      path: '/api/infinitepay/webhook'
+      fullPath: '/api/infinitepay/webhook'
+      preLoaderRoute: typeof ApiInfinitepayWebhookRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -183,6 +243,9 @@ const rootRouteChildren: RootRouteChildren = {
   ReservarRoute: ReservarRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   SobreRoute: SobreRoute,
+  PagamentoCanceladoRoute: PagamentoCanceladoRoute,
+  PagamentoSucessoRoute: PagamentoSucessoRoute,
+  ApiInfinitepayWebhookRoute: ApiInfinitepayWebhookRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
