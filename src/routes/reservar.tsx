@@ -4,14 +4,16 @@ import { z } from "zod";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { motion, AnimatePresence } from "framer-motion";
-import { Calendar as CalIcon, Check, ChevronLeft, ChevronRight, Clock, MessageCircle, Minus, Plus, UsersRound } from "lucide-react";
+import { useServerFn } from "@tanstack/react-start";
+import { toast } from "sonner";
+import { Calendar as CalIcon, Check, ChevronLeft, ChevronRight, Clock, CreditCard, Loader2, Minus, Plus, UsersRound } from "lucide-react";
 import { TOURS, brl, type Tour } from "@/lib/tours";
-import { waLink } from "@/lib/whatsapp";
 import { Calendar } from "@/components/ui/calendar";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
+import { createCheckout } from "@/lib/checkout.functions";
 
 const searchSchema = z.object({ tour: z.string().optional() });
 
