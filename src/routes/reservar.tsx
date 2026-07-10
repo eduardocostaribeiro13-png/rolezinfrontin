@@ -86,27 +86,8 @@ function ReservarPage() {
   const next = () => canAdvance() && setStep((s) => Math.min(s + 1, STEPS.length - 1));
   const back = () => setStep((s) => Math.max(s - 1, 0));
 
-  const buildMessage = () => {
-    if (!tour || !date || !time) return "";
-    return [
-      "Olá! Gostaria de realizar uma reserva.",
-      "",
-      `🏁 Passeio: ${tour.name}`,
-      `📅 Data: ${format(date, "dd 'de' MMMM 'de' yyyy", { locale: ptBR })}`,
-      `⏰ Horário: ${time}`,
-      `👥 Pessoas: ${adults} adulto(s)${kids ? `, ${kids} criança(s)` : ""}`,
-      `💰 Valor total: ${brl(total)}`,
-      "",
-      `Nome: ${cliente.nome}`,
-      `Telefone: ${cliente.telefone}`,
-      `WhatsApp: ${cliente.whatsapp}`,
-      `E-mail: ${cliente.email}`,
-      `Cidade: ${cliente.cidade} / ${cliente.estado.toUpperCase()}`,
-      cliente.observacoes ? `Observações: ${cliente.observacoes}` : "",
-      "",
-      "Aguardo confirmação. Obrigado!",
-    ].filter(Boolean).join("\n");
-  };
+
+
 
   const submitCheckout = useServerFn(createCheckout);
   const [submitting, setSubmitting] = useState(false);
