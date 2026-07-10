@@ -4,14 +4,16 @@ import { z } from "zod";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { motion, AnimatePresence } from "framer-motion";
-import { Calendar as CalIcon, Check, ChevronLeft, ChevronRight, Clock, MessageCircle, Minus, Plus, UsersRound } from "lucide-react";
+import { useServerFn } from "@tanstack/react-start";
+import { toast } from "sonner";
+import { Calendar as CalIcon, Check, ChevronLeft, ChevronRight, Clock, CreditCard, Loader2, Minus, Plus, UsersRound } from "lucide-react";
 import { TOURS, brl, type Tour } from "@/lib/tours";
-import { waLink } from "@/lib/whatsapp";
 import { Calendar } from "@/components/ui/calendar";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
+import { createCheckout } from "@/lib/checkout.functions";
 
 const searchSchema = z.object({ tour: z.string().optional() });
 
@@ -84,31 +86,40 @@ function ReservarPage() {
   const next = () => canAdvance() && setStep((s) => Math.min(s + 1, STEPS.length - 1));
   const back = () => setStep((s) => Math.max(s - 1, 0));
 
-  const buildMessage = () => {
-    if (!tour || !date || !time) return "";
-    return [
-      "Olá! Gostaria de realizar uma reserva.",
-      "",
-      `🏁 Passeio: ${tour.name}`,
-      `📅 Data: ${format(date, "dd 'de' MMMM 'de' yyyy", { locale: ptBR })}`,
-      `⏰ Horário: ${time}`,
-      `👥 Pessoas: ${adults} adulto(s)${kids ? `, ${kids} criança(s)` : ""}`,
-      `💰 Valor total: ${brl(total)}`,
-      "",
-      `Nome: ${cliente.nome}`,
-      `Telefone: ${cliente.telefone}`,
-      `WhatsApp: ${cliente.whatsapp}`,
-      `E-mail: ${cliente.email}`,
-      `Cidade: ${cliente.cidade} / ${cliente.estado.toUpperCase()}`,
-      cliente.observacoes ? `Observações: ${cliente.observacoes}` : "",
-      "",
-      "Aguardo confirmação. Obrigado!",
-    ].filter(Boolean).join("\n");
-  };
 
-  const confirm = () => {
-    const msg = buildMessage();
-    if (msg) window.open(waLink(msg), "_blank");
+
+
+  const submitCheckout = useServerFn(createCheckout);
+  const [submitting, setSubmitting] = useState(false);
+
+  const confirm = async () => {
+    if (!tour || !date || !time) return;
+    setSubmitting(true);
+    try {
+      const res = await submitCheckout({
+        data: {
+          tour_slug: tour.slug,
+          tour_name: tour.name,
+          reservation_date: format(date, "yyyy-MM-dd"),
+          reservation_time: time,
+          adults,
+          kids,
+          total_price: total,
+          customer_name: cliente.nome,
+          customer_email: cliente.email,
+          customer_phone: cliente.telefone,
+          customer_whatsapp: cliente.whatsapp,
+          customer_city: cliente.cidade,
+          customer_state: cliente.estado,
+          notes: cliente.observacoes,
+        },
+      });
+      window.location.href = res.url;
+    } catch (e) {
+      console.error(e);
+      toast.error("Não foi possível iniciar o pagamento. Tente novamente.");
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -192,8 +203,9 @@ function ReservarPage() {
                   Continuar <ChevronRight className="h-4 w-4" />
                 </button>
               ) : (
-                <button onClick={confirm} className="btn-brand text-xs">
-                  <MessageCircle className="h-4 w-4" /> Confirmar no WhatsApp
+                <button onClick={confirm} disabled={submitting} className="btn-brand text-xs disabled:opacity-60 disabled:cursor-not-allowed">
+                  {submitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <CreditCard className="h-4 w-4" />}
+                  {submitting ? "Redirecionando..." : "Pagar agora"}
                 </button>
               )}
             </div>
