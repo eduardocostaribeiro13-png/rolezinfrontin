@@ -3,13 +3,14 @@ import { getRequest } from "@tanstack/react-start/server";
 import { z } from "zod";
 
 const input = z.object({
+  vehicle_id: z.string().uuid(),
   tour_slug: z.string().min(1),
   tour_name: z.string().min(1),
-  reservation_date: z.string().min(1), // YYYY-MM-DD
+  reservation_date: z.string().min(1),
   reservation_time: z.string().min(1),
   adults: z.number().int().min(1).max(50),
   kids: z.number().int().min(0).max(50),
-  total_price: z.number().int().positive(), // in BRL (reais)
+  total_price: z.number().int().positive(),
   customer_name: z.string().trim().min(3).max(120),
   customer_email: z.string().trim().email().max(200),
   customer_phone: z.string().trim().min(8).max(30),
@@ -18,6 +19,21 @@ const input = z.object({
   customer_state: z.string().trim().max(4).optional(),
   notes: z.string().trim().max(1000).optional(),
 });
+
+/** Pending reservations expire after this window (minutes). */
+const PENDING_TTL_MINUTES = 20;
+
+/** Postgres unique-violation error code. */
+const PG_UNIQUE_VIOLATION = "23505";
+
+class SlotTakenError extends Error {
+  constructor() {
+    super(
+      "Este horário acabou de ser reservado por outro cliente. Escolha outro horário.",
+    );
+    this.name = "SlotTakenError";
+  }
+}
 
 function getAppUrl(): string {
   const req = getRequest();
@@ -41,18 +57,60 @@ export const createCheckout = createServerFn({ method: "POST" })
       "@/integrations/supabase/client.server"
     );
 
+    // 1) Sweep expired pending reservations so the unique index reflects
+    //    actual availability before we attempt the insert.
+    await supabaseAdmin.rpc(
+      "expire_pending_reservations" as never,
+      {} as never,
+    );
+
+    // 2) Server-side availability check (defense in depth — the unique index
+    //    is still the source of truth against concurrent writers).
+    const { data: takenRows, error: takenError } = await supabaseAdmin
+      .from("reservations")
+      .select("id")
+      .eq("vehicle_id", data.vehicle_id)
+      .eq("reservation_date", data.reservation_date)
+      .eq("reservation_time", data.reservation_time)
+      .in("payment_status", ["PENDING_PAYMENT", "PAID"])
+      .limit(1);
+
+    if (takenError) {
+      console.error("[checkout] availability query error", takenError);
+      throw new Error("Falha ao verificar disponibilidade");
+    }
+    if (takenRows && takenRows.length > 0) {
+      throw new SlotTakenError();
+    }
+
+    // 3) Vehicle lookup (name for the reservation record).
+    const { data: vehicle, error: vehicleError } = await supabaseAdmin
+      .from("vehicles" as never)
+      .select("name,status")
+      .eq("id", data.vehicle_id)
+      .maybeSingle<{ name: string; status: string }>();
+
+    if (vehicleError || !vehicle || vehicle.status !== "ACTIVE") {
+      throw new Error("Veículo indisponível");
+    }
+
     const orderNsu = crypto.randomUUID();
     const priceCents = Math.round(data.total_price * 100);
     const quantity = data.adults + data.kids;
     const appUrl = process.env.APP_URL ?? getAppUrl();
+    const expiresAt = new Date(
+      Date.now() + PENDING_TTL_MINUTES * 60 * 1000,
+    ).toISOString();
 
+    // 4) Insert reservation. Unique partial index guarantees no double booking.
     const { error: insertError } = await supabaseAdmin
       .from("reservations")
       .insert({
         order_nsu: orderNsu,
+        vehicle_id: data.vehicle_id,
         tour_slug: data.tour_slug,
         tour_name: data.tour_name,
-        vehicle: "Quadriciclo",
+        vehicle: vehicle.name,
         reservation_date: data.reservation_date,
         reservation_time: data.reservation_time,
         adults: data.adults,
@@ -67,9 +125,13 @@ export const createCheckout = createServerFn({ method: "POST" })
         customer_state: data.customer_state ?? null,
         notes: data.notes ?? null,
         payment_status: "PENDING_PAYMENT",
+        expires_at: expiresAt,
       });
 
     if (insertError) {
+      if ((insertError as { code?: string }).code === PG_UNIQUE_VIOLATION) {
+        throw new SlotTakenError();
+      }
       console.error("[checkout] insert error", insertError);
       throw new Error("Falha ao criar reserva");
     }
@@ -93,8 +155,14 @@ export const createCheckout = createServerFn({ method: "POST" })
       ],
     };
 
-    console.log("[checkout] Valor total: R$", (priceCents / 100).toFixed(2));
-    console.log("[checkout] Pessoas:", quantity, `(${data.adults} adultos + ${data.kids} crianças)`);
+    console.log(
+      "[checkout] Valor total: R$",
+      (priceCents / 100).toFixed(2),
+      "| Pessoas:",
+      quantity,
+      "| Veículo:",
+      vehicle.name,
+    );
     console.log("[checkout] Payload:", JSON.stringify(payload));
 
     const res = await fetch("https://api.checkout.infinitepay.io/links", {
