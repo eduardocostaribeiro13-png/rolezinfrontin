@@ -222,8 +222,9 @@ function ReservarPage() {
                   Continuar <ChevronRight className="h-4 w-4" />
                 </button>
               ) : (
-                <button onClick={confirm} className="btn-brand text-xs">
-                  <MessageCircle className="h-4 w-4" /> Confirmar no WhatsApp
+                <button onClick={confirm} disabled={submitting} className="btn-brand text-xs disabled:opacity-60 disabled:cursor-not-allowed">
+                  {submitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <CreditCard className="h-4 w-4" />}
+                  {submitting ? "Redirecionando..." : "Pagar agora"}
                 </button>
               )}
             </div>
