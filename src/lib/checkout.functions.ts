@@ -86,12 +86,16 @@ export const createCheckout = createServerFn({ method: "POST" })
       },
       items: [
         {
-          quantity,
+          quantity: 1,
           price: priceCents,
-          description: data.tour_name,
+          description: `${data.tour_name} — ${data.adults} adulto(s)${data.kids ? ` + ${data.kids} criança(s)` : ""}`,
         },
       ],
     };
+
+    console.log("[checkout] Valor total: R$", (priceCents / 100).toFixed(2));
+    console.log("[checkout] Pessoas:", quantity, `(${data.adults} adultos + ${data.kids} crianças)`);
+    console.log("[checkout] Payload:", JSON.stringify(payload));
 
     const res = await fetch("https://api.checkout.infinitepay.io/links", {
       method: "POST",
