@@ -108,9 +108,37 @@ function ReservarPage() {
     ].filter(Boolean).join("\n");
   };
 
-  const confirm = () => {
-    const msg = buildMessage();
-    if (msg) window.open(waLink(msg), "_blank");
+  const submitCheckout = useServerFn(createCheckout);
+  const [submitting, setSubmitting] = useState(false);
+
+  const confirm = async () => {
+    if (!tour || !date || !time) return;
+    setSubmitting(true);
+    try {
+      const res = await submitCheckout({
+        data: {
+          tour_slug: tour.slug,
+          tour_name: tour.name,
+          reservation_date: format(date, "yyyy-MM-dd"),
+          reservation_time: time,
+          adults,
+          kids,
+          total_price: total,
+          customer_name: cliente.nome,
+          customer_email: cliente.email,
+          customer_phone: cliente.telefone,
+          customer_whatsapp: cliente.whatsapp,
+          customer_city: cliente.cidade,
+          customer_state: cliente.estado,
+          notes: cliente.observacoes,
+        },
+      });
+      window.location.href = res.url;
+    } catch (e) {
+      console.error(e);
+      toast.error("Não foi possível iniciar o pagamento. Tente novamente.");
+      setSubmitting(false);
+    }
   };
 
   return (
