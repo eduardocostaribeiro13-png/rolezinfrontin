@@ -1,5 +1,6 @@
 import { Link } from "@tanstack/react-router";
-import { Instagram, MapPin, Phone, MessageCircle } from "lucide-react";
+import { MapPin, Phone, MessageCircle } from "lucide-react";
+import { InstagramIcon as Instagram } from "@/components/site/InstagramIcon";
 import { INSTAGRAM_HANDLE, INSTAGRAM_URL, WHATSAPP_DISPLAY, waQuickBooking } from "@/lib/whatsapp";
 
 export function Footer() {
