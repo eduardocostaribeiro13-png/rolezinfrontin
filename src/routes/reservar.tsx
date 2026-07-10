@@ -1,19 +1,39 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { z } from "zod";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { motion, AnimatePresence } from "framer-motion";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
-import { Calendar as CalIcon, Check, ChevronLeft, ChevronRight, Clock, CreditCard, Loader2, Minus, Plus, UsersRound } from "lucide-react";
+import {
+  Calendar as CalIcon,
+  Car,
+  Check,
+  ChevronLeft,
+  ChevronRight,
+  Clock,
+  CreditCard,
+  Loader2,
+  Minus,
+  Plus,
+  UsersRound,
+} from "lucide-react";
 import { TOURS, brl, type Tour } from "@/lib/tours";
 import { Calendar } from "@/components/ui/calendar";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import { createCheckout } from "@/lib/checkout.functions";
+import {
+  useFullyBookedDates,
+  useTakenTimes,
+  useTimeSlots,
+  useVehicles,
+} from "@/lib/hooks/use-availability";
+import type { Vehicle } from "@/lib/services/vehicle-service";
 
 const searchSchema = z.object({ tour: z.string().optional() });
 
@@ -21,7 +41,11 @@ export const Route = createFileRoute("/reservar")({
   head: () => ({
     meta: [
       { title: "Reservar Passeio — Rolezin Frontin Off Road" },
-      { name: "description", content: "Reserve seu passeio de quadriciclo ou UTV em Engenheiro Paulo de Frontin. Escolha data, horário e finalize pelo WhatsApp." },
+      {
+        name: "description",
+        content:
+          "Reserve seu passeio de quadriciclo ou UTV em Engenheiro Paulo de Frontin. Escolha veículo, data e horário em tempo real.",
+      },
     ],
     links: [{ rel: "canonical", href: "/reservar" }],
   }),
@@ -29,8 +53,15 @@ export const Route = createFileRoute("/reservar")({
   component: ReservarPage,
 });
 
-const HORARIOS = ["09:00", "11:00", "14:00", "16:00"];
-const STEPS = ["Passeio", "Data", "Horário", "Pessoas", "Dados", "Revisão"] as const;
+const STEPS = [
+  "Passeio",
+  "Veículo",
+  "Data",
+  "Horário",
+  "Pessoas",
+  "Dados",
+  "Revisão",
+] as const;
 
 const clientSchema = z.object({
   nome: z.string().trim().min(3, "Informe seu nome completo").max(100),
@@ -44,12 +75,17 @@ const clientSchema = z.object({
 
 type Cliente = z.infer<typeof clientSchema>;
 
+function toISODate(d: Date) {
+  return format(d, "yyyy-MM-dd");
+}
+
 function ReservarPage() {
   const { tour: initialSlug } = Route.useSearch();
   const [step, setStep] = useState(0);
   const [tour, setTour] = useState<Tour | null>(
     initialSlug ? TOURS.find((t) => t.slug === initialSlug) ?? null : null,
   );
+  const [vehicle, setVehicle] = useState<Vehicle | null>(null);
   const [date, setDate] = useState<Date | undefined>();
   const [time, setTime] = useState<string | null>(null);
   const [adults, setAdults] = useState(2);
@@ -59,17 +95,35 @@ function ReservarPage() {
   });
   const [errors, setErrors] = useState<Partial<Record<keyof Cliente, string>>>({});
 
+  // Reset dependent fields when vehicle or date change (availability differs)
+  useEffect(() => {
+    setTime(null);
+  }, [vehicle?.id, date]);
+
+  // Enforce vehicle capacity on people counts
+  useEffect(() => {
+    if (!vehicle) return;
+    const max = vehicle.capacity;
+    if (adults + kids > max) {
+      setAdults(Math.min(adults, max));
+      setKids(Math.max(0, max - Math.min(adults, max)));
+    }
+  }, [vehicle, adults, kids]);
+
   const total = useMemo(() => {
     if (!tour) return 0;
     return tour.price * adults + tour.price * 0.5 * kids;
   }, [tour, adults, kids]);
 
+  const maxPeople = vehicle?.capacity ?? tour?.maxPeople ?? 10;
+
   const canAdvance = () => {
     if (step === 0) return !!tour;
-    if (step === 1) return !!date;
-    if (step === 2) return !!time;
-    if (step === 3) return adults + kids > 0 && (tour ? adults + kids <= tour.maxPeople : true);
-    if (step === 4) {
+    if (step === 1) return !!vehicle;
+    if (step === 2) return !!date;
+    if (step === 3) return !!time;
+    if (step === 4) return adults + kids > 0 && adults + kids <= maxPeople;
+    if (step === 5) {
       const r = clientSchema.safeParse(cliente);
       if (!r.success) {
         const errs: Partial<Record<keyof Cliente, string>> = {};
@@ -86,21 +140,19 @@ function ReservarPage() {
   const next = () => canAdvance() && setStep((s) => Math.min(s + 1, STEPS.length - 1));
   const back = () => setStep((s) => Math.max(s - 1, 0));
 
-
-
-
   const submitCheckout = useServerFn(createCheckout);
   const [submitting, setSubmitting] = useState(false);
 
   const confirm = async () => {
-    if (!tour || !date || !time) return;
+    if (!tour || !vehicle || !date || !time) return;
     setSubmitting(true);
     try {
       const res = await submitCheckout({
         data: {
+          vehicle_id: vehicle.id,
           tour_slug: tour.slug,
           tour_name: tour.name,
-          reservation_date: format(date, "yyyy-MM-dd"),
+          reservation_date: toISODate(date),
           reservation_time: time,
           adults,
           kids,
@@ -116,8 +168,15 @@ function ReservarPage() {
       });
       window.location.href = res.url;
     } catch (e) {
-      console.error(e);
-      toast.error("Não foi possível iniciar o pagamento. Tente novamente.");
+      const msg = e instanceof Error ? e.message : "";
+      if (msg.includes("acabou de ser reservado") || msg.includes("indisponível")) {
+        toast.error(msg);
+        setTime(null);
+        setStep(3);
+      } else {
+        console.error(e);
+        toast.error("Não foi possível iniciar o pagamento. Tente novamente.");
+      }
       setSubmitting(false);
     }
   };
@@ -127,7 +186,7 @@ function ReservarPage() {
       <div className="container-x">
         <span className="eyebrow mb-4">Reserva</span>
         <h1 className="font-display text-5xl md:text-6xl uppercase leading-none">
-          Sua aventura em <span className="text-brand">6 passos.</span>
+          Sua aventura em <span className="text-brand">7 passos.</span>
         </h1>
 
         {/* Progress */}
@@ -153,7 +212,6 @@ function ReservarPage() {
         </div>
 
         <div className="mt-10 grid gap-8 lg:grid-cols-[1fr_360px] items-start">
-          {/* Steps */}
           <div className="min-h-[400px]">
             <AnimatePresence mode="wait">
               <motion.div
@@ -164,21 +222,36 @@ function ReservarPage() {
                 transition={{ duration: 0.3 }}
               >
                 {step === 0 && <StepTour selected={tour} onSelect={setTour} />}
-                {step === 1 && <StepDate date={date} onChange={setDate} />}
-                {step === 2 && <StepTime time={time} onChange={setTime} />}
+                {step === 1 && <StepVehicle selected={vehicle} onSelect={setVehicle} />}
+                {step === 2 && (
+                  <StepDate
+                    date={date}
+                    onChange={setDate}
+                    vehicleId={vehicle?.id ?? null}
+                  />
+                )}
                 {step === 3 && (
+                  <StepTime
+                    time={time}
+                    onChange={setTime}
+                    vehicleId={vehicle?.id ?? null}
+                    date={date ?? null}
+                  />
+                )}
+                {step === 4 && (
                   <StepPeople
                     adults={adults}
                     kids={kids}
                     setAdults={setAdults}
                     setKids={setKids}
-                    max={tour?.maxPeople ?? 10}
+                    max={maxPeople}
                   />
                 )}
-                {step === 4 && <StepClient value={cliente} onChange={setCliente} errors={errors} />}
-                {step === 5 && (
+                {step === 5 && <StepClient value={cliente} onChange={setCliente} errors={errors} />}
+                {step === 6 && (
                   <StepReview
                     tour={tour!}
+                    vehicle={vehicle!}
                     date={date!}
                     time={time!}
                     adults={adults}
@@ -211,11 +284,11 @@ function ReservarPage() {
             </div>
           </div>
 
-          {/* Summary */}
           <aside className="lg:sticky lg:top-28 p-6 rounded-2xl border border-border/60 bg-card">
             <p className="eyebrow mb-4">Resumo</p>
             <dl className="space-y-3 text-sm">
               <Row k="Passeio" v={tour?.name ?? "—"} />
+              <Row k="Veículo" v={vehicle?.name ?? "—"} />
               <Row k="Data" v={date ? format(date, "dd/MM/yyyy") : "—"} />
               <Row k="Horário" v={time ?? "—"} />
               <Row k="Adultos" v={String(adults)} />
@@ -277,19 +350,97 @@ function StepTour({ selected, onSelect }: { selected: Tour | null; onSelect: (t:
   );
 }
 
-function StepDate({ date, onChange }: { date?: Date; onChange: (d?: Date) => void }) {
+function StepVehicle({
+  selected,
+  onSelect,
+}: {
+  selected: Vehicle | null;
+  onSelect: (v: Vehicle) => void;
+}) {
+  const { data, isLoading, error } = useVehicles();
+  return (
+    <div>
+      <h2 className="font-display text-3xl uppercase flex items-center gap-2">
+        <Car className="h-6 w-6 text-brand" /> Escolha o veículo
+      </h2>
+      <p className="mt-2 text-sm text-muted-foreground">
+        Cada veículo tem apenas 1 unidade disponível.
+      </p>
+
+      {isLoading && (
+        <div className="mt-6 grid gap-4 sm:grid-cols-3">
+          {[0, 1, 2].map((i) => <Skeleton key={i} className="h-32 rounded-2xl" />)}
+        </div>
+      )}
+      {error && (
+        <p className="mt-6 text-sm text-destructive">Não foi possível carregar os veículos.</p>
+      )}
+      {data && (
+        <div className="mt-6 grid gap-4 sm:grid-cols-3">
+          {data.map((v) => {
+            const isActive = selected?.id === v.id;
+            return (
+              <button
+                key={v.id}
+                onClick={() => onSelect(v)}
+                className={cn(
+                  "p-5 rounded-2xl border text-left transition-all",
+                  isActive ? "border-brand ring-2 ring-brand/40" : "border-border/60 hover:border-brand/60",
+                )}
+              >
+                <p className="font-display text-xl uppercase leading-none">{v.name}</p>
+                <p className="mt-2 text-xs font-mono uppercase tracking-widest text-muted-foreground">
+                  Até {v.capacity} pessoa(s)
+                </p>
+                <p className="mt-4 text-xs text-foreground/70">{v.type}</p>
+              </button>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function StepDate({
+  date,
+  onChange,
+  vehicleId,
+}: {
+  date?: Date;
+  onChange: (d?: Date) => void;
+  vehicleId: string | null;
+}) {
+  const from = useMemo(() => new Date(), []);
+  const to = useMemo(() => {
+    const d = new Date();
+    d.setDate(d.getDate() + 120);
+    return d;
+  }, []);
+  const { data: bookedDates } = useFullyBookedDates(
+    vehicleId,
+    toISODate(from),
+    toISODate(to),
+  );
+  const bookedSet = useMemo(() => new Set(bookedDates ?? []), [bookedDates]);
+
   return (
     <div>
       <h2 className="font-display text-3xl uppercase flex items-center gap-2">
         <CalIcon className="h-6 w-6 text-brand" /> Escolha a data
       </h2>
-      <p className="mt-2 text-sm text-muted-foreground">Selecione um dia disponível no calendário.</p>
+      <p className="mt-2 text-sm text-muted-foreground">
+        Dias esgotados aparecem desabilitados no calendário.
+      </p>
       <div className="mt-6 inline-block rounded-2xl border border-border/60 bg-card p-3">
         <Calendar
           mode="single"
           selected={date}
           onSelect={onChange}
-          disabled={(d) => d < new Date(new Date().setHours(0, 0, 0, 0))}
+          disabled={(d) => {
+            if (d < new Date(new Date().setHours(0, 0, 0, 0))) return true;
+            return bookedSet.has(toISODate(d));
+          }}
           locale={ptBR}
           className={cn("pointer-events-auto")}
         />
@@ -298,26 +449,69 @@ function StepDate({ date, onChange }: { date?: Date; onChange: (d?: Date) => voi
   );
 }
 
-function StepTime({ time, onChange }: { time: string | null; onChange: (t: string) => void }) {
+function StepTime({
+  time,
+  onChange,
+  vehicleId,
+  date,
+}: {
+  time: string | null;
+  onChange: (t: string) => void;
+  vehicleId: string | null;
+  date: Date | null;
+}) {
+  const { data: slots, isLoading: loadingSlots } = useTimeSlots();
+  const dateISO = date ? toISODate(date) : null;
+  const { data: taken, isLoading: loadingTaken } = useTakenTimes(vehicleId, dateISO);
+  const takenSet = useMemo(() => new Set(taken ?? []), [taken]);
+  const isLoading = loadingSlots || loadingTaken;
+
   return (
     <div>
       <h2 className="font-display text-3xl uppercase flex items-center gap-2">
         <Clock className="h-6 w-6 text-brand" /> Escolha o horário
       </h2>
-      <div className="mt-6 grid grid-cols-2 sm:grid-cols-4 gap-3">
-        {HORARIOS.map((h) => (
-          <button
-            key={h}
-            onClick={() => onChange(h)}
-            className={cn(
-              "py-6 rounded-2xl border font-display text-2xl transition-all",
-              time === h ? "border-brand bg-brand text-brand-foreground" : "border-border/60 hover:border-brand/60",
-            )}
-          >
-            {h}
-          </button>
-        ))}
-      </div>
+
+      {isLoading && (
+        <div className="mt-6 grid grid-cols-2 sm:grid-cols-4 gap-3">
+          {[0, 1, 2, 3].map((i) => <Skeleton key={i} className="h-24 rounded-2xl" />)}
+        </div>
+      )}
+
+      {!isLoading && slots && slots.length === 0 && (
+        <p className="mt-6 text-sm text-muted-foreground">
+          Não há horários disponíveis nesta data.
+        </p>
+      )}
+
+      {!isLoading && slots && slots.length > 0 && (
+        <div className="mt-6 grid grid-cols-2 sm:grid-cols-4 gap-3">
+          {slots.map((slot) => {
+            const isTaken = takenSet.has(slot.time);
+            const isActive = time === slot.time;
+            return (
+              <button
+                key={slot.id}
+                onClick={() => !isTaken && onChange(slot.time)}
+                disabled={isTaken}
+                className={cn(
+                  "py-6 rounded-2xl border font-display text-2xl transition-all relative",
+                  isActive && !isTaken && "border-brand bg-brand text-brand-foreground",
+                  !isActive && !isTaken && "border-border/60 hover:border-brand/60",
+                  isTaken && "border-border/40 bg-muted/30 text-muted-foreground/60 cursor-not-allowed opacity-60",
+                )}
+              >
+                {slot.time}
+                {isTaken && (
+                  <span className="block mt-1 text-[10px] font-mono uppercase tracking-widest text-destructive">
+                    Esgotado
+                  </span>
+                )}
+              </button>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 }
@@ -332,10 +526,10 @@ function StepPeople({
       <h2 className="font-display text-3xl uppercase flex items-center gap-2">
         <UsersRound className="h-6 w-6 text-brand" /> Quantas pessoas?
       </h2>
-      <p className="mt-2 text-sm text-muted-foreground">Máximo de {max} pessoas por passeio.</p>
+      <p className="mt-2 text-sm text-muted-foreground">Máximo de {max} pessoas para este veículo.</p>
       <div className="mt-6 grid gap-4 sm:grid-cols-2">
-        <Counter label="Adultos" hint="Acima de 12 anos" value={adults} onChange={setAdults} min={1} max={max} />
-        <Counter label="Crianças" hint="5–11 anos · 50% off" value={kids} onChange={setKids} min={0} max={max} />
+        <Counter label="Adultos" hint="Acima de 12 anos" value={adults} onChange={setAdults} min={1} max={max - kids} />
+        <Counter label="Crianças" hint="5–11 anos · 50% off" value={kids} onChange={setKids} min={0} max={max - adults} />
       </div>
     </div>
   );
@@ -418,9 +612,9 @@ function Field({ label, error, children }: { label: string; error?: string; chil
 }
 
 function StepReview({
-  tour, date, time, adults, kids, total, cliente,
+  tour, vehicle, date, time, adults, kids, total, cliente,
 }: {
-  tour: Tour; date: Date; time: string; adults: number; kids: number; total: number; cliente: Cliente;
+  tour: Tour; vehicle: Vehicle; date: Date; time: string; adults: number; kids: number; total: number; cliente: Cliente;
 }) {
   return (
     <div>
@@ -428,6 +622,7 @@ function StepReview({
       <div className="mt-6 p-6 rounded-2xl border border-brand/50 bg-card">
         <div className="grid gap-6 sm:grid-cols-2">
           <Detail label="Passeio" value={tour.name} />
+          <Detail label="Veículo" value={vehicle.name} />
           <Detail label="Data" value={format(date, "dd 'de' MMMM 'de' yyyy", { locale: ptBR })} />
           <Detail label="Horário" value={time} />
           <Detail label="Pessoas" value={`${adults} adulto(s)${kids ? `, ${kids} criança(s)` : ""}`} />
@@ -442,7 +637,7 @@ function StepReview({
         </div>
       </div>
       <p className="mt-4 text-xs text-muted-foreground">
-        Ao confirmar, você será redirecionado para o WhatsApp com a mensagem já preenchida.
+        Ao confirmar, você será redirecionado para o checkout seguro da InfinitePay.
       </p>
     </div>
   );

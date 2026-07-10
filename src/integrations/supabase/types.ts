@@ -24,6 +24,7 @@ export type Database = {
           customer_phone: string
           customer_state: string | null
           customer_whatsapp: string | null
+          expires_at: string | null
           id: string
           installments: number | null
           invoice_slug: string | null
@@ -44,6 +45,7 @@ export type Database = {
           transaction_nsu: string | null
           updated_at: string
           vehicle: string
+          vehicle_id: string | null
         }
         Insert: {
           adults?: number
@@ -54,6 +56,7 @@ export type Database = {
           customer_phone: string
           customer_state?: string | null
           customer_whatsapp?: string | null
+          expires_at?: string | null
           id?: string
           installments?: number | null
           invoice_slug?: string | null
@@ -74,6 +77,7 @@ export type Database = {
           transaction_nsu?: string | null
           updated_at?: string
           vehicle?: string
+          vehicle_id?: string | null
         }
         Update: {
           adults?: number
@@ -84,6 +88,7 @@ export type Database = {
           customer_phone?: string
           customer_state?: string | null
           customer_whatsapp?: string | null
+          expires_at?: string | null
           id?: string
           installments?: number | null
           invoice_slug?: string | null
@@ -104,6 +109,78 @@ export type Database = {
           transaction_nsu?: string | null
           updated_at?: string
           vehicle?: string
+          vehicle_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reservations_vehicle_id_fkey"
+            columns: ["vehicle_id"]
+            isOneToOne: false
+            referencedRelation: "vehicles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      time_slots: {
+        Row: {
+          active: boolean
+          created_at: string
+          id: string
+          sort_order: number
+          time: string
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          id?: string
+          sort_order?: number
+          time: string
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          id?: string
+          sort_order?: number
+          time?: string
+        }
+        Relationships: []
+      }
+      vehicles: {
+        Row: {
+          available_quantity: number
+          capacity: number
+          created_at: string
+          id: string
+          name: string
+          slug: string
+          sort_order: number
+          status: string
+          type: string
+          updated_at: string
+        }
+        Insert: {
+          available_quantity?: number
+          capacity: number
+          created_at?: string
+          id?: string
+          name: string
+          slug: string
+          sort_order?: number
+          status?: string
+          type: string
+          updated_at?: string
+        }
+        Update: {
+          available_quantity?: number
+          capacity?: number
+          created_at?: string
+          id?: string
+          name?: string
+          slug?: string
+          sort_order?: number
+          status?: string
+          type?: string
+          updated_at?: string
         }
         Relationships: []
       }
@@ -112,10 +189,27 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      expire_pending_reservations: { Args: never; Returns: undefined }
+      get_fully_booked_dates: {
+        Args: { p_from: string; p_to: string; p_vehicle_id: string }
+        Returns: {
+          reservation_date: string
+        }[]
+      }
+      get_taken_times: {
+        Args: { p_date: string; p_vehicle_id: string }
+        Returns: {
+          reservation_time: string
+        }[]
+      }
     }
     Enums: {
-      payment_status: "PENDING_PAYMENT" | "PAID" | "FAILED" | "CANCELLED"
+      payment_status:
+        | "PENDING_PAYMENT"
+        | "PAID"
+        | "FAILED"
+        | "CANCELLED"
+        | "COMPLETED"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -243,7 +337,13 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      payment_status: ["PENDING_PAYMENT", "PAID", "FAILED", "CANCELLED"],
+      payment_status: [
+        "PENDING_PAYMENT",
+        "PAID",
+        "FAILED",
+        "CANCELLED",
+        "COMPLETED",
+      ],
     },
   },
 } as const
