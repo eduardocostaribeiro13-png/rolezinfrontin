@@ -32,14 +32,21 @@ export const Route = createFileRoute("/admin")({
   component: AdminLayout,
 });
 
-const NAV = [
+type NavItem = {
+  to: "/admin" | "/admin/reservas" | "/admin/veiculos" | "/admin/agenda" | "/admin/clientes" | "/admin/configuracoes";
+  label: string;
+  icon: typeof BarChart3;
+  exact?: boolean;
+};
+
+const NAV: NavItem[] = [
   { to: "/admin", label: "Dashboard", icon: BarChart3, exact: true },
   { to: "/admin/reservas", label: "Reservas", icon: ShoppingBag },
   { to: "/admin/veiculos", label: "Veículos", icon: Car },
   { to: "/admin/agenda", label: "Agenda", icon: Calendar },
   { to: "/admin/clientes", label: "Clientes", icon: Users },
   { to: "/admin/configuracoes", label: "Configurações", icon: Settings },
-] as const;
+];
 
 function AdminLayout() {
   const { loading, session, isAdmin } = useAdminAuth();

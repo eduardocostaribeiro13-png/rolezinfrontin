@@ -94,18 +94,18 @@ export const AdminService = {
 
   async listVehiclesAll(): Promise<AdminVehicle[]> {
     const { data, error } = await supabase
-      .from("vehicles" as never)
+      .from("vehicles")
       .select("*")
       .order("sort_order", { ascending: true });
     if (error) throw error;
-    return (data ?? []) as unknown as AdminVehicle[];
+    return (data ?? []) as AdminVehicle[];
   },
   async upsertVehicle(v: Partial<AdminVehicle> & { id?: string }): Promise<void> {
     const payload = {
-      name: v.name,
-      slug: v.slug,
-      type: v.type,
-      capacity: v.capacity,
+      name: v.name ?? "",
+      slug: v.slug ?? "",
+      type: v.type ?? "",
+      capacity: v.capacity ?? 1,
       status: v.status ?? "ACTIVE",
       sort_order: v.sort_order ?? 0,
       description: v.description ?? null,
@@ -113,28 +113,25 @@ export const AdminService = {
       image_url: v.image_url ?? null,
     };
     if (v.id) {
-      const { error } = await supabase
-        .from("vehicles" as never)
-        .update(payload)
-        .eq("id", v.id);
+      const { error } = await supabase.from("vehicles").update(payload).eq("id", v.id);
       if (error) throw error;
     } else {
-      const { error } = await supabase.from("vehicles" as never).insert(payload);
+      const { error } = await supabase.from("vehicles").insert(payload);
       if (error) throw error;
     }
   },
   async deleteVehicle(id: string): Promise<void> {
-    const { error } = await supabase.from("vehicles" as never).delete().eq("id", id);
+    const { error } = await supabase.from("vehicles").delete().eq("id", id);
     if (error) throw error;
   },
 
   async listBlockedSlots(): Promise<BlockedSlot[]> {
     const { data, error } = await supabase
-      .from("blocked_slots" as never)
+      .from("blocked_slots")
       .select("*")
       .order("blocked_date", { ascending: true });
     if (error) throw error;
-    return (data ?? []) as unknown as BlockedSlot[];
+    return (data ?? []) as BlockedSlot[];
   },
   async addBlockedSlot(input: {
     vehicle_id: string | null;
@@ -142,31 +139,27 @@ export const AdminService = {
     blocked_time: string | null;
     reason: string | null;
   }): Promise<void> {
-    const { error } = await supabase.from("blocked_slots" as never).insert(input);
+    const { error } = await supabase.from("blocked_slots").insert(input);
     if (error) throw error;
   },
   async removeBlockedSlot(id: string): Promise<void> {
-    const { error } = await supabase
-      .from("blocked_slots" as never)
-      .delete()
-      .eq("id", id);
+    const { error } = await supabase.from("blocked_slots").delete().eq("id", id);
     if (error) throw error;
   },
 
   async getSettings(): Promise<SiteSettings | null> {
     const { data, error } = await supabase
-      .from("site_settings" as never)
+      .from("site_settings")
       .select("*")
       .eq("id", 1)
       .maybeSingle();
     if (error) throw error;
-    return (data ?? null) as unknown as SiteSettings | null;
+    return (data ?? null) as SiteSettings | null;
   },
   async updateSettings(patch: Partial<SiteSettings>): Promise<void> {
-    const { error } = await supabase
-      .from("site_settings" as never)
-      .update(patch)
-      .eq("id", 1);
+    const { id: _id, ...rest } = patch;
+    void _id;
+    const { error } = await supabase.from("site_settings").update(rest).eq("id", 1);
     if (error) throw error;
   },
 };
