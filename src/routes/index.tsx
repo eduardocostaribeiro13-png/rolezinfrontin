@@ -29,7 +29,7 @@ export const Route = createFileRoute("/")({
         content:
           "Viva uma aventura off road inesquecível em Engenheiro Paulo de Frontin. Passeios de quadriciclo e UTV com guias experientes, segurança e fotos incluídas.",
       },
-      { property: "og:title", content: "Rolezin Frontin Off Road — Aventura Off Road no RJ" },
+      { property: "og:title", content: "Rolezin Frontin Off Road — Passeios de Quadriciclo em Eng. Paulo de Frontin, RJ" },
       { property: "og:image", content: "/assets/hero.jpg" },
     ],
     links: [{ rel: "canonical", href: "/" }],

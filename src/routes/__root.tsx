@@ -62,19 +62,23 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Rolezin Frontin Off Road — Passeios de Quadriciclo e UTV em Eng. Paulo de Frontin, RJ" },
+      { title: "Rolezin Frontin Off Road — Passeios de Quadriciclo em Eng. Paulo de Frontin, RJ" },
       {
         name: "description",
         content:
-          "Passeios de quadriciclo e UTV pelas trilhas mais incríveis de Engenheiro Paulo de Frontin, RJ. Aventura, segurança e paisagens inesquecíveis. Reserve pelo WhatsApp.",
+          "Viva uma aventura off road inesquecível em Engenheiro Paulo de Frontin. Passeios de quadriciclo e UTV com guias experientes, segurança e fotos incluídas.",
       },
       { name: "author", content: "Rolezin Frontin Off Road" },
       { name: "theme-color", content: "#111111" },
       { property: "og:site_name", content: "Rolezin Frontin Off Road" },
       { property: "og:type", content: "website" },
-      { property: "og:title", content: "Rolezin Frontin Off Road — Aventura Off Road no RJ" },
-      { property: "og:description", content: "Passeios de quadriciclo e UTV em Engenheiro Paulo de Frontin, RJ." },
+      { property: "og:title", content: "Rolezin Frontin Off Road — Passeios de Quadriciclo em Eng. Paulo de Frontin, RJ" },
+      { property: "og:description", content: "Viva uma aventura off road inesquecível em Engenheiro Paulo de Frontin. Passeios de quadriciclo e UTV com guias experientes, segurança e fotos incluídas." },
       { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "Rolezin Frontin Off Road — Passeios de Quadriciclo em Eng. Paulo de Frontin, RJ" },
+      { name: "twitter:description", content: "Viva uma aventura off road inesquecível em Engenheiro Paulo de Frontin. Passeios de quadriciclo e UTV com guias experientes, segurança e fotos incluídas." },
+      { property: "og:image", content: "/assets/hero.jpg" },
+      { name: "twitter:image", content: "/assets/hero.jpg" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
