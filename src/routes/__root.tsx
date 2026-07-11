@@ -3,6 +3,7 @@ import {
   Outlet,
   createRootRouteWithContext,
   useRouter,
+  useRouterState,
   HeadContent,
   Scripts,
   Link,
@@ -108,14 +109,16 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const isBare = pathname === "/auth" || pathname === "/admin" || pathname.startsWith("/admin/");
   return (
     <QueryClientProvider client={queryClient}>
-      <Navbar />
+      {!isBare && <Navbar />}
       <main className="min-h-dvh">
         <Outlet />
       </main>
-      <Footer />
-      <WhatsAppFloat />
+      {!isBare && <Footer />}
+      {!isBare && <WhatsAppFloat />}
       <Toaster richColors position="top-center" />
     </QueryClientProvider>
   );
