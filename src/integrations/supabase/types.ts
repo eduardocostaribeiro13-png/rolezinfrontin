@@ -14,6 +14,59 @@ export type Database = {
   }
   public: {
     Tables: {
+      admin_whitelist: {
+        Row: {
+          created_at: string
+          email: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+        }
+        Relationships: []
+      }
+      blocked_slots: {
+        Row: {
+          blocked_date: string
+          blocked_time: string | null
+          created_at: string
+          created_by: string | null
+          id: string
+          reason: string | null
+          vehicle_id: string | null
+        }
+        Insert: {
+          blocked_date: string
+          blocked_time?: string | null
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          reason?: string | null
+          vehicle_id?: string | null
+        }
+        Update: {
+          blocked_date?: string
+          blocked_time?: string | null
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          reason?: string | null
+          vehicle_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "blocked_slots_vehicle_id_fkey"
+            columns: ["vehicle_id"]
+            isOneToOne: false
+            referencedRelation: "vehicles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       reservations: {
         Row: {
           adults: number
@@ -121,6 +174,57 @@ export type Database = {
           },
         ]
       }
+      site_settings: {
+        Row: {
+          address: string | null
+          business_hours: string | null
+          cancellation_policy: string | null
+          company_name: string | null
+          email: string | null
+          email_message: string | null
+          facebook: string | null
+          id: number
+          instagram: string | null
+          logo_url: string | null
+          phone: string | null
+          updated_at: string
+          voucher_message: string | null
+          whatsapp: string | null
+        }
+        Insert: {
+          address?: string | null
+          business_hours?: string | null
+          cancellation_policy?: string | null
+          company_name?: string | null
+          email?: string | null
+          email_message?: string | null
+          facebook?: string | null
+          id?: number
+          instagram?: string | null
+          logo_url?: string | null
+          phone?: string | null
+          updated_at?: string
+          voucher_message?: string | null
+          whatsapp?: string | null
+        }
+        Update: {
+          address?: string | null
+          business_hours?: string | null
+          cancellation_policy?: string | null
+          company_name?: string | null
+          email?: string | null
+          email_message?: string | null
+          facebook?: string | null
+          id?: number
+          instagram?: string | null
+          logo_url?: string | null
+          phone?: string | null
+          updated_at?: string
+          voucher_message?: string | null
+          whatsapp?: string | null
+        }
+        Relationships: []
+      }
       time_slots: {
         Row: {
           active: boolean
@@ -145,13 +249,37 @@ export type Database = {
         }
         Relationships: []
       }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
       vehicles: {
         Row: {
           available_quantity: number
           capacity: number
           created_at: string
+          description: string | null
           id: string
+          image_url: string | null
           name: string
+          price_cents: number
           slug: string
           sort_order: number
           status: string
@@ -162,8 +290,11 @@ export type Database = {
           available_quantity?: number
           capacity: number
           created_at?: string
+          description?: string | null
           id?: string
+          image_url?: string | null
           name: string
+          price_cents?: number
           slug: string
           sort_order?: number
           status?: string
@@ -174,8 +305,11 @@ export type Database = {
           available_quantity?: number
           capacity?: number
           created_at?: string
+          description?: string | null
           id?: string
+          image_url?: string | null
           name?: string
+          price_cents?: number
           slug?: string
           sort_order?: number
           status?: string
@@ -189,6 +323,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      claim_admin_if_whitelisted: { Args: never; Returns: boolean }
       expire_pending_reservations: { Args: never; Returns: undefined }
       get_fully_booked_dates: {
         Args: { p_from: string; p_to: string; p_vehicle_id: string }
@@ -202,8 +337,16 @@ export type Database = {
           reservation_time: string
         }[]
       }
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
+      app_role: "admin"
       payment_status:
         | "PENDING_PAYMENT"
         | "PAID"
@@ -337,6 +480,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      app_role: ["admin"],
       payment_status: [
         "PENDING_PAYMENT",
         "PAID",
