@@ -12,7 +12,7 @@ import { Label } from "@/components/ui/label";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export const Route = createFileRoute("/admin/agenda")({
-  component: AdminAgenda;
+  component: AdminAgenda,
 });
 
 function AdminAgenda() {
