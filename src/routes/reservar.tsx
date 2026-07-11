@@ -15,9 +15,6 @@ import {
   Clock,
   CreditCard,
   Loader2,
-  Minus,
-  Plus,
-  UsersRound,
 } from "lucide-react";
 import { TOURS, brl, type Tour } from "@/lib/tours";
 import { Calendar } from "@/components/ui/calendar";
@@ -53,15 +50,7 @@ export const Route = createFileRoute("/reservar")({
   component: ReservarPage,
 });
 
-const STEPS = [
-  "Passeio",
-  "Veículo",
-  "Data",
-  "Horário",
-  "Pessoas",
-  "Dados",
-  "Revisão",
-] as const;
+const STEPS = ["Passeio", "Veículo", "Data", "Horário", "Dados", "Revisão"] as const;
 
 const clientSchema = z.object({
   nome: z.string().trim().min(3, "Informe seu nome completo").max(100),
@@ -88,42 +77,25 @@ function ReservarPage() {
   const [vehicle, setVehicle] = useState<Vehicle | null>(null);
   const [date, setDate] = useState<Date | undefined>();
   const [time, setTime] = useState<string | null>(null);
-  const [adults, setAdults] = useState(2);
-  const [kids, setKids] = useState(0);
   const [cliente, setCliente] = useState<Cliente>({
     nome: "", telefone: "", whatsapp: "", email: "", cidade: "", estado: "", observacoes: "",
   });
   const [errors, setErrors] = useState<Partial<Record<keyof Cliente, string>>>({});
 
-  // Reset dependent fields when vehicle or date change (availability differs)
   useEffect(() => {
     setTime(null);
   }, [vehicle?.id, date]);
 
-  // Enforce vehicle capacity on people counts
-  useEffect(() => {
-    if (!vehicle) return;
-    const max = vehicle.capacity;
-    if (adults + kids > max) {
-      setAdults(Math.min(adults, max));
-      setKids(Math.max(0, max - Math.min(adults, max)));
-    }
-  }, [vehicle, adults, kids]);
-
-  const total = useMemo(() => {
-    if (!tour) return 0;
-    return tour.price * adults + tour.price * 0.5 * kids;
-  }, [tour, adults, kids]);
-
-  const maxPeople = vehicle?.capacity ?? tour?.maxPeople ?? 10;
+  // Price is per tour (as advertised), not per person.
+  const total = useMemo(() => (tour ? tour.price : 0), [tour]);
+  const quantity = vehicle?.capacity ?? 1;
 
   const canAdvance = () => {
     if (step === 0) return !!tour;
     if (step === 1) return !!vehicle;
     if (step === 2) return !!date;
     if (step === 3) return !!time;
-    if (step === 4) return adults + kids > 0 && adults + kids <= maxPeople;
-    if (step === 5) {
+    if (step === 4) {
       const r = clientSchema.safeParse(cliente);
       if (!r.success) {
         const errs: Partial<Record<keyof Cliente, string>> = {};
@@ -154,8 +126,8 @@ function ReservarPage() {
           tour_name: tour.name,
           reservation_date: toISODate(date),
           reservation_time: time,
-          adults,
-          kids,
+          adults: quantity,
+          kids: 0,
           total_price: total,
           customer_name: cliente.nome,
           customer_email: cliente.email,
@@ -186,10 +158,9 @@ function ReservarPage() {
       <div className="container-x">
         <span className="eyebrow mb-4">Reserva</span>
         <h1 className="font-display text-5xl md:text-6xl uppercase leading-none">
-          Sua aventura em <span className="text-brand">7 passos.</span>
+          Sua aventura em <span className="text-brand">6 passos.</span>
         </h1>
 
-        {/* Progress */}
         <div className="mt-10 flex items-center gap-2 overflow-x-auto pb-2">
           {STEPS.map((label, i) => (
             <div key={label} className="flex items-center gap-2 shrink-0">
@@ -238,24 +209,14 @@ function ReservarPage() {
                     date={date ?? null}
                   />
                 )}
-                {step === 4 && (
-                  <StepPeople
-                    adults={adults}
-                    kids={kids}
-                    setAdults={setAdults}
-                    setKids={setKids}
-                    max={maxPeople}
-                  />
-                )}
-                {step === 5 && <StepClient value={cliente} onChange={setCliente} errors={errors} />}
-                {step === 6 && (
+                {step === 4 && <StepClient value={cliente} onChange={setCliente} errors={errors} />}
+                {step === 5 && (
                   <StepReview
                     tour={tour!}
                     vehicle={vehicle!}
                     date={date!}
                     time={time!}
-                    adults={adults}
-                    kids={kids}
+                    quantity={quantity}
                     total={total}
                     cliente={cliente}
                   />
@@ -291,12 +252,14 @@ function ReservarPage() {
               <Row k="Veículo" v={vehicle?.name ?? "—"} />
               <Row k="Data" v={date ? format(date, "dd/MM/yyyy") : "—"} />
               <Row k="Horário" v={time ?? "—"} />
-              <Row k="Adultos" v={String(adults)} />
-              <Row k="Crianças" v={String(kids)} />
+              <Row k="Participantes" v={vehicle ? `Até ${vehicle.capacity}` : "—"} />
               <div className="pt-3 border-t border-border/60 flex items-center justify-between">
                 <dt className="font-mono text-xs uppercase tracking-widest text-muted-foreground">Total</dt>
                 <dd className="font-display text-3xl text-brand">{brl(total)}</dd>
               </div>
+              <p className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground">
+                Valor por passeio (veículo inteiro)
+              </p>
             </dl>
           </aside>
         </div>
@@ -364,7 +327,7 @@ function StepVehicle({
         <Car className="h-6 w-6 text-brand" /> Escolha o veículo
       </h2>
       <p className="mt-2 text-sm text-muted-foreground">
-        Cada veículo tem apenas 1 unidade disponível.
+        Cada veículo tem apenas 1 unidade disponível. A capacidade máxima já está inclusa no passeio.
       </p>
 
       {isLoading && (
@@ -516,53 +479,6 @@ function StepTime({
   );
 }
 
-function StepPeople({
-  adults, kids, setAdults, setKids, max,
-}: {
-  adults: number; kids: number; setAdults: (n: number) => void; setKids: (n: number) => void; max: number;
-}) {
-  return (
-    <div>
-      <h2 className="font-display text-3xl uppercase flex items-center gap-2">
-        <UsersRound className="h-6 w-6 text-brand" /> Quantas pessoas?
-      </h2>
-      <p className="mt-2 text-sm text-muted-foreground">Máximo de {max} pessoas para este veículo.</p>
-      <div className="mt-6 grid gap-4 sm:grid-cols-2">
-        <Counter label="Adultos" hint="Acima de 12 anos" value={adults} onChange={setAdults} min={1} max={max - kids} />
-        <Counter label="Crianças" hint="5–11 anos · 50% off" value={kids} onChange={setKids} min={0} max={max - adults} />
-      </div>
-    </div>
-  );
-}
-
-function Counter({
-  label, hint, value, onChange, min, max,
-}: { label: string; hint: string; value: number; onChange: (n: number) => void; min: number; max: number }) {
-  return (
-    <div className="p-6 rounded-2xl border border-border/60 bg-card">
-      <p className="font-display text-xl uppercase">{label}</p>
-      <p className="text-xs text-muted-foreground">{hint}</p>
-      <div className="mt-4 flex items-center justify-between">
-        <button
-          onClick={() => onChange(Math.max(min, value - 1))}
-          className="h-10 w-10 rounded-full border border-border/60 grid place-items-center hover:border-brand"
-          aria-label={`Diminuir ${label}`}
-        >
-          <Minus className="h-4 w-4" />
-        </button>
-        <span className="font-display text-4xl w-16 text-center">{value}</span>
-        <button
-          onClick={() => onChange(Math.min(max, value + 1))}
-          className="h-10 w-10 rounded-full border border-border/60 grid place-items-center hover:border-brand"
-          aria-label={`Aumentar ${label}`}
-        >
-          <Plus className="h-4 w-4" />
-        </button>
-      </div>
-    </div>
-  );
-}
-
 function StepClient({
   value, onChange, errors,
 }: {
@@ -612,9 +528,9 @@ function Field({ label, error, children }: { label: string; error?: string; chil
 }
 
 function StepReview({
-  tour, vehicle, date, time, adults, kids, total, cliente,
+  tour, vehicle, date, time, quantity, total, cliente,
 }: {
-  tour: Tour; vehicle: Vehicle; date: Date; time: string; adults: number; kids: number; total: number; cliente: Cliente;
+  tour: Tour; vehicle: Vehicle; date: Date; time: string; quantity: number; total: number; cliente: Cliente;
 }) {
   return (
     <div>
@@ -625,14 +541,14 @@ function StepReview({
           <Detail label="Veículo" value={vehicle.name} />
           <Detail label="Data" value={format(date, "dd 'de' MMMM 'de' yyyy", { locale: ptBR })} />
           <Detail label="Horário" value={time} />
-          <Detail label="Pessoas" value={`${adults} adulto(s)${kids ? `, ${kids} criança(s)` : ""}`} />
+          <Detail label="Participantes" value={`Até ${quantity} pessoa(s)`} />
           <Detail label="Nome" value={cliente.nome} />
           <Detail label="Contato" value={`${cliente.whatsapp} · ${cliente.email}`} />
           <Detail label="Cidade" value={`${cliente.cidade} / ${cliente.estado.toUpperCase()}`} />
           {cliente.observacoes && <Detail label="Observações" value={cliente.observacoes} />}
         </div>
         <div className="mt-8 pt-6 border-t border-border/60 flex items-center justify-between">
-          <span className="font-mono text-xs uppercase tracking-widest text-muted-foreground">Valor total</span>
+          <span className="font-mono text-xs uppercase tracking-widest text-muted-foreground">Valor do passeio</span>
           <span className="font-display text-4xl text-brand">{brl(total)}</span>
         </div>
       </div>
