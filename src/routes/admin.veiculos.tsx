@@ -254,13 +254,16 @@ function AdminVeiculos() {
                   <option value="INACTIVE">Inativo</option>
                 </select>
               </Field>
-              <Field label="URL da imagem">
-                <Input
-                  value={editing.image_url}
-                  onChange={(e) => setEditing({ ...editing, image_url: e.target.value })}
-                  placeholder="https://..."
-                />
-              </Field>
+              <div>
+                <Label className="text-xs">Imagem do veículo</Label>
+                <div className="mt-1">
+                  <ImageUpload
+                    value={editing.image_url || null}
+                    onChange={(url) => setEditing({ ...editing, image_url: url ?? "" })}
+                    upload={StorageService.uploadVehicleImage}
+                  />
+                </div>
+              </div>
               <Field label="Descrição">
                 <Textarea
                   rows={3}
