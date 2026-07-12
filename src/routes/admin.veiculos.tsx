@@ -4,6 +4,8 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { Plus, Trash2, Wrench } from "lucide-react";
 import { AdminService, brlCents, type AdminVehicle } from "@/lib/services/admin-service";
+import { StorageService } from "@/lib/services/storage-service";
+import { ImageUpload } from "@/components/admin/ImageUpload";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -252,13 +254,16 @@ function AdminVeiculos() {
                   <option value="INACTIVE">Inativo</option>
                 </select>
               </Field>
-              <Field label="URL da imagem">
-                <Input
-                  value={editing.image_url}
-                  onChange={(e) => setEditing({ ...editing, image_url: e.target.value })}
-                  placeholder="https://..."
-                />
-              </Field>
+              <div>
+                <Label className="text-xs">Imagem do veículo</Label>
+                <div className="mt-1">
+                  <ImageUpload
+                    value={editing.image_url || null}
+                    onChange={(url) => setEditing({ ...editing, image_url: url ?? "" })}
+                    upload={StorageService.uploadVehicleImage}
+                  />
+                </div>
+              </div>
               <Field label="Descrição">
                 <Textarea
                   rows={3}

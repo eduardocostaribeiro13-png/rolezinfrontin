@@ -2,6 +2,7 @@ import { Link, useRouterState } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { Menu, X } from "lucide-react";
 import { waQuickBooking } from "@/lib/whatsapp";
+import logo from "@/assets/logo.png";
 
 const links = [
   { to: "/", label: "Início" },
@@ -35,10 +36,8 @@ export function Navbar() {
     >
       <div className="container-x flex h-16 items-center justify-between md:h-20">
         <Link to="/" className="flex items-center gap-2 group" aria-label="Rolezin Frontin Off Road — início">
-          <span className="grid place-items-center h-9 w-9 rounded-full bg-brand text-brand-foreground font-display text-lg leading-none">
-            RF
-          </span>
-          <span className="flex flex-col leading-tight">
+          <img src={logo} alt="Rolezin Frontin Off Road" className="h-11 w-11 md:h-12 md:w-12 object-contain" />
+          <span className="hidden sm:flex flex-col leading-tight">
             <span className="font-display text-lg tracking-widest">ROLEZIN FRONTIN</span>
             <span className="text-[10px] font-mono uppercase tracking-[0.3em] text-brand">Off Road</span>
           </span>

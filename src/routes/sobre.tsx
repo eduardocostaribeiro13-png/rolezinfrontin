@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Shield, Heart, Award, Target } from "lucide-react";
-import heroImg from "@/assets/hero.jpg";
+import sobreImg from "@/assets/sobre.jpg";
 
 export const Route = createFileRoute("/sobre")({
   head: () => ({
@@ -42,7 +42,7 @@ function SobrePage() {
             <Link to="/reservar" className="btn-brand mt-8">Reservar meu passeio</Link>
           </div>
           <div className="relative aspect-[4/5] overflow-hidden rounded-3xl">
-            <img src={heroImg} alt="Aventura off road" loading="lazy" className="h-full w-full object-cover" />
+            <img src={sobreImg} alt="Aventura off road" loading="lazy" className="h-full w-full object-cover" />
           </div>
         </div>
 

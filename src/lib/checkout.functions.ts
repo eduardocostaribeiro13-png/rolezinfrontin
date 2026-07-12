@@ -10,7 +10,9 @@ const input = z.object({
   reservation_time: z.string().min(1),
   adults: z.number().int().min(1).max(50),
   kids: z.number().int().min(0).max(50),
-  total_price: z.number().int().positive(),
+  duration_hours: z.number().int().min(1).max(24).default(1),
+  price_per_hour: z.number().positive(),
+  total_price: z.number().positive(),
   customer_name: z.string().trim().min(3).max(120),
   customer_email: z.string().trim().email().max(200),
   customer_phone: z.string().trim().min(8).max(30),
@@ -95,7 +97,10 @@ export const createCheckout = createServerFn({ method: "POST" })
     }
 
     const orderNsu = crypto.randomUUID();
-    const priceCents = Math.round(data.total_price * 100);
+    const pricePerHourCents = Math.round(data.price_per_hour * 100);
+    const hours = data.duration_hours;
+    // Single source of truth: total = price_per_hour × hours.
+    const priceCents = pricePerHourCents * hours;
     const quantity = data.adults + data.kids;
     const appUrl = process.env.APP_URL ?? getAppUrl();
     const expiresAt = new Date(
@@ -116,6 +121,8 @@ export const createCheckout = createServerFn({ method: "POST" })
         adults: data.adults,
         kids: data.kids,
         quantity,
+        duration_hours: hours,
+        price_per_hour_cents: pricePerHourCents,
         total_price: priceCents,
         customer_name: data.customer_name,
         customer_email: data.customer_email,
@@ -126,7 +133,7 @@ export const createCheckout = createServerFn({ method: "POST" })
         notes: data.notes ?? null,
         payment_status: "PENDING_PAYMENT",
         expires_at: expiresAt,
-      });
+      } as never);
 
     if (insertError) {
       if ((insertError as { code?: string }).code === PG_UNIQUE_VIOLATION) {
@@ -150,7 +157,7 @@ export const createCheckout = createServerFn({ method: "POST" })
         {
           quantity: 1,
           price: priceCents,
-          description: `${data.tour_name} — ${data.adults} adulto(s)${data.kids ? ` + ${data.kids} criança(s)` : ""}`,
+          description: `${data.tour_name} — ${hours}h`,
         },
       ],
     };
