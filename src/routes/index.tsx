@@ -437,10 +437,10 @@ function CTAFinal() {
     <section className="relative overflow-hidden">
       <img src={ctaImg} alt="" loading="lazy" className="absolute inset-0 h-full w-full object-cover" />
       <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/60 to-black/90" />
-      <div className="relative container-x py-28 md:py-36 text-center">
+      <div className="relative container-x py-20 sm:py-28 md:py-36 text-center">
         <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
           <span className="eyebrow mb-6 justify-center">Bora?</span>
-          <h2 className="font-display text-5xl md:text-8xl uppercase leading-[0.9]">
+          <h2 className="font-display text-4xl sm:text-5xl md:text-8xl uppercase leading-[0.9]">
             Pronto pra uma aventura
             <br />
             <span className="text-gradient-brand">inesquecível?</span>
@@ -448,9 +448,9 @@ function CTAFinal() {
           <p className="mt-6 max-w-xl mx-auto text-foreground/85">
             Reserve agora e garanta seu lugar nas trilhas mais incríveis de Engenheiro Paulo de Frontin.
           </p>
-          <div className="mt-8 flex flex-wrap justify-center gap-3">
-            <Link to="/reservar" className="btn-brand">Reservar Agora <ArrowRight className="h-4 w-4" /></Link>
-            <a href={waQuickBooking()} target="_blank" rel="noreferrer" className="btn-outline-brand">
+          <div className="mt-8 flex flex-col sm:flex-row flex-wrap justify-center gap-3">
+            <Link to="/reservar" className="btn-brand w-full sm:w-auto">Reservar Agora <ArrowRight className="h-4 w-4" /></Link>
+            <a href={waQuickBooking()} target="_blank" rel="noreferrer" className="btn-outline-brand w-full sm:w-auto">
               Falar no WhatsApp
             </a>
           </div>
