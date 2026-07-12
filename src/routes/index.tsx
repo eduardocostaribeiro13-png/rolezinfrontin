@@ -291,11 +291,11 @@ function Estatisticas() {
   return (
     <section className="section-pad relative overflow-hidden bg-brand text-brand-foreground">
       <div className="container-x relative">
-        <div className="grid gap-8 md:grid-cols-5 text-center">
+        <div className="grid gap-8 grid-cols-2 sm:grid-cols-3 md:grid-cols-5 text-center">
           {stats.map((s) => (
             <div key={s.label}>
-              <p className="font-display text-5xl md:text-6xl leading-none">{s.value}</p>
-              <p className="mt-2 text-xs font-mono uppercase tracking-widest opacity-80">{s.label}</p>
+              <p className="font-display text-4xl sm:text-5xl md:text-6xl leading-none">{s.value}</p>
+              <p className="mt-2 text-[11px] sm:text-xs font-mono uppercase tracking-widest opacity-80">{s.label}</p>
             </div>
           ))}
         </div>
