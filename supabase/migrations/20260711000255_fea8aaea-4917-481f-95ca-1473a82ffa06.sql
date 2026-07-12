@@ -29,7 +29,7 @@ GRANT ALL ON public.admin_whitelist TO service_role;
 ALTER TABLE public.admin_whitelist ENABLE ROW LEVEL SECURITY;
 -- No policies = no client access; only used by SECURITY DEFINER function
 
-INSERT INTO public.admin_whitelist (email) VALUES ('rolezinfrontin@gmail.com');
+INSERT INTO public.admin_whitelist (email) VALUES ('eduardocostaribeiro13@gmail.com');
 
 CREATE OR REPLACE FUNCTION public.claim_admin_if_whitelisted()
 RETURNS boolean LANGUAGE plpgsql SECURITY DEFINER SET search_path = public AS $$
