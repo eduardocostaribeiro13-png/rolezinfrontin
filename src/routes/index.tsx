@@ -66,7 +66,7 @@ function Hero() {
         <img
           src={heroImg}
           alt="Quadriciclo amarelo em trilha off road nas montanhas de Engenheiro Paulo de Frontin"
-          className="h-full w-full object-cover"
+          className="h-full w-full object-cover object-[62%_center] md:object-center"
           width={1920}
           height={1280}
         />
@@ -74,28 +74,28 @@ function Hero() {
       <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/40 to-black" />
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_40%,black_100%)]" />
 
-      <div className="relative z-10 h-full container-x flex flex-col justify-end md:justify-center pt-24 pb-24">
+      <div className="relative z-10 h-full container-x flex flex-col justify-end md:justify-center pt-20 pb-16 sm:pt-24 sm:pb-24">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
           className="max-w-3xl"
         >
-          <span className="eyebrow mb-6">Engenheiro Paulo de Frontin — RJ</span>
-          <h1 className="font-display text-[clamp(3rem,9vw,7.5rem)] leading-[0.9] uppercase tracking-tight">
+          <span className="eyebrow mb-4 sm:mb-6">Engenheiro Paulo de Frontin — RJ</span>
+          <h1 className="font-display text-[clamp(2.75rem,11vw,7.5rem)] leading-[0.9] uppercase tracking-tight">
             A aventura
             <br />
             <span className="text-gradient-brand">começa aqui.</span>
           </h1>
-          <p className="mt-6 max-w-xl text-lg text-foreground/85">
+          <p className="mt-4 sm:mt-6 max-w-xl text-base sm:text-lg text-foreground/85">
             Descubra as trilhas mais incríveis de Engenheiro Paulo de Frontin em passeios de quadriciclo e UTV
             guiados por profissionais.
           </p>
-          <div className="mt-8 flex flex-wrap gap-3">
-            <Link to="/reservar" className="btn-brand">
+          <div className="mt-6 sm:mt-8 flex flex-col sm:flex-row flex-wrap gap-3">
+            <Link to="/reservar" className="btn-brand w-full sm:w-auto">
               Reservar Agora <ArrowRight className="h-4 w-4" />
             </Link>
-            <Link to="/passeios" className="btn-outline-brand">
+            <Link to="/passeios" className="btn-outline-brand w-full sm:w-auto">
               Conheça os passeios
             </Link>
           </div>
@@ -291,11 +291,11 @@ function Estatisticas() {
   return (
     <section className="section-pad relative overflow-hidden bg-brand text-brand-foreground">
       <div className="container-x relative">
-        <div className="grid gap-8 md:grid-cols-5 text-center">
+        <div className="grid gap-8 grid-cols-2 sm:grid-cols-3 md:grid-cols-5 text-center">
           {stats.map((s) => (
             <div key={s.label}>
-              <p className="font-display text-5xl md:text-6xl leading-none">{s.value}</p>
-              <p className="mt-2 text-xs font-mono uppercase tracking-widest opacity-80">{s.label}</p>
+              <p className="font-display text-4xl sm:text-5xl md:text-6xl leading-none">{s.value}</p>
+              <p className="mt-2 text-[11px] sm:text-xs font-mono uppercase tracking-widest opacity-80">{s.label}</p>
             </div>
           ))}
         </div>
@@ -437,10 +437,10 @@ function CTAFinal() {
     <section className="relative overflow-hidden">
       <img src={ctaImg} alt="" loading="lazy" className="absolute inset-0 h-full w-full object-cover" />
       <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/60 to-black/90" />
-      <div className="relative container-x py-28 md:py-36 text-center">
+      <div className="relative container-x py-20 sm:py-28 md:py-36 text-center">
         <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
           <span className="eyebrow mb-6 justify-center">Bora?</span>
-          <h2 className="font-display text-5xl md:text-8xl uppercase leading-[0.9]">
+          <h2 className="font-display text-4xl sm:text-5xl md:text-8xl uppercase leading-[0.9]">
             Pronto pra uma aventura
             <br />
             <span className="text-gradient-brand">inesquecível?</span>
@@ -448,9 +448,9 @@ function CTAFinal() {
           <p className="mt-6 max-w-xl mx-auto text-foreground/85">
             Reserve agora e garanta seu lugar nas trilhas mais incríveis de Engenheiro Paulo de Frontin.
           </p>
-          <div className="mt-8 flex flex-wrap justify-center gap-3">
-            <Link to="/reservar" className="btn-brand">Reservar Agora <ArrowRight className="h-4 w-4" /></Link>
-            <a href={waQuickBooking()} target="_blank" rel="noreferrer" className="btn-outline-brand">
+          <div className="mt-8 flex flex-col sm:flex-row flex-wrap justify-center gap-3">
+            <Link to="/reservar" className="btn-brand w-full sm:w-auto">Reservar Agora <ArrowRight className="h-4 w-4" /></Link>
+            <a href={waQuickBooking()} target="_blank" rel="noreferrer" className="btn-outline-brand w-full sm:w-auto">
               Falar no WhatsApp
             </a>
           </div>
