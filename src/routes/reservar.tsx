@@ -135,6 +135,8 @@ function ReservarPage() {
           reservation_time: time,
           adults: quantity,
           kids: 0,
+          duration_hours: hours,
+          price_per_hour: pricePerHour,
           total_price: total,
           customer_name: cliente.nome,
           customer_email: cliente.email,
