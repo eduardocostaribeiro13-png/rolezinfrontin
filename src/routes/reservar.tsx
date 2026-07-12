@@ -262,12 +262,40 @@ function ReservarPage() {
               <Row k="Data" v={date ? format(date, "dd/MM/yyyy") : "—"} />
               <Row k="Horário" v={time ?? "—"} />
               <Row k="Participantes" v={vehicle ? `Até ${vehicle.capacity}` : "—"} />
+
+              <div className="pt-3 border-t border-border/60">
+                <dt className="font-mono text-xs uppercase tracking-widest text-muted-foreground mb-2">
+                  Quantidade de horas
+                </dt>
+                <div className="flex items-center gap-3">
+                  <button
+                    type="button"
+                    onClick={() => setHours((h) => Math.max(1, h - 1))}
+                    className="h-9 w-9 rounded-md border border-border/60 hover:border-brand text-lg leading-none"
+                    aria-label="Diminuir horas"
+                  >
+                    −
+                  </button>
+                  <span className="font-display text-2xl min-w-[3ch] text-center">{hours}h</span>
+                  <button
+                    type="button"
+                    onClick={() => setHours((h) => Math.min(12, h + 1))}
+                    className="h-9 w-9 rounded-md border border-border/60 hover:border-brand text-lg leading-none"
+                    aria-label="Aumentar horas"
+                  >
+                    +
+                  </button>
+                </div>
+              </div>
+
+              <Row k="Valor por hora" v={pricePerHour > 0 ? brl(pricePerHour) : "—"} />
+              <Row k="Subtotal" v={brl(total)} />
               <div className="pt-3 border-t border-border/60 flex items-center justify-between">
                 <dt className="font-mono text-xs uppercase tracking-widest text-muted-foreground">Total</dt>
                 <dd className="font-display text-3xl text-brand">{brl(total)}</dd>
               </div>
               <p className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground">
-                Valor por passeio (veículo inteiro)
+                {hours}h × {brl(pricePerHour)}
               </p>
             </dl>
           </aside>
