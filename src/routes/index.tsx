@@ -66,7 +66,7 @@ function Hero() {
         <img
           src={heroImg}
           alt="Quadriciclo amarelo em trilha off road nas montanhas de Engenheiro Paulo de Frontin"
-          className="h-full w-full object-cover"
+          className="h-full w-full object-cover object-[62%_center] md:object-center"
           width={1920}
           height={1280}
         />
