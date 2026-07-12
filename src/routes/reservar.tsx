@@ -82,12 +82,19 @@ function ReservarPage() {
   });
   const [errors, setErrors] = useState<Partial<Record<keyof Cliente, string>>>({});
 
+  const [hours, setHours] = useState(1);
+
   useEffect(() => {
     setTime(null);
   }, [vehicle?.id, date]);
 
-  // Price is per tour (as advertised), not per person.
-  const total = useMemo(() => (tour ? tour.price : 0), [tour]);
+  // Total = price per hour × hours. Falls back to tour static price when
+  // vehicle has no price configured (legacy tours).
+  const pricePerHour = useMemo(() => {
+    if (vehicle && vehicle.price_cents > 0) return vehicle.price_cents / 100;
+    return tour ? tour.price : 0;
+  }, [vehicle, tour]);
+  const total = useMemo(() => pricePerHour * hours, [pricePerHour, hours]);
   const quantity = vehicle?.capacity ?? 1;
 
   const canAdvance = () => {
