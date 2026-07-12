@@ -2,16 +2,15 @@ import { Link } from "@tanstack/react-router";
 import { MapPin, Phone, MessageCircle } from "lucide-react";
 import { InstagramIcon as Instagram } from "@/components/site/InstagramIcon";
 import { INSTAGRAM_HANDLE, INSTAGRAM_URL, WHATSAPP_DISPLAY, waQuickBooking } from "@/lib/whatsapp";
+import logo from "@/assets/logo.png";
 
 export function Footer() {
   return (
     <footer className="relative border-t border-border/60 bg-[oklch(0.11_0_0)]">
       <div className="container-x py-16 grid gap-12 md:grid-cols-4">
         <div className="md:col-span-2">
-          <div className="flex items-center gap-2 mb-4">
-            <span className="grid place-items-center h-10 w-10 rounded-full bg-brand text-brand-foreground font-display">
-              RF
-            </span>
+          <div className="flex items-center gap-3 mb-4">
+            <img src={logo} alt="Rolezin Frontin Off Road" className="h-14 w-14 object-contain" />
             <span className="font-display text-xl tracking-widest">ROLEZIN FRONTIN OFF ROAD</span>
           </div>
           <p className="text-sm text-muted-foreground max-w-md">

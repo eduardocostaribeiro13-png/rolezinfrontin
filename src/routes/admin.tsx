@@ -10,6 +10,7 @@ import {
   BarChart3,
   Calendar,
   Car,
+  Image as ImageIcon,
   LogOut,
   Menu,
   Settings,
@@ -20,6 +21,7 @@ import {
 import { supabase } from "@/integrations/supabase/client";
 import { useAdminAuth } from "@/lib/auth/use-admin";
 import { cn } from "@/lib/utils";
+import logo from "@/assets/logo.png";
 
 export const Route = createFileRoute("/admin")({
   head: () => ({
@@ -33,7 +35,7 @@ export const Route = createFileRoute("/admin")({
 });
 
 type NavItem = {
-  to: "/admin" | "/admin/reservas" | "/admin/veiculos" | "/admin/agenda" | "/admin/clientes" | "/admin/configuracoes";
+  to: "/admin" | "/admin/reservas" | "/admin/veiculos" | "/admin/galeria" | "/admin/agenda" | "/admin/clientes" | "/admin/configuracoes";
   label: string;
   icon: typeof BarChart3;
   exact?: boolean;
@@ -43,6 +45,7 @@ const NAV: NavItem[] = [
   { to: "/admin", label: "Dashboard", icon: BarChart3, exact: true },
   { to: "/admin/reservas", label: "Reservas", icon: ShoppingBag },
   { to: "/admin/veiculos", label: "Veículos", icon: Car },
+  { to: "/admin/galeria", label: "Galeria", icon: ImageIcon },
   { to: "/admin/agenda", label: "Agenda", icon: Calendar },
   { to: "/admin/clientes", label: "Clientes", icon: Users },
   { to: "/admin/configuracoes", label: "Configurações", icon: Settings },
@@ -88,9 +91,7 @@ function AdminLayout() {
         )}
       >
         <div className="p-6 border-b border-border/60 flex items-center gap-2">
-          <span className="grid place-items-center h-9 w-9 rounded-full bg-brand text-brand-foreground font-display text-lg leading-none">
-            RF
-          </span>
+          <img src={logo} alt="Rolezin Frontin Off Road" className="h-10 w-10 object-contain" />
           <div className="flex flex-col leading-tight">
             <span className="font-display text-sm tracking-widest">ROLEZIN FRONTIN</span>
             <span className="text-[10px] font-mono uppercase tracking-[0.3em] text-brand">
