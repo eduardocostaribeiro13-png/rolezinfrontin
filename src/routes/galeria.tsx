@@ -1,13 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 import { X } from "lucide-react";
-import heroImg from "@/assets/hero.jpg";
-import p1 from "@/assets/passeio-1.jpg";
-import p2 from "@/assets/passeio-2.jpg";
-import p3 from "@/assets/passeio-3.jpg";
-import p4 from "@/assets/passeio-4.jpg";
-import cta from "@/assets/cta.jpg";
+import { GalleryService } from "@/lib/services/gallery-service";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export const Route = createFileRoute("/galeria")({
   head: () => ({
@@ -20,23 +17,17 @@ export const Route = createFileRoute("/galeria")({
   component: GaleriaPage,
 });
 
-const IMAGES = [
-  { src: heroImg, cat: "Trilhas", alt: "Quadriciclo em trilha ao entardecer" },
-  { src: p2, cat: "Drone", alt: "Vista aérea da serra" },
-  { src: p4, cat: "Clientes", alt: "Grupo atravessando rio" },
-  { src: p1, cat: "UTV", alt: "UTV saltando no off road" },
-  { src: p3, cat: "Trilhas", alt: "Pôr do sol de quadriciclo" },
-  { src: cta, cat: "Drone", alt: "Estrada de terra no crepúsculo" },
-  { src: p4, cat: "Clientes", alt: "Aventura em grupo" },
-  { src: p1, cat: "UTV", alt: "UTV nas montanhas" },
-];
-
-const CATS = ["Todos", "Trilhas", "UTV", "Drone", "Clientes"] as const;
-
 function GaleriaPage() {
-  const [cat, setCat] = useState<(typeof CATS)[number]>("Todos");
+  const { data, isLoading } = useQuery({
+    queryKey: ["gallery"],
+    queryFn: () => GalleryService.list(),
+    staleTime: 60_000,
+  });
+  const [cat, setCat] = useState<string>("Todos");
   const [preview, setPreview] = useState<string | null>(null);
-  const filtered = cat === "Todos" ? IMAGES : IMAGES.filter((i) => i.cat === cat);
+
+  const cats = ["Todos", ...Array.from(new Set((data ?? []).map((i) => i.category).filter(Boolean) as string[]))];
+  const filtered = cat === "Todos" ? (data ?? []) : (data ?? []).filter((i) => i.category === cat);
 
   return (
     <div className="pt-32 pb-24">
@@ -47,40 +38,56 @@ function GaleriaPage() {
         </h1>
         <p className="mt-6 max-w-xl text-foreground/80">Momentos reais capturados nas nossas trilhas.</p>
 
-        <div className="mt-10 flex flex-wrap gap-2">
-          {CATS.map((c) => (
-            <button
-              key={c}
-              onClick={() => setCat(c)}
-              className={`px-4 py-2 rounded-full text-xs font-mono uppercase tracking-widest border transition-colors ${
-                cat === c ? "bg-brand text-brand-foreground border-brand" : "border-border/60 hover:border-brand/60"
-              }`}
-            >
-              {c}
-            </button>
-          ))}
-        </div>
+        {cats.length > 1 && (
+          <div className="mt-10 flex flex-wrap gap-2">
+            {cats.map((c) => (
+              <button
+                key={c}
+                onClick={() => setCat(c)}
+                className={`px-4 py-2 rounded-full text-xs font-mono uppercase tracking-widest border transition-colors ${
+                  cat === c ? "bg-brand text-brand-foreground border-brand" : "border-border/60 hover:border-brand/60"
+                }`}
+              >
+                {c}
+              </button>
+            ))}
+          </div>
+        )}
 
-        <div className="mt-10 columns-1 sm:columns-2 lg:columns-3 gap-4 [column-fill:_balance]">
-          {filtered.map((img, i) => (
-            <motion.button
-              key={i}
-              layout
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.04 }}
-              onClick={() => setPreview(img.src)}
-              className="mb-4 block w-full overflow-hidden rounded-2xl border border-border/60 group"
-            >
-              <img
-                src={img.src}
-                alt={img.alt}
-                loading="lazy"
-                className="w-full h-auto transition-transform duration-500 group-hover:scale-105"
-              />
-            </motion.button>
-          ))}
-        </div>
+        {isLoading && (
+          <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {[0, 1, 2, 3, 4, 5].map((i) => (
+              <Skeleton key={i} className="h-64 rounded-2xl" />
+            ))}
+          </div>
+        )}
+
+        {!isLoading && filtered.length === 0 && (
+          <p className="mt-10 text-sm text-muted-foreground">Nenhuma imagem na galeria ainda.</p>
+        )}
+
+        {!isLoading && filtered.length > 0 && (
+          <div className="mt-10 columns-1 sm:columns-2 lg:columns-3 gap-4 [column-fill:_balance]">
+            {filtered.map((img, i) => (
+              <motion.button
+                key={img.id}
+                layout
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: i * 0.04 }}
+                onClick={() => setPreview(img.image_url)}
+                className="mb-4 block w-full overflow-hidden rounded-2xl border border-border/60 group"
+              >
+                <img
+                  src={img.image_url}
+                  alt={img.alt_text ?? ""}
+                  loading="lazy"
+                  className="w-full h-auto transition-transform duration-500 group-hover:scale-105"
+                />
+              </motion.button>
+            ))}
+          </div>
+        )}
       </div>
 
       {preview && (
