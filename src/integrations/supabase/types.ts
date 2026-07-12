@@ -67,6 +67,36 @@ export type Database = {
           },
         ]
       }
+      gallery: {
+        Row: {
+          alt_text: string | null
+          category: string | null
+          created_at: string
+          id: string
+          image_url: string
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          alt_text?: string | null
+          category?: string | null
+          created_at?: string
+          id?: string
+          image_url: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          alt_text?: string | null
+          category?: string | null
+          created_at?: string
+          id?: string
+          image_url?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       reservations: {
         Row: {
           adults: number
@@ -77,6 +107,7 @@ export type Database = {
           customer_phone: string
           customer_state: string | null
           customer_whatsapp: string | null
+          duration_hours: number
           expires_at: string | null
           id: string
           installments: number | null
@@ -88,6 +119,7 @@ export type Database = {
           paid_at: string | null
           payment_method: string | null
           payment_status: Database["public"]["Enums"]["payment_status"]
+          price_per_hour_cents: number | null
           quantity: number
           receipt_url: string | null
           reservation_date: string
@@ -109,6 +141,7 @@ export type Database = {
           customer_phone: string
           customer_state?: string | null
           customer_whatsapp?: string | null
+          duration_hours?: number
           expires_at?: string | null
           id?: string
           installments?: number | null
@@ -120,6 +153,7 @@ export type Database = {
           paid_at?: string | null
           payment_method?: string | null
           payment_status?: Database["public"]["Enums"]["payment_status"]
+          price_per_hour_cents?: number | null
           quantity: number
           receipt_url?: string | null
           reservation_date: string
@@ -141,6 +175,7 @@ export type Database = {
           customer_phone?: string
           customer_state?: string | null
           customer_whatsapp?: string | null
+          duration_hours?: number
           expires_at?: string | null
           id?: string
           installments?: number | null
@@ -152,6 +187,7 @@ export type Database = {
           paid_at?: string | null
           payment_method?: string | null
           payment_status?: Database["public"]["Enums"]["payment_status"]
+          price_per_hour_cents?: number | null
           quantity?: number
           receipt_url?: string | null
           reservation_date?: string
