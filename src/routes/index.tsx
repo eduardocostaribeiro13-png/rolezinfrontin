@@ -74,28 +74,28 @@ function Hero() {
       <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/40 to-black" />
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_40%,black_100%)]" />
 
-      <div className="relative z-10 h-full container-x flex flex-col justify-end md:justify-center pt-24 pb-24">
+      <div className="relative z-10 h-full container-x flex flex-col justify-end md:justify-center pt-20 pb-16 sm:pt-24 sm:pb-24">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
           className="max-w-3xl"
         >
-          <span className="eyebrow mb-6">Engenheiro Paulo de Frontin — RJ</span>
-          <h1 className="font-display text-[clamp(3rem,9vw,7.5rem)] leading-[0.9] uppercase tracking-tight">
+          <span className="eyebrow mb-4 sm:mb-6">Engenheiro Paulo de Frontin — RJ</span>
+          <h1 className="font-display text-[clamp(2.75rem,11vw,7.5rem)] leading-[0.9] uppercase tracking-tight">
             A aventura
             <br />
             <span className="text-gradient-brand">começa aqui.</span>
           </h1>
-          <p className="mt-6 max-w-xl text-lg text-foreground/85">
+          <p className="mt-4 sm:mt-6 max-w-xl text-base sm:text-lg text-foreground/85">
             Descubra as trilhas mais incríveis de Engenheiro Paulo de Frontin em passeios de quadriciclo e UTV
             guiados por profissionais.
           </p>
-          <div className="mt-8 flex flex-wrap gap-3">
-            <Link to="/reservar" className="btn-brand">
+          <div className="mt-6 sm:mt-8 flex flex-col sm:flex-row flex-wrap gap-3">
+            <Link to="/reservar" className="btn-brand w-full sm:w-auto">
               Reservar Agora <ArrowRight className="h-4 w-4" />
             </Link>
-            <Link to="/passeios" className="btn-outline-brand">
+            <Link to="/passeios" className="btn-outline-brand w-full sm:w-auto">
               Conheça os passeios
             </Link>
           </div>
