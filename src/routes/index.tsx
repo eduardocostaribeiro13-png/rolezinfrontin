@@ -18,7 +18,7 @@ import {
 import heroImg from "@/assets/hero.jpg";
 import ctaImg from "@/assets/cta.jpg";
 import sobreImg from "@/assets/sobre.jpg";
-import { brl, brlCents, type Tour } from "@/lib/tours";
+import { brlCents, type Tour } from "@/lib/tours";
 import { useQuery } from "@tanstack/react-query";
 import { TourService } from "@/lib/services/tour-service";
 import { Skeleton } from "@/components/ui/skeleton";
