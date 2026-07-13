@@ -73,9 +73,18 @@ function toISODate(d: Date) {
 function ReservarPage() {
   const { tour: initialSlug } = Route.useSearch();
   const [step, setStep] = useState(0);
-  const [tour, setTour] = useState<Tour | null>(
-    initialSlug ? TOURS.find((t) => t.slug === initialSlug) ?? null : null,
-  );
+  const { data: tours } = useQuery({
+    queryKey: ["tours", "public"],
+    queryFn: () => TourService.list(),
+    staleTime: 60_000,
+  });
+  const [tour, setTour] = useState<Tour | null>(null);
+  useEffect(() => {
+    if (!tour && initialSlug && tours) {
+      const t = tours.find((x) => x.slug === initialSlug);
+      if (t) setTour(t);
+    }
+  }, [initialSlug, tours, tour]);
   const [vehicle, setVehicle] = useState<Vehicle | null>(null);
   const [date, setDate] = useState<Date | undefined>();
   const [time, setTime] = useState<string | null>(null);
@@ -90,14 +99,15 @@ function ReservarPage() {
     setTime(null);
   }, [vehicle?.id, date]);
 
-  // Total = price per hour × hours. Falls back to tour static price when
-  // vehicle has no price configured (legacy tours).
+  // Single source of truth for pricing: the tour's price per hour (from DB).
+  // Total = price per hour × chosen number of hours.
   const pricePerHour = useMemo(() => {
+    if (tour) return tour.price_per_hour_cents / 100;
     if (vehicle && vehicle.price_cents > 0) return vehicle.price_cents / 100;
-    return tour ? tour.price : 0;
+    return 0;
   }, [vehicle, tour]);
   const total = useMemo(() => pricePerHour * hours, [pricePerHour, hours]);
-  const quantity = vehicle?.capacity ?? 1;
+  const quantity = vehicle?.capacity ?? tour?.max_people ?? 1;
 
   const canAdvance = () => {
     if (step === 0) return !!tour;
