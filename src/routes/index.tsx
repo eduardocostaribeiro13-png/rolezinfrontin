@@ -212,6 +212,11 @@ function Diferenciais() {
 
 /* -------- PASSEIOS -------- */
 function Passeios() {
+  const { data, isLoading } = useQuery({
+    queryKey: ["tours", "public"],
+    queryFn: () => TourService.list(),
+    staleTime: 60_000,
+  });
   return (
     <section className="section-pad">
       <div className="container-x">
@@ -224,17 +229,32 @@ function Passeios() {
           </div>
           <Link to="/passeios" className="btn-outline-brand text-xs">Ver todos <ArrowRight className="h-4 w-4" /></Link>
         </div>
-        <div className="grid gap-6 md:grid-cols-2">
-          {TOURS.map((t, i) => (
-            <TourCard key={t.slug} tour={t} index={i} />
-          ))}
-        </div>
+        {isLoading ? (
+          <div className="grid gap-6 md:grid-cols-2">
+            {[0, 1, 2, 3].map((i) => (
+              <Skeleton key={i} className="h-96 rounded-3xl" />
+            ))}
+          </div>
+        ) : (
+          <div className="grid gap-6 md:grid-cols-2">
+            {(data ?? []).map((t, i) => (
+              <TourCard key={t.slug} tour={t} index={i} />
+            ))}
+          </div>
+        )}
       </div>
     </section>
   );
 }
 
-export function TourCard({ tour, index = 0 }: { tour: (typeof TOURS)[number]; index?: number }) {
+function fmtDuration(h: number) {
+  if (Number.isInteger(h)) return `${h}h`;
+  const hours = Math.floor(h);
+  const minutes = Math.round((h - hours) * 60);
+  return `${hours}h${minutes.toString().padStart(2, "0")}`;
+}
+
+export function TourCard({ tour, index = 0 }: { tour: Tour; index?: number }) {
   return (
     <motion.article
       initial={{ opacity: 0, y: 30 }}
@@ -244,31 +264,42 @@ export function TourCard({ tour, index = 0 }: { tour: (typeof TOURS)[number]; in
       className="group relative overflow-hidden rounded-3xl border border-border/60 bg-card"
     >
       <div className="relative aspect-[16/11] overflow-hidden">
-        <img
-          src={tour.image}
-          alt={tour.name}
-          loading="lazy"
-          className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
-        />
+        {tour.image_url ? (
+          <img
+            src={tour.image_url}
+            alt={tour.name}
+            loading="lazy"
+            className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
+          />
+        ) : (
+          <div className="h-full w-full bg-muted" />
+        )}
         <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
         <div className="absolute top-4 left-4 flex gap-2">
           <span className="glass px-3 py-1 rounded-full text-[10px] font-mono uppercase tracking-widest">
             {tour.level}
           </span>
+          {tour.category && (
+            <span className="glass px-3 py-1 rounded-full text-[10px] font-mono uppercase tracking-widest">
+              {tour.category}
+            </span>
+          )}
         </div>
         <div className="absolute top-4 right-4 glass px-4 py-2 rounded-full">
-          <span className="font-display text-lg leading-none">{brl(tour.price)}</span>
-          <span className="ml-1 text-[10px] font-mono uppercase text-foreground/70">/ pessoa</span>
+          <span className="font-display text-lg leading-none">{brlCents(tour.price_per_hour_cents)}</span>
+          <span className="ml-1 text-[10px] font-mono uppercase text-foreground/70">/ hora</span>
         </div>
         <div className="absolute inset-x-0 bottom-0 p-6">
           <h3 className="font-display text-3xl md:text-4xl uppercase leading-none">{tour.name}</h3>
-          <p className="mt-2 text-sm text-foreground/80 max-w-md">{tour.short}</p>
+          {tour.short_description && (
+            <p className="mt-2 text-sm text-foreground/80 max-w-md">{tour.short_description}</p>
+          )}
         </div>
       </div>
       <div className="p-6 flex flex-wrap items-center gap-x-6 gap-y-3 justify-between">
         <div className="flex flex-wrap gap-x-5 gap-y-2 text-xs font-mono uppercase tracking-widest text-muted-foreground">
-          <span className="flex items-center gap-1.5"><Clock className="h-3.5 w-3.5 text-brand" /> {tour.duration}</span>
-          <span className="flex items-center gap-1.5"><UsersRound className="h-3.5 w-3.5 text-brand" /> Até {tour.maxPeople}</span>
+          <span className="flex items-center gap-1.5"><Clock className="h-3.5 w-3.5 text-brand" /> {fmtDuration(tour.duration_hours)}</span>
+          <span className="flex items-center gap-1.5"><UsersRound className="h-3.5 w-3.5 text-brand" /> Até {tour.max_people}</span>
           <span className="flex items-center gap-1.5"><Gauge className="h-3.5 w-3.5 text-brand" /> {tour.level}</span>
         </div>
         <Link
@@ -282,6 +313,7 @@ export function TourCard({ tour, index = 0 }: { tour: (typeof TOURS)[number]; in
     </motion.article>
   );
 }
+
 
 /* -------- ESTATÍSTICAS -------- */
 function Estatisticas() {
