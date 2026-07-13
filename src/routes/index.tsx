@@ -151,7 +151,7 @@ function Sobre() {
           className="relative aspect-[4/5] overflow-hidden rounded-3xl border border-border/60"
         >
           <img
-            src={TOURS[2].image}
+            src={sobreImg}
             alt="Passeio ao pôr do sol com quadriciclo em Frontin"
             loading="lazy"
             className="h-full w-full object-cover"
