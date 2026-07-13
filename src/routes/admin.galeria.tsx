@@ -8,6 +8,30 @@ import { StorageService } from "@/lib/services/storage-service";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Input } from "@/components/ui/input";
 
+const GALLERY_CATEGORIES = [
+  "Quadriciclos",
+  "UTVs",
+  "Trilhas",
+  "Passeios",
+  "Clientes",
+  "Eventos",
+  "Cachoeiras",
+  "Paisagens",
+  "Outros",
+] as const;
+
+function fmtDate(iso: string) {
+  try {
+    return new Date(iso).toLocaleDateString("pt-BR", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+    });
+  } catch {
+    return "";
+  }
+}
+
 export const Route = createFileRoute("/admin/galeria")({
   component: AdminGaleria,
 });
