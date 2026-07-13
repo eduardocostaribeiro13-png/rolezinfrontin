@@ -17,7 +17,11 @@ import {
 } from "lucide-react";
 import heroImg from "@/assets/hero.jpg";
 import ctaImg from "@/assets/cta.jpg";
-import { TOURS, brl } from "@/lib/tours";
+import sobreImg from "@/assets/sobre.jpg";
+import { brl, brlCents, type Tour } from "@/lib/tours";
+import { useQuery } from "@tanstack/react-query";
+import { TourService } from "@/lib/services/tour-service";
+import { Skeleton } from "@/components/ui/skeleton";
 import { waQuickBooking } from "@/lib/whatsapp";
 
 export const Route = createFileRoute("/")({
