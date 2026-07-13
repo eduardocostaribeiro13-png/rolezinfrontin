@@ -13,6 +13,7 @@ import {
   Image as ImageIcon,
   LogOut,
   Menu,
+  MountainSnow,
   Settings,
   ShoppingBag,
   Users,
@@ -35,7 +36,15 @@ export const Route = createFileRoute("/admin")({
 });
 
 type NavItem = {
-  to: "/admin" | "/admin/reservas" | "/admin/veiculos" | "/admin/galeria" | "/admin/agenda" | "/admin/clientes" | "/admin/configuracoes";
+  to:
+    | "/admin"
+    | "/admin/reservas"
+    | "/admin/passeios"
+    | "/admin/veiculos"
+    | "/admin/galeria"
+    | "/admin/agenda"
+    | "/admin/clientes"
+    | "/admin/configuracoes";
   label: string;
   icon: typeof BarChart3;
   exact?: boolean;
@@ -44,6 +53,7 @@ type NavItem = {
 const NAV: NavItem[] = [
   { to: "/admin", label: "Dashboard", icon: BarChart3, exact: true },
   { to: "/admin/reservas", label: "Reservas", icon: ShoppingBag },
+  { to: "/admin/passeios", label: "Passeios", icon: MountainSnow },
   { to: "/admin/veiculos", label: "Veículos", icon: Car },
   { to: "/admin/galeria", label: "Galeria", icon: ImageIcon },
   { to: "/admin/agenda", label: "Agenda", icon: Calendar },

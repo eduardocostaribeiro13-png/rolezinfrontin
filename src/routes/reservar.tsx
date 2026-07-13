@@ -16,7 +16,9 @@ import {
   CreditCard,
   Loader2,
 } from "lucide-react";
-import { TOURS, brl, type Tour } from "@/lib/tours";
+import { brl, brlCents, type Tour } from "@/lib/tours";
+import { useQuery } from "@tanstack/react-query";
+import { TourService } from "@/lib/services/tour-service";
 import { Calendar } from "@/components/ui/calendar";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -71,9 +73,18 @@ function toISODate(d: Date) {
 function ReservarPage() {
   const { tour: initialSlug } = Route.useSearch();
   const [step, setStep] = useState(0);
-  const [tour, setTour] = useState<Tour | null>(
-    initialSlug ? TOURS.find((t) => t.slug === initialSlug) ?? null : null,
-  );
+  const { data: tours } = useQuery({
+    queryKey: ["tours", "public"],
+    queryFn: () => TourService.list(),
+    staleTime: 60_000,
+  });
+  const [tour, setTour] = useState<Tour | null>(null);
+  useEffect(() => {
+    if (!tour && initialSlug && tours) {
+      const t = tours.find((x) => x.slug === initialSlug);
+      if (t) setTour(t);
+    }
+  }, [initialSlug, tours, tour]);
   const [vehicle, setVehicle] = useState<Vehicle | null>(null);
   const [date, setDate] = useState<Date | undefined>();
   const [time, setTime] = useState<string | null>(null);
@@ -88,14 +99,15 @@ function ReservarPage() {
     setTime(null);
   }, [vehicle?.id, date]);
 
-  // Total = price per hour × hours. Falls back to tour static price when
-  // vehicle has no price configured (legacy tours).
+  // Single source of truth for pricing: the tour's price per hour (from DB).
+  // Total = price per hour × chosen number of hours.
   const pricePerHour = useMemo(() => {
+    if (tour) return tour.price_per_hour_cents / 100;
     if (vehicle && vehicle.price_cents > 0) return vehicle.price_cents / 100;
-    return tour ? tour.price : 0;
+    return 0;
   }, [vehicle, tour]);
   const total = useMemo(() => pricePerHour * hours, [pricePerHour, hours]);
-  const quantity = vehicle?.capacity ?? 1;
+  const quantity = vehicle?.capacity ?? tour?.max_people ?? 1;
 
   const canAdvance = () => {
     if (step === 0) return !!tour;
@@ -316,36 +328,54 @@ function Row({ k, v }: { k: string; v: string }) {
 
 /* ---------- Steps ---------- */
 function StepTour({ selected, onSelect }: { selected: Tour | null; onSelect: (t: Tour) => void }) {
+  const { data, isLoading } = useQuery({
+    queryKey: ["tours", "public"],
+    queryFn: () => TourService.list(),
+    staleTime: 60_000,
+  });
   return (
     <div>
       <h2 className="font-display text-3xl uppercase">Escolha o passeio</h2>
-      <div className="mt-6 grid gap-4 sm:grid-cols-2">
-        {TOURS.map((t) => {
-          const isActive = selected?.slug === t.slug;
-          return (
-            <button
-              key={t.slug}
-              onClick={() => onSelect(t)}
-              className={cn(
-                "text-left rounded-2xl overflow-hidden border transition-all",
-                isActive ? "border-brand ring-2 ring-brand/40" : "border-border/60 hover:border-brand/60",
-              )}
-            >
-              <div className="relative aspect-[16/10]">
-                <img src={t.image} alt={t.name} loading="lazy" className="h-full w-full object-cover" />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent" />
-                <div className="absolute bottom-3 left-3 right-3 flex items-end justify-between">
-                  <div>
-                    <p className="font-display text-xl uppercase leading-none">{t.name}</p>
-                    <p className="text-xs text-foreground/80 mt-1">{t.duration} · {t.level}</p>
+      {isLoading ? (
+        <div className="mt-6 grid gap-4 sm:grid-cols-2">
+          {[0, 1, 2, 3].map((i) => <Skeleton key={i} className="h-48 rounded-2xl" />)}
+        </div>
+      ) : (
+        <div className="mt-6 grid gap-4 sm:grid-cols-2">
+          {(data ?? []).map((t) => {
+            const isActive = selected?.slug === t.slug;
+            return (
+              <button
+                key={t.slug}
+                onClick={() => onSelect(t)}
+                className={cn(
+                  "text-left rounded-2xl overflow-hidden border transition-all",
+                  isActive ? "border-brand ring-2 ring-brand/40" : "border-border/60 hover:border-brand/60",
+                )}
+              >
+                <div className="relative aspect-[16/10]">
+                  {t.image_url ? (
+                    <img src={t.image_url} alt={t.name} loading="lazy" className="h-full w-full object-cover" />
+                  ) : (
+                    <div className="h-full w-full bg-muted" />
+                  )}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent" />
+                  <div className="absolute bottom-3 left-3 right-3 flex items-end justify-between">
+                    <div>
+                      <p className="font-display text-xl uppercase leading-none">{t.name}</p>
+                      <p className="text-xs text-foreground/80 mt-1">{t.level}</p>
+                    </div>
+                    <div className="text-right">
+                      <span className="font-display text-brand text-lg block leading-none">{brlCents(t.price_per_hour_cents)}</span>
+                      <span className="text-[10px] font-mono uppercase text-foreground/70">/ hora</span>
+                    </div>
                   </div>
-                  <span className="font-display text-brand text-lg">{brl(t.price)}</span>
                 </div>
-              </div>
-            </button>
-          );
-        })}
-      </div>
+              </button>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 }

@@ -8,6 +8,30 @@ import { StorageService } from "@/lib/services/storage-service";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Input } from "@/components/ui/input";
 
+const GALLERY_CATEGORIES = [
+  "Quadriciclos",
+  "UTVs",
+  "Trilhas",
+  "Passeios",
+  "Clientes",
+  "Eventos",
+  "Cachoeiras",
+  "Paisagens",
+  "Outros",
+] as const;
+
+function fmtDate(iso: string) {
+  try {
+    return new Date(iso).toLocaleDateString("pt-BR", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+    });
+  } catch {
+    return "";
+  }
+}
+
 export const Route = createFileRoute("/admin/galeria")({
   component: AdminGaleria,
 });
@@ -112,20 +136,27 @@ function AdminGaleria() {
             <div key={img.id} className="rounded-2xl border border-border/60 bg-card overflow-hidden">
               <img src={img.image_url} alt={img.alt_text ?? ""} className="w-full h-40 object-cover" />
               <div className="p-3 space-y-2">
-                <Input
-                  placeholder="Categoria (opcional)"
-                  defaultValue={img.category ?? ""}
-                  onBlur={(e) =>
-                    e.target.value !== (img.category ?? "") &&
+                <div className="flex items-center justify-between text-[10px] font-mono uppercase tracking-widest text-muted-foreground">
+                  <span className="truncate">{img.alt_text || "Sem título"}</span>
+                  <span>{fmtDate(img.created_at)}</span>
+                </div>
+                <select
+                  value={img.category ?? ""}
+                  onChange={(e) =>
                     updateMut.mutate({
                       id: img.id,
                       patch: { category: e.target.value || null },
                     })
                   }
-                  className="h-8 text-xs"
-                />
+                  className="h-8 w-full rounded-md border border-input bg-transparent px-2 text-xs"
+                >
+                  <option value="">Sem categoria</option>
+                  {GALLERY_CATEGORIES.map((c) => (
+                    <option key={c} value={c}>{c}</option>
+                  ))}
+                </select>
                 <Input
-                  placeholder="Descrição (alt)"
+                  placeholder="Título / descrição"
                   defaultValue={img.alt_text ?? ""}
                   onBlur={(e) =>
                     e.target.value !== (img.alt_text ?? "") &&

@@ -1,6 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
-import { TOURS } from "@/lib/tours";
+import { useQuery } from "@tanstack/react-query";
+import { TourService } from "@/lib/services/tour-service";
+import { Skeleton } from "@/components/ui/skeleton";
 import { TourCard } from "@/routes/index";
 
 const LEVELS = ["Todos", "Leve", "Intermediário", "Radical"] as const;
@@ -19,7 +21,12 @@ export const Route = createFileRoute("/passeios")({
 
 function PasseiosPage() {
   const [level, setLevel] = useState<(typeof LEVELS)[number]>("Todos");
-  const list = level === "Todos" ? TOURS : TOURS.filter((t) => t.level === level);
+  const { data, isLoading } = useQuery({
+    queryKey: ["tours", "public"],
+    queryFn: () => TourService.list(),
+    staleTime: 60_000,
+  });
+  const list = (data ?? []).filter((t) => level === "Todos" || t.level === level);
 
   return (
     <div className="pt-32 pb-24">
@@ -49,11 +56,17 @@ function PasseiosPage() {
           ))}
         </div>
 
-        <div className="mt-10 grid gap-6 md:grid-cols-2">
-          {list.map((t, i) => (
-            <TourCard key={t.slug} tour={t} index={i} />
-          ))}
-        </div>
+        {isLoading ? (
+          <div className="mt-10 grid gap-6 md:grid-cols-2">
+            {[0, 1, 2, 3].map((i) => <Skeleton key={i} className="h-96 rounded-3xl" />)}
+          </div>
+        ) : (
+          <div className="mt-10 grid gap-6 md:grid-cols-2">
+            {list.map((t, i) => (
+              <TourCard key={t.slug} tour={t} index={i} />
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

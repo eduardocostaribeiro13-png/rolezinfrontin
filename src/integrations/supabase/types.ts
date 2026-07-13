@@ -285,6 +285,63 @@ export type Database = {
         }
         Relationships: []
       }
+      tours: {
+        Row: {
+          category: string | null
+          created_at: string
+          description: string | null
+          duration_hours: number
+          highlights: string[]
+          id: string
+          image_url: string | null
+          level: string
+          max_people: number
+          name: string
+          price_per_hour_cents: number
+          short_description: string | null
+          slug: string
+          sort_order: number
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          category?: string | null
+          created_at?: string
+          description?: string | null
+          duration_hours?: number
+          highlights?: string[]
+          id?: string
+          image_url?: string | null
+          level?: string
+          max_people?: number
+          name: string
+          price_per_hour_cents?: number
+          short_description?: string | null
+          slug: string
+          sort_order?: number
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          category?: string | null
+          created_at?: string
+          description?: string | null
+          duration_hours?: number
+          highlights?: string[]
+          id?: string
+          image_url?: string | null
+          level?: string
+          max_people?: number
+          name?: string
+          price_per_hour_cents?: number
+          short_description?: string | null
+          slug?: string
+          sort_order?: number
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string
