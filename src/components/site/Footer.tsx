@@ -30,6 +30,7 @@ export function Footer() {
             <li><Link to="/" className="hover:text-brand">Início</Link></li>
             <li><Link to="/passeios" className="hover:text-brand">Passeios</Link></li>
             <li><Link to="/galeria" className="hover:text-brand">Galeria</Link></li>
+            <li><Link to="/tour-virtual" className="hover:text-brand">Tour Virtual</Link></li>
             <li><Link to="/sobre" className="hover:text-brand">Sobre</Link></li>
             <li><Link to="/reservar" className="hover:text-brand">Reservar</Link></li>
             <li><Link to="/contato" className="hover:text-brand">Contato</Link></li>
