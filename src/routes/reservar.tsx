@@ -268,9 +268,9 @@ function ReservarPage() {
                   Continuar <ChevronRight className="h-4 w-4" />
                 </button>
               ) : (
-                <button onClick={confirm} disabled={submitting} className="btn-brand text-xs disabled:opacity-60 disabled:cursor-not-allowed">
+                <button onClick={confirm} disabled={submitting} type="button" className="btn-brand text-xs disabled:opacity-60 disabled:cursor-not-allowed">
                   {submitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <CreditCard className="h-4 w-4" />}
-                  {submitting ? "Redirecionando..." : "Pagar agora"}
+                  {submitting ? "Gerando pagamento..." : "Pagar agora"}
                 </button>
               )}
             </div>
