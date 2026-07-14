@@ -259,19 +259,19 @@
     letter-spacing: 0.18em;
   }
 
-  /* Buttons: comfy tap target, avoid over-wide horizontal padding */
+  /* Buttons: premium tap target, full-width comfort on mobile hero/CTA */
   .btn-brand,
   .btn-outline-brand {
-    padding: 0.85rem 1.35rem;
-    font-size: 0.8rem;
-    min-height: 46px;
+    padding: 0.95rem 1.35rem;
+    font-size: 0.85rem;
+    min-height: 54px;
+    letter-spacing: 0.05em;
   }
 
-  /* Floating WhatsApp button: pull slightly in from the edge and
-     shrink so it doesn't overlap sticky CTAs / form inputs. */
+  /* Floating WhatsApp button: respect iOS safe area, never overlap CTAs */
   a[aria-label="Fale conosco no WhatsApp"] {
-    bottom: 1rem;
-    right: 1rem;
+    bottom: calc(1rem + env(safe-area-inset-bottom, 0px));
+    right: calc(1rem + env(safe-area-inset-right, 0px));
     height: 3.25rem;
     width: 3.25rem;
   }
@@ -280,7 +280,16 @@
   .container-x {
     padding-inline: clamp(1rem, 5vw, 1.25rem);
   }
+
+  /* Hero — premium mobile framing */
+  .hero-section {
+    padding-top: env(safe-area-inset-top, 0px);
+  }
+  .hero-title {
+    text-wrap: balance;
+  }
 }
+
 
 @media (max-width: 430px) {
   h2.font-display {

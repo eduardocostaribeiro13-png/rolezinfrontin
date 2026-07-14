@@ -64,7 +64,7 @@ export function Navbar() {
         </div>
 
         <button
-          className="md:hidden p-2 rounded-md text-foreground"
+          className="md:hidden inline-flex h-11 w-11 items-center justify-center rounded-md text-foreground -mr-2 active:scale-95 transition-transform"
           onClick={() => setOpen((v) => !v)}
           aria-label={open ? "Fechar menu" : "Abrir menu"}
           aria-expanded={open}
@@ -73,29 +73,32 @@ export function Navbar() {
         </button>
       </div>
 
-      {open && (
-        <div className="md:hidden border-t border-border/60 bg-background/95 backdrop-blur-xl">
-          <div className="container-x py-6 flex flex-col gap-4">
-            {links.map((l) => (
-              <Link
-                key={l.to}
-                to={l.to}
-                className="text-lg font-display tracking-widest text-foreground/90"
-                activeProps={{ className: "text-brand" }}
-                activeOptions={{ exact: l.to === "/" }}
-              >
-                {l.label}
-              </Link>
-            ))}
-            <div className="flex flex-col gap-2 pt-2">
-              <Link to="/reservar" className="btn-brand">Reservar Agora</Link>
-              <a href={waQuickBooking()} target="_blank" rel="noreferrer" className="btn-outline-brand">
-                WhatsApp
-              </a>
-            </div>
+      <div
+        className={`md:hidden overflow-hidden border-t border-border/60 bg-background/95 backdrop-blur-xl transition-[max-height,opacity] duration-300 ease-out ${
+          open ? "max-h-[80vh] opacity-100" : "max-h-0 opacity-0"
+        }`}
+        style={{ paddingBottom: open ? "env(safe-area-inset-bottom, 0px)" : 0 }}
+      >
+        <div className="container-x py-5 flex flex-col">
+          {links.map((l) => (
+            <Link
+              key={l.to}
+              to={l.to}
+              className="py-3 text-lg font-display tracking-widest text-foreground/90 border-b border-border/40 last:border-b-0"
+              activeProps={{ className: "text-brand" }}
+              activeOptions={{ exact: l.to === "/" }}
+            >
+              {l.label}
+            </Link>
+          ))}
+          <div className="flex flex-col gap-2 pt-4">
+            <Link to="/reservar" className="btn-brand">Reservar Agora</Link>
+            <a href={waQuickBooking()} target="_blank" rel="noreferrer" className="btn-outline-brand">
+              WhatsApp
+            </a>
           </div>
         </div>
-      )}
+      </div>
     </header>
   );
 }
