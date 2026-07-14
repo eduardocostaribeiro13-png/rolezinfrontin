@@ -65,37 +65,38 @@ function HomePage() {
 /* -------- HERO -------- */
 function Hero() {
   return (
-    <section className="relative h-dvh min-h-[640px] w-full overflow-hidden">
+    <section className="hero-section relative h-dvh min-h-[560px] md:min-h-[640px] max-h-[900px] w-full overflow-hidden">
       <div className="absolute inset-0 animate-ken-burns">
         <img
           src={heroImg}
           alt="Quadriciclo amarelo em trilha off road nas montanhas de Engenheiro Paulo de Frontin"
-          className="h-full w-full object-cover object-[62%_center] md:object-center"
+          className="h-full w-full object-cover object-[65%_center] md:object-center"
           width={1920}
           height={1280}
+          fetchPriority="high"
         />
       </div>
-      <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/40 to-black" />
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_40%,black_100%)]" />
+      <div className="hero-overlay absolute inset-0 bg-gradient-to-b from-black/55 via-black/30 to-black md:from-black/70 md:via-black/40" />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_40%,black_100%)] opacity-70 md:opacity-100" />
 
-      <div className="relative z-10 h-full container-x flex flex-col justify-end md:justify-center pt-20 pb-16 sm:pt-24 sm:pb-24">
+      <div className="relative z-10 h-full container-x flex flex-col justify-end md:justify-center pt-24 pb-24 md:pt-24 md:pb-24">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
           className="max-w-3xl"
         >
-          <span className="eyebrow mb-4 sm:mb-6">Engenheiro Paulo de Frontin — RJ</span>
-          <h1 className="font-display text-[clamp(2.75rem,11vw,7.5rem)] leading-[0.9] uppercase tracking-tight">
+          <span className="eyebrow mb-3 sm:mb-6">Engenheiro Paulo de Frontin — RJ</span>
+          <h1 className="hero-title font-display text-[clamp(2.35rem,9.5vw,7.5rem)] md:text-[clamp(3rem,9vw,7.5rem)] leading-[0.95] md:leading-[0.9] uppercase tracking-tight">
             A aventura
             <br />
             <span className="text-gradient-brand">começa aqui.</span>
           </h1>
-          <p className="mt-4 sm:mt-6 max-w-xl text-base sm:text-lg text-foreground/85">
+          <p className="mt-3 sm:mt-6 max-w-[34ch] sm:max-w-xl text-[0.95rem] sm:text-lg leading-relaxed text-foreground/85">
             Descubra as trilhas mais incríveis de Engenheiro Paulo de Frontin em passeios de quadriciclo e UTV
             guiados por profissionais.
           </p>
-          <div className="mt-6 sm:mt-8 flex flex-col sm:flex-row flex-wrap gap-3">
+          <div className="mt-5 sm:mt-8 flex flex-col sm:flex-row flex-wrap gap-3">
             <Link to="/reservar" className="btn-brand w-full sm:w-auto">
               Reservar Agora <ArrowRight className="h-4 w-4" />
             </Link>
@@ -106,7 +107,7 @@ function Hero() {
         </motion.div>
       </div>
 
-      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-2 text-foreground/70">
+      <div className="hero-scroll-hint absolute bottom-5 left-1/2 -translate-x-1/2 z-10 hidden sm:flex flex-col items-center gap-2 text-foreground/70">
         <span className="font-mono text-[10px] uppercase tracking-[0.3em]">Role a página</span>
         <ChevronDown className="h-5 w-5 animate-scroll-hint" />
       </div>
