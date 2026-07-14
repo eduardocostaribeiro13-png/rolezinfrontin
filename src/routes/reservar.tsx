@@ -93,19 +93,17 @@ function ReservarPage() {
   });
   const [errors, setErrors] = useState<Partial<Record<keyof Cliente, string>>>({});
 
-  const [hours, setHours] = useState(1);
-
   useEffect(() => {
     setTime(null);
   }, [vehicle?.id, date]);
 
-  // Single source of truth for pricing: the tour's price per hour (from DB).
-  // Total = price per hour × chosen number of hours.
+  // Single source of truth for pricing: the tour's price per hour × tour duration (from DB).
   const pricePerHour = useMemo(() => {
     if (tour) return tour.price_per_hour_cents / 100;
     if (vehicle && vehicle.price_cents > 0) return vehicle.price_cents / 100;
     return 0;
   }, [vehicle, tour]);
+  const hours = tour?.duration_hours ?? 1;
   const total = useMemo(() => pricePerHour * hours, [pricePerHour, hours]);
   const quantity = vehicle?.capacity ?? tour?.max_people ?? 1;
 
