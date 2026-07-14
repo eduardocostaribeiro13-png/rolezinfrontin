@@ -133,39 +133,51 @@ function ReservarPage() {
   const [submitting, setSubmitting] = useState(false);
 
   const confirm = async () => {
-    if (!tour || !vehicle || !date || !time) return;
+    if (submitting) return;
+    if (!tour || !vehicle || !date || !time) {
+      console.warn("[checkout] dados incompletos", { tour, vehicle, date, time });
+      toast.error("Complete todas as etapas antes de pagar.");
+      return;
+    }
     setSubmitting(true);
+    const payload = {
+      vehicle_id: vehicle.id,
+      tour_slug: tour.slug,
+      tour_name: tour.name,
+      reservation_date: toISODate(date),
+      reservation_time: time,
+      adults: quantity,
+      kids: 0,
+      duration_hours: hours,
+      price_per_hour: pricePerHour,
+      total_price: total,
+      customer_name: cliente.nome,
+      customer_email: cliente.email,
+      customer_phone: cliente.telefone,
+      customer_whatsapp: cliente.whatsapp,
+      customer_city: cliente.cidade,
+      customer_state: cliente.estado,
+      notes: cliente.observacoes,
+    };
+    console.log("[checkout] enviando payload", payload);
     try {
-      const res = await submitCheckout({
-        data: {
-          vehicle_id: vehicle.id,
-          tour_slug: tour.slug,
-          tour_name: tour.name,
-          reservation_date: toISODate(date),
-          reservation_time: time,
-          adults: quantity,
-          kids: 0,
-          duration_hours: hours,
-          price_per_hour: pricePerHour,
-          total_price: total,
-          customer_name: cliente.nome,
-          customer_email: cliente.email,
-          customer_phone: cliente.telefone,
-          customer_whatsapp: cliente.whatsapp,
-          customer_city: cliente.cidade,
-          customer_state: cliente.estado,
-          notes: cliente.observacoes,
-        },
-      });
-      window.location.href = res.url;
+      const res = await submitCheckout({ data: payload });
+      console.log("[checkout] resposta", res);
+      if (!res?.url) {
+        toast.error("Não foi possível iniciar o pagamento. Tente novamente.");
+        setSubmitting(false);
+        return;
+      }
+      // Redireciona para a URL externa da InfinitePay (não usar router interno).
+      window.location.assign(res.url);
     } catch (e) {
-      const msg = e instanceof Error ? e.message : "";
+      const msg = e instanceof Error ? e.message : String(e);
+      console.error("[checkout] erro", e);
       if (msg.includes("acabou de ser reservado") || msg.includes("indisponível")) {
         toast.error(msg);
         setTime(null);
         setStep(3);
       } else {
-        console.error(e);
         toast.error("Não foi possível iniciar o pagamento. Tente novamente.");
       }
       setSubmitting(false);
@@ -256,9 +268,9 @@ function ReservarPage() {
                   Continuar <ChevronRight className="h-4 w-4" />
                 </button>
               ) : (
-                <button onClick={confirm} disabled={submitting} className="btn-brand text-xs disabled:opacity-60 disabled:cursor-not-allowed">
+                <button onClick={confirm} disabled={submitting} type="button" className="btn-brand text-xs disabled:opacity-60 disabled:cursor-not-allowed">
                   {submitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <CreditCard className="h-4 w-4" />}
-                  {submitting ? "Redirecionando..." : "Pagar agora"}
+                  {submitting ? "Gerando pagamento..." : "Pagar agora"}
                 </button>
               )}
             </div>
