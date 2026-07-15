@@ -34,7 +34,10 @@ export const Route = createFileRoute("/")({
         content:
           "Viva uma aventura off road inesquecível em Engenheiro Paulo de Frontin. Passeios de quadriciclo e UTV com guias experientes, segurança e fotos incluídas.",
       },
-      { property: "og:title", content: "Rolezin Frontin Off Road — Passeios de Quadriciclo em Eng. Paulo de Frontin, RJ" },
+      {
+        property: "og:title",
+        content: "Rolezin Frontin Off Road — Passeios de Quadriciclo em Eng. Paulo de Frontin, RJ",
+      },
       { property: "og:image", content: "/assets/hero.jpg" },
     ],
     links: [{ rel: "canonical", href: "/" }],
@@ -44,7 +47,11 @@ export const Route = createFileRoute("/")({
 
 const fadeUp = {
   hidden: { opacity: 0, y: 24 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] as [number, number, number, number] } },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] as [number, number, number, number] },
+  },
 } as const;
 
 function HomePage() {
@@ -101,8 +108,8 @@ function Hero() {
             />
           </h1>
           <p className="mt-3 sm:mt-6 max-w-[34ch] sm:max-w-xl text-[0.95rem] sm:text-lg leading-relaxed text-foreground/85">
-            Descubra as trilhas mais incríveis de Engenheiro Paulo de Frontin em passeios de quadriciclo e UTV
-            guiados por profissionais.
+            Descubra as trilhas mais incríveis de Engenheiro Paulo de Frontin em passeios de quadriciclo e UTV guiados
+            por profissionais.
           </p>
           <div className="mt-5 sm:mt-8 flex flex-col sm:flex-row flex-wrap gap-3">
             <Link to="/reservar" className="btn-brand w-full sm:w-auto">
@@ -128,15 +135,20 @@ function Sobre() {
   return (
     <section className="section-pad bg-grain">
       <div className="container-x grid gap-12 md:grid-cols-2 md:items-center">
-        <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-100px" }} variants={fadeUp}>
+        <motion.div
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-100px" }}
+          variants={fadeUp}
+        >
           <span className="eyebrow mb-4">Sobre nós</span>
           <h2 className="font-display text-5xl md:text-6xl uppercase leading-none">
             Aventura com <span className="text-brand">alma off road.</span>
           </h2>
           <p className="mt-6 text-foreground/80 leading-relaxed">
-            Somos apaixonados por trilhas, natureza e adrenalina. Há anos guiamos turistas, casais, famílias e
-            grupos de amigos pelas paisagens mais incríveis de Engenheiro Paulo de Frontin, no Rio de Janeiro,
-            com foco total em segurança, diversão e memórias inesquecíveis.
+            Somos apaixonados por trilhas, natureza e adrenalina. Há anos guiamos turistas, casais, famílias e grupos de
+            amigos pelas paisagens mais incríveis de Engenheiro Paulo de Frontin, no Rio de Janeiro, com foco total em
+            segurança, diversão e memórias inesquecíveis.
           </p>
           <ul className="mt-6 space-y-3">
             {[
@@ -236,7 +248,9 @@ function Passeios() {
               Escolha sua <span className="text-brand">trilha.</span>
             </h2>
           </div>
-          <Link to="/passeios" className="btn-outline-brand text-xs">Ver todos <ArrowRight className="h-4 w-4" /></Link>
+          <Link to="/passeios" className="btn-outline-brand text-xs">
+            Ver todos <ArrowRight className="h-4 w-4" />
+          </Link>
         </div>
         {isLoading ? (
           <div className="grid gap-6 md:grid-cols-2">
@@ -307,22 +321,23 @@ export function TourCard({ tour, index = 0 }: { tour: Tour; index?: number }) {
       </div>
       <div className="p-6 flex flex-wrap items-center gap-x-6 gap-y-3 justify-between">
         <div className="flex flex-wrap gap-x-5 gap-y-2 text-xs font-mono uppercase tracking-widest text-muted-foreground">
-          <span className="flex items-center gap-1.5"><Clock className="h-3.5 w-3.5 text-brand" /> {fmtDuration(tour.duration_hours)}</span>
-          <span className="flex items-center gap-1.5"><UsersRound className="h-3.5 w-3.5 text-brand" /> Até {tour.max_people}</span>
-          <span className="flex items-center gap-1.5"><Gauge className="h-3.5 w-3.5 text-brand" /> {tour.level}</span>
+          <span className="flex items-center gap-1.5">
+            <Clock className="h-3.5 w-3.5 text-brand" /> {fmtDuration(tour.duration_hours)}
+          </span>
+          <span className="flex items-center gap-1.5">
+            <UsersRound className="h-3.5 w-3.5 text-brand" /> Até {tour.max_people}
+          </span>
+          <span className="flex items-center gap-1.5">
+            <Gauge className="h-3.5 w-3.5 text-brand" /> {tour.level}
+          </span>
         </div>
-        <Link
-          to="/reservar"
-          search={{ tour: tour.slug }}
-          className="btn-brand text-xs"
-        >
+        <Link to="/reservar" search={{ tour: tour.slug }} className="btn-brand text-xs">
           Reservar agora
         </Link>
       </div>
     </motion.article>
   );
 }
-
 
 /* -------- ESTATÍSTICAS -------- */
 function Estatisticas() {
@@ -389,10 +404,26 @@ function ComoFunciona() {
 
 /* -------- DEPOIMENTOS -------- */
 const testimonials = [
-  { name: "Ana & Rafael", city: "Rio de Janeiro, RJ", text: "Melhor experiência do nosso aniversário. Trilhas incríveis e equipe atenciosa do começo ao fim!" },
-  { name: "Pedro Mendes", city: "São Paulo, SP", text: "Adrenalina pura! Guias super profissionais, quadriciclos novos e paisagens surreais. Voltarei com certeza." },
-  { name: "Camila Rocha", city: "Belo Horizonte, MG", text: "Fizemos o Rolezão Completo em família e as crianças AMARAM. Segurança impecável." },
-  { name: "Diego Alves", city: "Petrópolis, RJ", text: "Cachoeira escondida, drone gravando, almoço caipira delícia. Nota mil!" },
+  {
+    name: "Ana & Rafael",
+    city: "Rio de Janeiro, RJ",
+    text: "Melhor experiência do nosso aniversário. Trilhas incríveis e equipe atenciosa do começo ao fim!",
+  },
+  {
+    name: "Pedro Mendes",
+    city: "São Paulo, SP",
+    text: "Adrenalina pura! Guias super profissionais, quadriciclos novos e paisagens surreais. Voltarei com certeza.",
+  },
+  {
+    name: "Camila Rocha",
+    city: "Belo Horizonte, MG",
+    text: "Fizemos o Rolezão Completo em família e as crianças AMARAM. Segurança impecável.",
+  },
+  {
+    name: "Diego Alves",
+    city: "Petrópolis, RJ",
+    text: "Cachoeira escondida, drone gravando, almoço caipira delícia. Nota mil!",
+  },
 ];
 
 function Depoimentos() {
@@ -437,12 +468,27 @@ function Depoimentos() {
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 
 const faqs = [
-  { q: "Precisa de CNH?", a: "Não é obrigatório para pilotar em nossas trilhas privadas, mas você recebe instrução completa antes do passeio." },
-  { q: "Posso levar crianças?", a: "Sim! Crianças a partir de 5 anos podem ir como passageiras, sempre acompanhadas de um adulto responsável." },
-  { q: "Tem seguro?", a: "Todos os passeios contam com seguro contra acidentes pessoais e cobertura para os participantes." },
-  { q: "E se chover no dia?", a: "Trilhas leves acontecem com chuva leve. Em caso de temporal, remarcamos sem custo adicional." },
+  {
+    q: "Precisa de CNH?",
+    a: "Não é obrigatório para pilotar em nossas trilhas privadas, mas você recebe instrução completa antes do passeio.",
+  },
+  {
+    q: "Posso levar crianças?",
+    a: "Sim! Crianças a partir de 5 anos podem ir como passageiras, sempre acompanhadas de um adulto responsável.",
+  },
+  {
+    q: "Tem seguro?",
+    a: "Todos os passeios contam com seguro contra acidentes pessoais e cobertura para os participantes.",
+  },
+  {
+    q: "E se chover no dia?",
+    a: "Trilhas leves acontecem com chuva leve. Em caso de temporal, remarcamos sem custo adicional.",
+  },
   { q: "Quanto tempo dura?", a: "Depende do passeio escolhido: de 2h até 6h, incluindo briefing, paradas e fotos." },
-  { q: "Posso pilotar sozinho?", a: "Sim! Após o briefing e o teste rápido em área controlada, você assume o controle do seu quadriciclo." },
+  {
+    q: "Posso pilotar sozinho?",
+    a: "Sim! Após o briefing e o teste rápido em área controlada, você assume o controle do seu quadriciclo.",
+  },
 ];
 
 function FAQ() {
@@ -494,13 +540,15 @@ function CTAFinal() {
             Reserve agora e garanta seu lugar nas trilhas mais incríveis de Engenheiro Paulo de Frontin.
           </p>
           <div className="mt-8 flex flex-col sm:flex-row flex-wrap justify-center gap-3">
-            <Link to="/reservar" className="btn-brand w-full sm:w-auto">Reservar Agora <ArrowRight className="h-4 w-4" /></Link>
+            <Link to="/reservar" className="btn-brand w-full sm:w-auto">
+              Reservar Agora <ArrowRight className="h-4 w-4" />
+            </Link>
             <a href={waQuickBooking()} target="_blank" rel="noreferrer" className="btn-outline-brand w-full sm:w-auto">
               Falar no WhatsApp
             </a>
           </div>
           <p className="mt-6 text-xs font-mono uppercase tracking-widest text-muted-foreground flex items-center justify-center gap-2">
-            <MapPin className="h-3.5 w-3.5 text-brand" /> Engenheiro Paulo de Frontin — RJ
+            <MapPin className="h-3.5 w-3.5 text-brand" /> Engenheiro Paulo de Frontin
           </p>
         </motion.div>
       </div>
