@@ -548,7 +548,7 @@ function CTAFinal() {
             </a>
           </div>
           <p className="mt-6 text-xs font-mono uppercase tracking-widest text-muted-foreground flex items-center justify-center gap-2">
-            <MapPin className="h-3.5 w-3.5 text-brand" /> Engenheiro Paulo de Frontin
+            <MapPin className="h-3.5 w-3.5 text-brand" /> Engenheiro Paulo de Frontin - RJ
           </p>
         </motion.div>
       </div>
