@@ -46,7 +46,7 @@ export function Navbar() {
               OFF ROAD
             </span>
             <span className="mt-[12px] font-mono text-[10px] uppercase tracking-[0.22em] text-foreground/60 whitespace-nowrap">
-              1 2 3 Engenheiro Paulo de Frontin — RJ
+              Engenheiro Paulo de Frontin — RJ
             </span>
           </span>
         </Link>
