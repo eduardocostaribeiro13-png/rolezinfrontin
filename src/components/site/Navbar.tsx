@@ -30,31 +30,23 @@ export function Navbar() {
   return (
     <header
       className={`fixed inset-x-0 top-0 z-50 transition-all duration-300 ${
-        scrolled || open
-          ? "bg-background/85 backdrop-blur-xl border-b border-border/60"
-          : "bg-transparent"
+        scrolled || open ? "bg-background/85 backdrop-blur-xl border-b border-border/60" : "bg-transparent"
       }`}
     >
       <div className="container-x flex h-16 items-center justify-between gap-6 md:h-20 lg:gap-10">
-        <Link
-          to="/"
-          className="flex items-center gap-4 group shrink-0"
-          aria-label="Rolezin Frontin Off Road — início"
-        >
+        <Link to="/" className="flex items-center gap-4 group shrink-0" aria-label="Rolezin Frontin Off Road — início">
           <img
             src={logo}
             alt="Rolezin Frontin Off Road"
             className="h-11 w-11 md:h-12 md:w-12 object-contain shrink-0"
           />
           <span className="hidden sm:flex lg:hidden xl:flex flex-col items-start justify-center leading-none">
-            <span className="font-display text-lg tracking-widest whitespace-nowrap">
-              ROLEZIN FRONTIN
-            </span>
+            <span className="font-display text-lg tracking-widest whitespace-nowrap">ROLEZIN FRONTIN</span>
             <span className="mt-[8px] font-display text-[13px] tracking-[0.28em] text-brand whitespace-nowrap">
               OFF ROAD
             </span>
             <span className="mt-[12px] font-mono text-[10px] uppercase tracking-[0.22em] text-foreground/60 whitespace-nowrap">
-              Engenheiro Paulo de Frontin — RJ
+              1 2 3 Engenheiro Paulo de Frontin — RJ
             </span>
           </span>
         </Link>
@@ -108,7 +100,9 @@ export function Navbar() {
             </Link>
           ))}
           <div className="flex flex-col gap-2 pt-4">
-            <Link to="/reservar" className="btn-brand">Reservar Agora</Link>
+            <Link to="/reservar" className="btn-brand">
+              Reservar Agora
+            </Link>
             <a href={waQuickBooking()} target="_blank" rel="noreferrer" className="btn-outline-brand">
               WhatsApp
             </a>
