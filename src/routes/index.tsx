@@ -88,10 +88,17 @@ function Hero() {
           className="max-w-3xl"
         >
           <span className="eyebrow mb-3 sm:mb-6">Engenheiro Paulo de Frontin — RJ</span>
-          <h1 className="hero-title font-display text-[clamp(2.35rem,9.5vw,7.5rem)] md:text-[clamp(3rem,9vw,7.5rem)] leading-[0.95] md:leading-[0.9] uppercase tracking-tight">
-            A aventura
-            <br />
-            <span className="text-gradient-brand">começa aqui.</span>
+          <h1 className="hero-title -mx-2 sm:mx-0">
+            <span className="sr-only">A aventura começa aqui.</span>
+            <img
+              src={heroTitleImg}
+              alt="A aventura começa aqui"
+              width={1600}
+              height={912}
+              fetchPriority="high"
+              className="w-full max-w-[36rem] sm:max-w-[42rem] md:max-w-[52rem] lg:max-w-[60rem] h-auto select-none drop-shadow-[0_20px_40px_rgba(0,0,0,0.6)]"
+              draggable={false}
+            />
           </h1>
           <p className="mt-3 sm:mt-6 max-w-[34ch] sm:max-w-xl text-[0.95rem] sm:text-lg leading-relaxed text-foreground/85">
             Descubra as trilhas mais incríveis de Engenheiro Paulo de Frontin em passeios de quadriciclo e UTV
