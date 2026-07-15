@@ -17,8 +17,8 @@
   --radius-2xl: calc(var(--radius) + 8px);
   --radius-3xl: calc(var(--radius) + 12px);
 
-  --font-display: "Road Rage", "Rubik Dirt", "Bebas Neue", "Anton", ui-sans-serif, system-ui, sans-serif;
-  --font-heading: "Road Rage", "Anton", "Bebas Neue", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Rubik Dirt", "Road Rage", "Bebas Neue", "Anton", ui-sans-serif, system-ui, sans-serif;
+  --font-heading: "Rubik Dirt", "Road Rage", "Anton", "Bebas Neue", ui-sans-serif, system-ui, sans-serif;
   --font-sans: "Inter", "Manrope", ui-sans-serif, system-ui, sans-serif;
   --font-mono: "Montserrat", ui-sans-serif, system-ui, sans-serif;
 
