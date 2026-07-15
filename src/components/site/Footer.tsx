@@ -70,7 +70,7 @@ export function Footer() {
           <ul className="space-y-3 text-sm text-foreground/80">
             <li className="flex items-start gap-2">
               <MapPin className="h-4 w-4 mt-0.5 text-brand" />
-              AOO Engenheiro Paulo de Frontin — RJ
+              Engenheiro Paulo de Frontin — RJ
             </li>
             <li className="flex items-start gap-2">
               <Phone className="h-4 w-4 mt-0.5 text-brand" />
