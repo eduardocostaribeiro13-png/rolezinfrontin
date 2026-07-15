@@ -45,9 +45,7 @@ export function Navbar() {
             <span className="mt-[8px] font-display text-[13px] tracking-[0.28em] text-brand whitespace-nowrap">
               OFF ROAD
             </span>
-            <span className="mt-[12px] font-mono text-[10px] uppercase tracking-[0.22em] text-foreground/60 whitespace-nowrap">
-              Engenheiro Paulo de Frontin — RJ
-            </span>
+            <span className="mt-[12px] font-mono text-[10px] uppercase tracking-[0.22em] text-foreground/60 whitespace-nowrap"></span>
           </span>
         </Link>
 
