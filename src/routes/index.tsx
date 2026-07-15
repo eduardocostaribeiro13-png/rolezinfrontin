@@ -94,7 +94,7 @@ function Hero() {
           transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
           className="max-w-3xl"
         >
-          <span className="eyebrow mb-3 sm:mb-6">Engenheiro Paulo de Frontin — RJ</span>
+          <span className="eyebrow mb-3 sm:mb-6"></span>
           <h1 className="hero-title -mx-2 sm:mx-0">
             <span className="sr-only">A aventura começa aqui.</span>
             <img
