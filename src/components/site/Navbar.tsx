@@ -35,21 +35,25 @@ export function Navbar() {
           : "bg-transparent"
       }`}
     >
-      <div className="container-x flex h-16 items-center justify-between md:h-20">
-        <Link to="/" className="flex items-center gap-2 group" aria-label="Rolezin Frontin Off Road — início">
-          <img src={logo} alt="Rolezin Frontin Off Road" className="h-11 w-11 md:h-12 md:w-12 object-contain" />
-          <span className="hidden sm:flex flex-col leading-tight">
-            <span className="font-display text-lg tracking-widest">ROLEZIN FRONTIN</span>
+      <div className="container-x flex h-16 items-center justify-between gap-6 md:h-20 lg:gap-10">
+        <Link
+          to="/"
+          className="flex items-center gap-2 group shrink-0"
+          aria-label="Rolezin Frontin Off Road — início"
+        >
+          <img src={logo} alt="Rolezin Frontin Off Road" className="h-11 w-11 md:h-12 md:w-12 object-contain shrink-0" />
+          <span className="hidden sm:flex lg:hidden xl:flex flex-col leading-tight">
+            <span className="font-display text-lg tracking-widest whitespace-nowrap">ROLEZIN FRONTIN</span>
             <span className="text-[10px] font-mono uppercase tracking-[0.3em] text-brand">Off Road</span>
           </span>
         </Link>
 
-        <nav className="hidden md:flex items-center gap-8">
+        <nav className="hidden lg:flex flex-1 items-center justify-center gap-6 xl:gap-8 flex-nowrap">
           {links.map((l) => (
             <Link
               key={l.to}
               to={l.to}
-              className="text-sm font-medium uppercase tracking-wider text-foreground/80 hover:text-brand transition-colors"
+              className="text-sm font-medium uppercase tracking-wider text-foreground/80 hover:text-brand transition-colors whitespace-nowrap"
               activeProps={{ className: "text-brand" }}
               activeOptions={{ exact: l.to === "/" }}
             >
@@ -58,14 +62,14 @@ export function Navbar() {
           ))}
         </nav>
 
-        <div className="hidden md:flex items-center gap-3">
-          <Link to="/reservar" className="btn-brand text-xs">
+        <div className="hidden lg:flex items-center gap-3 shrink-0">
+          <Link to="/reservar" className="btn-brand text-xs whitespace-nowrap">
             Reservar Agora
           </Link>
         </div>
 
         <button
-          className="md:hidden inline-flex h-11 w-11 items-center justify-center rounded-md text-foreground -mr-2 active:scale-95 transition-transform"
+          className="lg:hidden inline-flex h-11 w-11 items-center justify-center rounded-md text-foreground -mr-2 active:scale-95 transition-transform shrink-0"
           onClick={() => setOpen((v) => !v)}
           aria-label={open ? "Fechar menu" : "Abrir menu"}
           aria-expanded={open}
@@ -75,7 +79,7 @@ export function Navbar() {
       </div>
 
       <div
-        className={`md:hidden overflow-hidden border-t border-border/60 bg-background/95 backdrop-blur-xl transition-[max-height,opacity] duration-300 ease-out ${
+        className={`lg:hidden overflow-hidden border-t border-border/60 bg-background/95 backdrop-blur-xl transition-[max-height,opacity] duration-300 ease-out ${
           open ? "max-h-[80vh] opacity-100" : "max-h-0 opacity-0"
         }`}
         style={{ paddingBottom: open ? "env(safe-area-inset-bottom, 0px)" : 0 }}
