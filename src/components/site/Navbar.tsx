@@ -38,13 +38,24 @@ export function Navbar() {
       <div className="container-x flex h-16 items-center justify-between gap-6 md:h-20 lg:gap-10">
         <Link
           to="/"
-          className="flex items-center gap-2 group shrink-0"
+          className="flex items-center gap-4 group shrink-0"
           aria-label="Rolezin Frontin Off Road — início"
         >
-          <img src={logo} alt="Rolezin Frontin Off Road" className="h-11 w-11 md:h-12 md:w-12 object-contain shrink-0" />
-          <span className="hidden sm:flex lg:hidden xl:flex flex-col leading-tight">
-            <span className="font-display text-lg tracking-widest whitespace-nowrap">ROLEZIN FRONTIN</span>
-            <span className="text-[10px] font-mono uppercase tracking-[0.3em] text-brand">Off Road</span>
+          <img
+            src={logo}
+            alt="Rolezin Frontin Off Road"
+            className="h-11 w-11 md:h-12 md:w-12 object-contain shrink-0"
+          />
+          <span className="hidden sm:flex lg:hidden xl:flex flex-col items-start justify-center leading-none">
+            <span className="font-display text-lg tracking-widest whitespace-nowrap">
+              ROLEZIN FRONTIN
+            </span>
+            <span className="mt-[8px] font-display text-[13px] tracking-[0.28em] text-brand whitespace-nowrap">
+              OFF ROAD
+            </span>
+            <span className="mt-[12px] font-mono text-[10px] uppercase tracking-[0.22em] text-foreground/60 whitespace-nowrap">
+              Engenheiro Paulo de Frontin — RJ
+            </span>
           </span>
         </Link>
 
