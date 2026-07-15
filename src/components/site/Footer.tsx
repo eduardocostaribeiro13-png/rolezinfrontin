@@ -14,8 +14,8 @@ export function Footer() {
             <span className="font-display text-xl tracking-widest">ROLEZIN FRONTIN OFF ROAD</span>
           </div>
           <p className="text-sm text-muted-foreground max-w-md">
-            Passeios de quadriciclo e UTV pelas trilhas mais incríveis de Engenheiro Paulo de Frontin, RJ.
-            Aventura, segurança e memórias inesquecíveis.
+            Passeios de quadriciclo e UTV pelas trilhas mais incríveis de Engenheiro Paulo de Frontin, RJ. Aventura,
+            segurança e memórias inesquecíveis.
           </p>
           <div className="mt-6 flex gap-3">
             <a href={waQuickBooking()} target="_blank" rel="noreferrer" className="btn-brand text-xs">
@@ -27,13 +27,41 @@ export function Footer() {
         <div>
           <h4 className="font-mono text-xs uppercase tracking-[0.2em] text-brand mb-4">Navegação</h4>
           <ul className="space-y-2 text-sm text-foreground/80">
-            <li><Link to="/" className="hover:text-brand">Início</Link></li>
-            <li><Link to="/passeios" className="hover:text-brand">Passeios</Link></li>
-            <li><Link to="/galeria" className="hover:text-brand">Galeria</Link></li>
-            <li><Link to="/tour-virtual" className="hover:text-brand">Tour Virtual</Link></li>
-            <li><Link to="/sobre" className="hover:text-brand">Sobre</Link></li>
-            <li><Link to="/reservar" className="hover:text-brand">Reservar</Link></li>
-            <li><Link to="/contato" className="hover:text-brand">Contato</Link></li>
+            <li>
+              <Link to="/" className="hover:text-brand">
+                Início
+              </Link>
+            </li>
+            <li>
+              <Link to="/passeios" className="hover:text-brand">
+                Passeios
+              </Link>
+            </li>
+            <li>
+              <Link to="/galeria" className="hover:text-brand">
+                Galeria
+              </Link>
+            </li>
+            <li>
+              <Link to="/tour-virtual" className="hover:text-brand">
+                Tour Virtual
+              </Link>
+            </li>
+            <li>
+              <Link to="/sobre" className="hover:text-brand">
+                Sobre
+              </Link>
+            </li>
+            <li>
+              <Link to="/reservar" className="hover:text-brand">
+                Reservar
+              </Link>
+            </li>
+            <li>
+              <Link to="/contato" className="hover:text-brand">
+                Contato
+              </Link>
+            </li>
           </ul>
         </div>
 
@@ -42,19 +70,29 @@ export function Footer() {
           <ul className="space-y-3 text-sm text-foreground/80">
             <li className="flex items-start gap-2">
               <MapPin className="h-4 w-4 mt-0.5 text-brand" />
-              Engenheiro Paulo de Frontin — RJ
+              AOO Engenheiro Paulo de Frontin — RJ
             </li>
             <li className="flex items-start gap-2">
               <Phone className="h-4 w-4 mt-0.5 text-brand" />
               {WHATSAPP_DISPLAY}
             </li>
             <li>
-              <a href={waQuickBooking()} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 hover:text-brand">
+              <a
+                href={waQuickBooking()}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center gap-2 hover:text-brand"
+              >
                 <MessageCircle className="h-4 w-4 text-brand" /> WhatsApp
               </a>
             </li>
             <li>
-              <a href={INSTAGRAM_URL} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 hover:text-brand">
+              <a
+                href={INSTAGRAM_URL}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center gap-2 hover:text-brand"
+              >
                 <Instagram className="h-4 w-4 text-brand" /> {INSTAGRAM_HANDLE}
               </a>
             </li>
