@@ -19,7 +19,7 @@ export function POIPanel({
           animate={{ x: 0, opacity: 1 }}
           exit={{ x: 420, opacity: 0 }}
           transition={{ type: "spring", damping: 24, stiffness: 200 }}
-          className="pointer-events-auto absolute right-3 top-24 z-20 w-[92vw] max-w-sm rounded-2xl border border-white/10 bg-black/85 p-5 text-white shadow-2xl backdrop-blur-xl"
+          className="pointer-events-auto absolute right-3 top-40 z-30 w-[92vw] max-w-sm rounded-2xl border border-white/10 bg-black/85 p-5 text-white shadow-2xl backdrop-blur-xl sm:top-44"
         >
           <button
             onClick={onClose}
