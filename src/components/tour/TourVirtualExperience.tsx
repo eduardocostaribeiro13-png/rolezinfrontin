@@ -92,17 +92,33 @@ export function TourVirtualExperience() {
     state?.activePoi && state.activePoi.id !== dismissedPoi ? state.activePoi : null;
 
   return (
-    <div className="relative min-h-dvh bg-black text-white">
-      {/* Barra superior */}
-      <header className="absolute inset-x-0 top-0 z-30 flex items-center justify-between p-3 sm:p-4">
+    <div className="relative h-dvh w-full overflow-hidden bg-black text-white">
+      {/* Mundo 3D em fullscreen atrás de todo o HUD */}
+      <div className="absolute inset-0 z-0">
+        {loading || !compiled || !state ? (
+          <div className="grid h-full place-items-center bg-gradient-to-b from-[#0b1220] to-black">
+            <div className="flex flex-col items-center gap-3 text-white/70">
+              <Loader2 className="h-8 w-8 animate-spin text-brand" />
+              <p className="font-mono text-xs uppercase tracking-[0.3em]">
+                Carregando dados reais · OSM + DEM
+              </p>
+            </div>
+          </div>
+        ) : (
+          <TourWorld compiled={compiled} state={state} cameraMode={cameraMode} />
+        )}
+      </div>
+
+      {/* Barra superior (Voltar + Seletor de rota) */}
+      <header className="pointer-events-none absolute inset-x-0 top-0 z-40 flex items-center justify-between gap-2 p-3 sm:p-4">
         <Link
           to="/"
-          className="pointer-events-auto flex items-center gap-2 rounded-full border border-white/10 bg-black/60 px-4 py-2 font-mono text-[10px] uppercase tracking-widest text-white/80 backdrop-blur-md hover:text-white"
+          className="pointer-events-auto flex items-center gap-2 rounded-full border border-white/10 bg-black/70 px-3 py-2 font-mono text-[10px] uppercase tracking-widest text-white/85 backdrop-blur-md hover:text-white sm:px-4"
         >
           <ArrowLeft className="h-3.5 w-3.5" />
-          Voltar
+          <span className="hidden sm:inline">Voltar</span>
         </Link>
-        <div className="pointer-events-auto flex gap-1 rounded-full border border-white/10 bg-black/60 p-1 backdrop-blur-md">
+        <div className="pointer-events-auto flex gap-1 rounded-full border border-white/10 bg-black/70 p-1 backdrop-blur-md">
           {REAL_ROUTES.map((r) => (
             <button
               key={r.id}
@@ -122,31 +138,23 @@ export function TourVirtualExperience() {
         </div>
       </header>
 
-      {/* Mundo 3D */}
-      <div className="absolute inset-0">
-        {loading || !compiled || !state ? (
-          <div className="grid h-full place-items-center">
-            <div className="flex flex-col items-center gap-3 text-white/70">
-              <Loader2 className="h-8 w-8 animate-spin text-brand" />
-              <p className="font-mono text-xs uppercase tracking-[0.3em]">
-                Carregando dados reais · OSM + DEM
-              </p>
-            </div>
-          </div>
-        ) : (
-          <TourWorld compiled={compiled} state={state} cameraMode={cameraMode} />
-        )}
-      </div>
+      {/* HUD de navegação (métricas + progresso) — abaixo do header */}
+      {state && !loading && (
+        <div className="pointer-events-none absolute inset-x-0 top-14 z-20 sm:top-16">
+          <NavigationHUD state={state} route={route} />
+        </div>
+      )}
 
-      {/* HUD */}
-      {state && !loading && <NavigationHUD state={state} route={route} />}
-
-      {/* Câmeras */}
-      {!loading && <CameraSwitcher mode={cameraMode} onChange={setCameraMode} />}
+      {/* Câmeras (bottom-center) */}
+      {!loading && (
+        <div className="pointer-events-none absolute inset-x-0 bottom-4 z-30 flex justify-center">
+          <CameraSwitcher mode={cameraMode} onChange={setCameraMode} />
+        </div>
+      )}
 
       {/* Controles laterais direita */}
       {!loading && state && (
-        <div className="pointer-events-none absolute bottom-4 right-3 z-10 flex flex-col gap-2">
+        <div className="pointer-events-none absolute right-3 top-1/2 z-30 flex -translate-y-1/2 flex-col gap-2">
           <button
             onClick={() => setPaused((p) => !p)}
             className="pointer-events-auto flex items-center gap-2 rounded-full border border-white/10 bg-black/70 px-4 py-2 font-mono text-[10px] uppercase tracking-widest text-white backdrop-blur-md hover:bg-black/85"
@@ -164,9 +172,9 @@ export function TourVirtualExperience() {
         </div>
       )}
 
-      {/* Minimapa Waze */}
+      {/* Minimapa Waze (bottom-left, longe do CameraSwitcher) */}
       {state && !loading && (
-        <div className="absolute bottom-4 left-3 z-10 h-40 w-56 sm:h-56 sm:w-72">
+        <div className="pointer-events-auto absolute bottom-20 left-3 z-20 h-36 w-48 sm:bottom-4 sm:h-52 sm:w-64">
           <WazeMinimap
             route={route}
             vehicleLngLat={state.lngLat}
