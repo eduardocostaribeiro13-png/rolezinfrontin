@@ -354,7 +354,7 @@ function Estatisticas() {
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-x-24 gap-y-8 text-center">
           {stats.map((s) => (
             <div key={s.label}>
-              <p className="font-display text-4xl sm:text-5xl md:text-6xl leading-none">{s.value}</p>
+              <p className="font-display text-4xl sm:text-5xl md:text-5xl leading-none whitespace-nowrap">
               <p className="mt-2 text-[11px] sm:text-xs font-mono uppercase tracking-widest opacity-80">{s.label}</p>
             </div>
           ))}
