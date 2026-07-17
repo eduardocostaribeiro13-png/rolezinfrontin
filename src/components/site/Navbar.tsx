@@ -1,8 +1,13 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useState, type MouseEvent } from "react";
 import { Menu, X } from "lucide-react";
 import { waQuickBooking } from "@/lib/whatsapp";
 import logo from "@/assets/logo.png";
+
+function scrollToTop() {
+  if (typeof window === "undefined") return;
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
 
 const links = [
   { to: "/", label: "Início" },
@@ -34,13 +39,23 @@ export function Navbar() {
       }`}
     >
       <div className="container-x flex h-16 items-center justify-between gap-6 md:h-20 lg:gap-10">
-        <Link to="/" className="flex items-center gap-4 group shrink-0" aria-label="Rolezin Frontin Off Road — início">
+        <Link
+          to="/"
+          onClick={(e: MouseEvent<HTMLAnchorElement>) => {
+            if (pathname === "/") {
+              e.preventDefault();
+              scrollToTop();
+            }
+          }}
+          className="flex items-center gap-4 group shrink-0 cursor-pointer hover:opacity-90 transition-opacity"
+          aria-label="Rolezin Frontin Off Road — voltar ao topo"
+        >
           <img
             src={logo}
             alt="Rolezin Frontin Off Road"
             className="h-11 w-11 md:h-12 md:w-12 object-contain shrink-0"
           />
-          <span className="hidden sm:flex lg:hidden xl:flex flex-col items-start justify-center leading-none">
+          <span className="hidden sm:flex lg:hidden xl:flex flex-col items-start justify-center leading-none group-hover:text-brand transition-colors">
             <span className="font-display text-lg tracking-widest whitespace-nowrap">ROLEZIN FRONTIN</span>
             <span className="mt-[8px] font-display text-[13px] tracking-[0.28em] text-brand whitespace-nowrap">
               OFF ROAD
