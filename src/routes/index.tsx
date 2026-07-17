@@ -221,7 +221,7 @@ function Diferenciais() {
             >
               <div className="absolute -top-16 -right-16 h-40 w-40 rounded-full bg-brand/5 blur-2xl opacity-0 group-hover:opacity-100 transition-opacity" />
               <d.icon className="h-8 w-8 text-brand" strokeWidth={1.5} />
-              <h3 className="mt-5 font-display text-2xl uppercase">{d.title}</h3>
+              <h3 className="mt-5 text-lg font-semibold leading-relaxed text-foreground">{d.title}</h3>
               <p className="mt-2 text-sm text-muted-foreground leading-relaxed">{d.desc}</p>
             </motion.div>
           ))}

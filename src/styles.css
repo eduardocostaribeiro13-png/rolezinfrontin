@@ -101,14 +101,14 @@
   h1, h2, h3, h4, .font-display, .brand-title, .font-brand {
     font-family: var(--font-display);
     font-weight: 700;
-    letter-spacing: -0.02em;
+    letter-spacing: 0.02em;
     line-height: 0.95;
     text-transform: uppercase;
     text-shadow: 0 3px 12px rgba(0, 0, 0, 0.45);
   }
   h1, h1.font-display {
-    letter-spacing: -0.03em;
-    line-height: 0.9;
+    letter-spacing: 0.015em;
+    line-height: 0.92;
   }
   ::selection {
     background: var(--color-brand);
@@ -254,7 +254,7 @@
   h2.font-display,
   h3.font-display,
   .font-display {
-    letter-spacing: 0;
+    letter-spacing: 0.025em;
   }
   h2.font-display {
     font-size: clamp(2.25rem, 9.5vw, 3rem);
