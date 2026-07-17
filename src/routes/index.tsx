@@ -351,7 +351,7 @@ function Estatisticas() {
   return (
     <section className="section-pad relative overflow-hidden bg-brand text-brand-foreground">
       <div className="container-x relative">
-        <div className="grid gap-8 grid-cols-2 sm:grid-cols-3 md:grid-cols-5 text-center">
+        <div className="grid gap-x-12 gap-y-12 sm:gap-x-16 md:gap-x-20 lg:gap-x-24 grid-cols-2 sm:grid-cols-3 md:grid-cols-5 text-center">
           {stats.map((s) => (
             <div key={s.label}>
               <p className="font-display text-4xl sm:text-5xl md:text-6xl leading-none">{s.value}</p>
