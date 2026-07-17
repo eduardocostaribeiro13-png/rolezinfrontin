@@ -498,7 +498,7 @@ function FAQ() {
       <div className="container-x grid gap-12 md:grid-cols-[1fr_1.4fr]">
         <div>
           <span className="eyebrow mb-4">Perguntas frequentes</span>
-          <h2 className="font-display text-5xl md:text-6xl uppercase leading-none tracking-[0.08em]">
+          <h2 className="font-display text-5xl md:text-6xl uppercase leading-none tracking-[0.1em]">
             Tira as dúvidas <span className="text-brand">e bora.</span>
           </h2>
           <p className="mt-6 text-muted-foreground max-w-sm">
