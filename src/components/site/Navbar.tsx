@@ -69,6 +69,12 @@ export function Navbar() {
             <Link
               key={l.to}
               to={l.to}
+              onClick={(e: MouseEvent<HTMLAnchorElement>) => {
+                if (l.to === "/" && pathname === "/") {
+                  e.preventDefault();
+                  scrollToTop();
+                }
+              }}
               className="text-sm font-medium uppercase tracking-wider text-foreground/80 hover:text-brand transition-colors whitespace-nowrap"
               activeProps={{ className: "text-brand" }}
               activeOptions={{ exact: l.to === "/" }}
