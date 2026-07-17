@@ -185,9 +185,9 @@ function RoadNetwork({ compiled }: { compiled: CompiledRoute }) {
 
   return new THREE.TubeGeometry(
     curve,
-    points.length * 12,
-    4.2,
-    16,
+    points.length * 20,
+    5.5,
+    24,
     false,
   );
 
