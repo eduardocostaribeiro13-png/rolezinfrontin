@@ -91,7 +91,7 @@ export function TourWorld({ compiled, state, cameraMode }: WorldProps) {
 /* ---------- TERRENO ---------- */
 function Terrain({ compiled }: { compiled: CompiledRoute }) {
   const size = 3200;
-  const segs = 120;
+  const segs = 512;
 
   const { geometry, avgAlt } = useMemo(() => {
     const g = new THREE.PlaneGeometry(size, size, segs, segs);
@@ -114,13 +114,23 @@ function Terrain({ compiled }: { compiled: CompiledRoute }) {
           bestAlt = compiled.elevations[k];
         }
       }
-      const delta = bestAlt - avg;
-      // Suaviza faixa próxima à estrada para o asfalto assentar bem
       const distToRoad = Math.sqrt(bestDist);
-      const flatten = Math.min(1, Math.max(0, (distToRoad - 8) / 40));
-      const n = (Math.sin(x * 0.008) * 3 + Math.cos(z * 0.011) * 2 + Math.sin((x + z) * 0.005) * 4) * flatten;
-      pos.setY(i, delta * 0.4 * flatten + n);
-    }
+
+const flatten = Math.min(
+  1,
+  Math.max(0, (distToRoad - 8) / 40),
+);
+
+const terrainHeight = getTerrainHeight(
+  x,
+  z,
+  compiled,
+);
+
+pos.setY(
+  i,
+  terrainHeight * flatten,
+);
     g.computeVertexNormals();
     return { geometry: g, avgAlt: avg };
   }, [compiled]);
