@@ -353,7 +353,7 @@ function Estatisticas() {
       <div className="container-x relative">
         <div className="grid gap-x-16 gap-y-16 sm:gap-x-16 md:gap-x-30 lg:gap-x-38 grid-cols-2 sm:grid-cols-3 md:grid-cols-5 text-center">
           {stats.map((s) => (
-            <div key={s.label} className="flex flex-col items-center justify-center text-center">
+            <div key={s.label} className="flex flex-col items-center justify-center text-center w-full">
               <p className="font-display text-4xl sm:text-5xl md:text-6xl leading-none">{s.value}</p>
 
               <p className="mt-2 text-[11px] sm:text-xs font-mono uppercase tracking-widest opacity-80">{s.label}</p>
