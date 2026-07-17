@@ -154,11 +154,44 @@ pos.setY(
 /* ---------- REDE VIÁRIA ---------- */
 function RoadNetwork({ compiled }: { compiled: CompiledRoute }) {
   const geometry = useMemo(() => {
-    const points = compiled.raw.coordinates.map(toLocal);
-    const path: THREE.Vector3[] = points.map(([x, z]) => new THREE.Vector3(x, 0.35, z));
-    const curve = new THREE.CatmullRomCurve3(path, false, "centripetal", 0.5);
-    return new THREE.TubeGeometry(curve, points.length * 8, 3.4, 10, false);
-  }, [compiled]);
+
+  const points = compiled.raw.coordinates.map(toLocal);
+
+  const path: THREE.Vector3[] = [];
+
+  for (const [x, z] of points) {
+
+    const y = getTerrainHeight(
+      x,
+      z,
+      compiled,
+    );
+
+    path.push(
+      new THREE.Vector3(
+        x,
+        y + 0.08,
+        z,
+      ),
+    );
+  }
+
+  const curve = new THREE.CatmullRomCurve3(
+    path,
+    false,
+    "centripetal",
+    0.35,
+  );
+
+  return new THREE.TubeGeometry(
+    curve,
+    points.length * 12,
+    4.2,
+    16,
+    false,
+  );
+
+}, [compiled]);
 
   return (
     <mesh geometry={geometry} receiveShadow>
