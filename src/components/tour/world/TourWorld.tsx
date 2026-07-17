@@ -1,4 +1,32 @@
 import { useMemo, useRef } from "react";
+function getTerrainHeight(x: number, z: number, compiled: CompiledRoute) {
+  const route = compiled.raw.coordinates.map(toLocal);
+
+  let best = Infinity;
+  let elevation = compiled.elevations.length > 0 ? compiled.elevations[0] : 0;
+
+  for (let i = 0; i < route.length; i++) {
+    const [rx, rz] = route[i];
+
+    const dx = rx - x;
+    const dz = rz - z;
+
+    const d = dx * dx + dz * dz;
+
+    if (d < best) {
+      best = d;
+      elevation = compiled.elevations[i];
+    }
+  }
+
+  const avg = compiled.elevations.reduce((a, b) => a + b, 0) / compiled.elevations.length;
+
+  const mountain = Math.sin(x * 0.0015) * 45 + Math.cos(z * 0.0018) * 32 + Math.sin((x + z) * 0.0012) * 18;
+
+  const detail = Math.sin(x * 0.015) * 2 + Math.cos(z * 0.018) * 2;
+
+  return (elevation - avg) * 0.8 + mountain + detail;
+}
 import { Canvas, useFrame } from "@react-three/fiber";
 import { Sky, Cloud, Clouds } from "@react-three/drei";
 import * as THREE from "three";
@@ -54,14 +82,7 @@ export function TourWorld({ compiled, state, cameraMode }: WorldProps) {
       <CameraRig state={state} mode={cameraMode} />
 
       <Clouds material={THREE.MeshBasicMaterial} limit={30}>
-        <Cloud
-          seed={7}
-          bounds={[600, 20, 600]}
-          volume={100}
-          color="#ffffff"
-          opacity={0.55}
-          position={[0, 260, 0]}
-        />
+        <Cloud seed={7} bounds={[600, 20, 600]} volume={100} color="#ffffff" opacity={0.55} position={[0, 260, 0]} />
       </Clouds>
     </Canvas>
   );
@@ -76,9 +97,7 @@ function Terrain({ compiled }: { compiled: CompiledRoute }) {
     const g = new THREE.PlaneGeometry(size, size, segs, segs);
     g.rotateX(-Math.PI / 2);
     const pos = g.attributes.position;
-    const avg =
-      compiled.elevations.reduce((a, b) => a + b, 0) /
-      Math.max(1, compiled.elevations.length);
+    const avg = compiled.elevations.reduce((a, b) => a + b, 0) / Math.max(1, compiled.elevations.length);
 
     const routeLocal = compiled.raw.coordinates.map(toLocal);
 
@@ -99,11 +118,7 @@ function Terrain({ compiled }: { compiled: CompiledRoute }) {
       // Suaviza faixa próxima à estrada para o asfalto assentar bem
       const distToRoad = Math.sqrt(bestDist);
       const flatten = Math.min(1, Math.max(0, (distToRoad - 8) / 40));
-      const n =
-        (Math.sin(x * 0.008) * 3 +
-          Math.cos(z * 0.011) * 2 +
-          Math.sin((x + z) * 0.005) * 4) *
-        flatten;
+      const n = (Math.sin(x * 0.008) * 3 + Math.cos(z * 0.011) * 2 + Math.sin((x + z) * 0.005) * 4) * flatten;
       pos.setY(i, delta * 0.4 * flatten + n);
     }
     g.computeVertexNormals();
@@ -146,17 +161,14 @@ function RoadNetwork({ compiled }: { compiled: CompiledRoute }) {
 function Buildings({ compiled }: { compiled: CompiledRoute }) {
   const meshRef = useRef<THREE.InstancedMesh>(null);
   const geom = useMemo(() => new THREE.BoxGeometry(1, 1, 1), []);
-  const mat = useMemo(
-    () => new THREE.MeshStandardMaterial({ color: "#c9b998", roughness: 0.85 }),
-    [],
-  );
+  const mat = useMemo(() => new THREE.MeshStandardMaterial({ color: "#c9b998", roughness: 0.85 }), []);
 
   const matrices = useMemo(() => {
     const routePts = compiled.raw.coordinates.map(toLocal);
     const dummies: THREE.Matrix4[] = [];
     const m = new THREE.Matrix4();
     let seed = 1337;
-    const rand = () => ((seed = (seed * 9301 + 49297) % 233280) / 233280);
+    const rand = () => (seed = (seed * 9301 + 49297) % 233280) / 233280;
 
     for (const [rx, rz] of routePts) {
       const clusterCount = 3 + Math.floor(rand() * 4);
@@ -170,9 +182,7 @@ function Buildings({ compiled }: { compiled: CompiledRoute }) {
         const h = 3 + rand() * 6;
         m.compose(
           new THREE.Vector3(x, h / 2, z),
-          new THREE.Quaternion().setFromEuler(
-            new THREE.Euler(0, rand() * Math.PI, 0),
-          ),
+          new THREE.Quaternion().setFromEuler(new THREE.Euler(0, rand() * Math.PI, 0)),
           new THREE.Vector3(w, h, d),
         );
         dummies.push(m.clone());
@@ -187,15 +197,7 @@ function Buildings({ compiled }: { compiled: CompiledRoute }) {
     meshRef.current.instanceMatrix.needsUpdate = true;
   }, [matrices]);
 
-  return (
-    <instancedMesh
-      ref={meshRef}
-      args={[geom, mat, matrices.length]}
-      castShadow
-      receiveShadow
-      frustumCulled
-    />
-  );
+  return <instancedMesh ref={meshRef} args={[geom, mat, matrices.length]} castShadow receiveShadow frustumCulled />;
 }
 
 /* ---------- VEGETAÇÃO (Mata Atlântica) ---------- */
@@ -204,10 +206,7 @@ function Vegetation({ compiled }: { compiled: CompiledRoute }) {
   const count = 1200;
 
   const geom = useMemo(() => new THREE.ConeGeometry(3, 10, 6), []);
-  const mat = useMemo(
-    () => new THREE.MeshStandardMaterial({ color: "#2d5a2a", roughness: 0.95 }),
-    [],
-  );
+  const mat = useMemo(() => new THREE.MeshStandardMaterial({ color: "#2d5a2a", roughness: 0.95 }), []);
 
   const matrices = useMemo(() => {
     const m = new THREE.Matrix4();
@@ -253,15 +252,7 @@ function Vegetation({ compiled }: { compiled: CompiledRoute }) {
     meshRef.current.instanceMatrix.needsUpdate = true;
   }, [matrices]);
 
-  return (
-    <instancedMesh
-      ref={meshRef}
-      args={[geom, mat, matrices.length]}
-      castShadow
-      receiveShadow
-      frustumCulled
-    />
-  );
+  return <instancedMesh ref={meshRef} args={[geom, mat, matrices.length]} castShadow receiveShadow frustumCulled />;
 }
 
 /* ---------- VEÍCULO ---------- */
@@ -317,19 +308,31 @@ function CameraRig({ state, mode }: { state: RouteState; mode: CameraMode }) {
 
     switch (mode) {
       case "chase":
-        desired.current.copy(base).addScaledVector(forward, -12).add(new THREE.Vector3(0, 6, 0));
+        desired.current
+          .copy(base)
+          .addScaledVector(forward, -12)
+          .add(new THREE.Vector3(0, 6, 0));
         desiredLook.current.copy(base).addScaledVector(forward, 8);
         break;
       case "drone":
-        desired.current.copy(base).add(new THREE.Vector3(0, 40, 0)).addScaledVector(forward, -18);
+        desired.current
+          .copy(base)
+          .add(new THREE.Vector3(0, 40, 0))
+          .addScaledVector(forward, -18);
         desiredLook.current.copy(base).addScaledVector(forward, 20);
         break;
       case "hood":
-        desired.current.copy(base).addScaledVector(forward, 1.2).add(new THREE.Vector3(0, 1.6, 0));
+        desired.current
+          .copy(base)
+          .addScaledVector(forward, 1.2)
+          .add(new THREE.Vector3(0, 1.6, 0));
         desiredLook.current.copy(base).addScaledVector(forward, 40);
         break;
       case "side":
-        desired.current.copy(base).addScaledVector(right, 14).add(new THREE.Vector3(0, 4, 0));
+        desired.current
+          .copy(base)
+          .addScaledVector(right, 14)
+          .add(new THREE.Vector3(0, 4, 0));
         desiredLook.current.copy(base);
         break;
       case "aerial":
