@@ -111,6 +111,13 @@ export function Navbar() {
             <Link
               key={l.to}
               to={l.to}
+              onClick={(e: MouseEvent<HTMLAnchorElement>) => {
+                if (l.to === "/" && pathname === "/") {
+                  e.preventDefault();
+                  scrollToTop();
+                  setOpen(false);
+                }
+              }}
               className="py-3 text-lg font-display tracking-widest text-foreground/90 border-b border-border/40 last:border-b-0"
               activeProps={{ className: "text-brand" }}
               activeOptions={{ exact: l.to === "/" }}
