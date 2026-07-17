@@ -195,7 +195,11 @@ function RoadNetwork({ compiled }: { compiled: CompiledRoute }) {
 
   return (
     <mesh geometry={geometry} receiveShadow>
-      <meshStandardMaterial color="#2a2a2a" roughness={0.85} />
+      <meshStandardMaterial
+    color="#3a3a3a"
+    roughness={0.95}
+    metalness={0.02}
+/>
     </mesh>
   );
 }
