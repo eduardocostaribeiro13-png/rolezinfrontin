@@ -120,13 +120,11 @@ function ContatoPage() {
           </div>
 
           <p className="mt-3 text-foreground/80">
-            📍 Base oficial de saída dos passeios em
+            Sede Rolezin Frontin Off Road em
             <strong> Engenheiro Paulo de Frontin - RJ.</strong>
           </p>
 
-          <p className="mt-2 text-sm text-muted-foreground">
-            Após a confirmação da reserva, enviamos a localização exata pelo WhatsApp.
-          </p>
+          <p className="mt-2 text-sm text-muted-foreground">Venha nos conhecer!</p>
 
           <a
             href="https://maps.app.goo.gl/LKBFpXqpTHYULb5D9"
