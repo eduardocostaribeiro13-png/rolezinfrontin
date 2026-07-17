@@ -342,8 +342,8 @@ export function TourCard({ tour, index = 0 }: { tour: Tour; index?: number }) {
 /* -------- ESTATÍSTICAS -------- */
 function Estatisticas() {
   const stats = [
-    { value: "5.000+", label: "Clientes atendidos" },
-    { value: "12.000+", label: "Passeios realizados" },
+    { value: "5.000", label: "Clientes atendidos" },
+    { value: "12.000", label: "Passeios realizados" },
     { value: "80.000", label: "Km percorridos" },
     { value: "4.9", label: "Avaliação média" },
     { value: "8", label: "Anos de estrada" },
