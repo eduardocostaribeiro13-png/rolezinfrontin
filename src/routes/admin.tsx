@@ -55,6 +55,7 @@ const NAV: NavItem[] = [
   { to: "/admin", label: "Dashboard", icon: BarChart3, exact: true },
   { to: "/admin/reservas", label: "Reservas", icon: ShoppingBag },
   { to: "/admin/passeios", label: "Passeios", icon: MountainSnow },
+  { to: "/admin/experiencias", label: "Experiências Off-Road", icon: MountainSnow },
   { to: "/admin/veiculos", label: "Veículos", icon: Car },
   { to: "/admin/galeria", label: "Galeria", icon: ImageIcon },
   { to: "/admin/agenda", label: "Agenda", icon: Calendar },
