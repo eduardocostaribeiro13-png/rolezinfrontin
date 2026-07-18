@@ -4,11 +4,12 @@ import { supabase } from "@/integrations/supabase/client";
 const SIGNED_URL_TTL = 60 * 60 * 24 * 365 * 10;
 
 async function uploadAndSign(
-  bucket: "vehicles" | "gallery" | "tours",
+  bucket: "vehicles" | "gallery" | "tours" | "experiences",
   file: File,
+  folder?: string,
 ): Promise<string> {
-  const ext = file.name.includes(".") ? file.name.split(".").pop() : "jpg";
-  const path = `${crypto.randomUUID()}.${ext}`;
+  const ext = file.name.includes(".") ? file.name.split(".").pop() : "bin";
+  const path = `${folder ? folder + "/" : ""}${crypto.randomUUID()}.${ext}`;
   const { error: upErr } = await supabase.storage
     .from(bucket)
     .upload(path, file, { contentType: file.type, upsert: false });
@@ -20,8 +21,22 @@ async function uploadAndSign(
   return data.signedUrl;
 }
 
+export type ExperienceMediaKind =
+  | "cover"
+  | "horizontal"
+  | "vertical"
+  | "preview"
+  | "main"
+  | "drone"
+  | "onboard"
+  | "video360"
+  | "gallery"
+  | "map";
+
 export const StorageService = {
   uploadVehicleImage: (file: File) => uploadAndSign("vehicles", file),
   uploadGalleryImage: (file: File) => uploadAndSign("gallery", file),
   uploadTourImage: (file: File) => uploadAndSign("tours", file),
+  uploadExperienceMedia: (file: File, kind: ExperienceMediaKind) =>
+    uploadAndSign("experiences", file, kind),
 };

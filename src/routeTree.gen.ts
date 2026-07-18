@@ -9,12 +9,12 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as TourVirtualRouteImport } from './routes/tour-virtual'
 import { Route as SobreRouteImport } from './routes/sobre'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as ReservarRouteImport } from './routes/reservar'
 import { Route as PasseiosRouteImport } from './routes/passeios'
 import { Route as GaleriaRouteImport } from './routes/galeria'
+import { Route as ExperienciasRouteImport } from './routes/experiencias'
 import { Route as ContatoRouteImport } from './routes/contato'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AdminRouteImport } from './routes/admin'
@@ -22,20 +22,18 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as PagamentoSucessoRouteImport } from './routes/pagamento.sucesso'
 import { Route as PagamentoCanceladoRouteImport } from './routes/pagamento.cancelado'
+import { Route as ExperienciasSlugRouteImport } from './routes/experiencias.$slug'
 import { Route as AdminVeiculosRouteImport } from './routes/admin.veiculos'
 import { Route as AdminReservasRouteImport } from './routes/admin.reservas'
 import { Route as AdminPasseiosRouteImport } from './routes/admin.passeios'
 import { Route as AdminGaleriaRouteImport } from './routes/admin.galeria'
+import { Route as AdminExperienciasRouteImport } from './routes/admin.experiencias'
 import { Route as AdminConfiguracoesRouteImport } from './routes/admin.configuracoes'
 import { Route as AdminClientesRouteImport } from './routes/admin.clientes'
 import { Route as AdminAgendaRouteImport } from './routes/admin.agenda'
 import { Route as ApiInfinitepayWebhookRouteImport } from './routes/api/infinitepay.webhook'
+import { Route as AdminExperienciasIdRouteImport } from './routes/admin.experiencias.$id'
 
-const TourVirtualRoute = TourVirtualRouteImport.update({
-  id: '/tour-virtual',
-  path: '/tour-virtual',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const SobreRoute = SobreRouteImport.update({
   id: '/sobre',
   path: '/sobre',
@@ -59,6 +57,11 @@ const PasseiosRoute = PasseiosRouteImport.update({
 const GaleriaRoute = GaleriaRouteImport.update({
   id: '/galeria',
   path: '/galeria',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ExperienciasRoute = ExperienciasRouteImport.update({
+  id: '/experiencias',
+  path: '/experiencias',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ContatoRoute = ContatoRouteImport.update({
@@ -96,6 +99,11 @@ const PagamentoCanceladoRoute = PagamentoCanceladoRouteImport.update({
   path: '/pagamento/cancelado',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ExperienciasSlugRoute = ExperienciasSlugRouteImport.update({
+  id: '/$slug',
+  path: '/$slug',
+  getParentRoute: () => ExperienciasRoute,
+} as any)
 const AdminVeiculosRoute = AdminVeiculosRouteImport.update({
   id: '/veiculos',
   path: '/veiculos',
@@ -114,6 +122,11 @@ const AdminPasseiosRoute = AdminPasseiosRouteImport.update({
 const AdminGaleriaRoute = AdminGaleriaRouteImport.update({
   id: '/galeria',
   path: '/galeria',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminExperienciasRoute = AdminExperienciasRouteImport.update({
+  id: '/experiencias',
+  path: '/experiencias',
   getParentRoute: () => AdminRoute,
 } as any)
 const AdminConfiguracoesRoute = AdminConfiguracoesRouteImport.update({
@@ -136,50 +149,61 @@ const ApiInfinitepayWebhookRoute = ApiInfinitepayWebhookRouteImport.update({
   path: '/api/infinitepay/webhook',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminExperienciasIdRoute = AdminExperienciasIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => AdminExperienciasRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteWithChildren
   '/auth': typeof AuthRoute
   '/contato': typeof ContatoRoute
+  '/experiencias': typeof ExperienciasRouteWithChildren
   '/galeria': typeof GaleriaRoute
   '/passeios': typeof PasseiosRoute
   '/reservar': typeof ReservarRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/sobre': typeof SobreRoute
-  '/tour-virtual': typeof TourVirtualRoute
   '/admin/agenda': typeof AdminAgendaRoute
   '/admin/clientes': typeof AdminClientesRoute
   '/admin/configuracoes': typeof AdminConfiguracoesRoute
+  '/admin/experiencias': typeof AdminExperienciasRouteWithChildren
   '/admin/galeria': typeof AdminGaleriaRoute
   '/admin/passeios': typeof AdminPasseiosRoute
   '/admin/reservas': typeof AdminReservasRoute
   '/admin/veiculos': typeof AdminVeiculosRoute
+  '/experiencias/$slug': typeof ExperienciasSlugRoute
   '/pagamento/cancelado': typeof PagamentoCanceladoRoute
   '/pagamento/sucesso': typeof PagamentoSucessoRoute
   '/admin/': typeof AdminIndexRoute
+  '/admin/experiencias/$id': typeof AdminExperienciasIdRoute
   '/api/infinitepay/webhook': typeof ApiInfinitepayWebhookRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/contato': typeof ContatoRoute
+  '/experiencias': typeof ExperienciasRouteWithChildren
   '/galeria': typeof GaleriaRoute
   '/passeios': typeof PasseiosRoute
   '/reservar': typeof ReservarRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/sobre': typeof SobreRoute
-  '/tour-virtual': typeof TourVirtualRoute
   '/admin/agenda': typeof AdminAgendaRoute
   '/admin/clientes': typeof AdminClientesRoute
   '/admin/configuracoes': typeof AdminConfiguracoesRoute
+  '/admin/experiencias': typeof AdminExperienciasRouteWithChildren
   '/admin/galeria': typeof AdminGaleriaRoute
   '/admin/passeios': typeof AdminPasseiosRoute
   '/admin/reservas': typeof AdminReservasRoute
   '/admin/veiculos': typeof AdminVeiculosRoute
+  '/experiencias/$slug': typeof ExperienciasSlugRoute
   '/pagamento/cancelado': typeof PagamentoCanceladoRoute
   '/pagamento/sucesso': typeof PagamentoSucessoRoute
   '/admin': typeof AdminIndexRoute
+  '/admin/experiencias/$id': typeof AdminExperienciasIdRoute
   '/api/infinitepay/webhook': typeof ApiInfinitepayWebhookRoute
 }
 export interface FileRoutesById {
@@ -188,22 +212,25 @@ export interface FileRoutesById {
   '/admin': typeof AdminRouteWithChildren
   '/auth': typeof AuthRoute
   '/contato': typeof ContatoRoute
+  '/experiencias': typeof ExperienciasRouteWithChildren
   '/galeria': typeof GaleriaRoute
   '/passeios': typeof PasseiosRoute
   '/reservar': typeof ReservarRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/sobre': typeof SobreRoute
-  '/tour-virtual': typeof TourVirtualRoute
   '/admin/agenda': typeof AdminAgendaRoute
   '/admin/clientes': typeof AdminClientesRoute
   '/admin/configuracoes': typeof AdminConfiguracoesRoute
+  '/admin/experiencias': typeof AdminExperienciasRouteWithChildren
   '/admin/galeria': typeof AdminGaleriaRoute
   '/admin/passeios': typeof AdminPasseiosRoute
   '/admin/reservas': typeof AdminReservasRoute
   '/admin/veiculos': typeof AdminVeiculosRoute
+  '/experiencias/$slug': typeof ExperienciasSlugRoute
   '/pagamento/cancelado': typeof PagamentoCanceladoRoute
   '/pagamento/sucesso': typeof PagamentoSucessoRoute
   '/admin/': typeof AdminIndexRoute
+  '/admin/experiencias/$id': typeof AdminExperienciasIdRoute
   '/api/infinitepay/webhook': typeof ApiInfinitepayWebhookRoute
 }
 export interface FileRouteTypes {
@@ -213,44 +240,50 @@ export interface FileRouteTypes {
     | '/admin'
     | '/auth'
     | '/contato'
+    | '/experiencias'
     | '/galeria'
     | '/passeios'
     | '/reservar'
     | '/sitemap.xml'
     | '/sobre'
-    | '/tour-virtual'
     | '/admin/agenda'
     | '/admin/clientes'
     | '/admin/configuracoes'
+    | '/admin/experiencias'
     | '/admin/galeria'
     | '/admin/passeios'
     | '/admin/reservas'
     | '/admin/veiculos'
+    | '/experiencias/$slug'
     | '/pagamento/cancelado'
     | '/pagamento/sucesso'
     | '/admin/'
+    | '/admin/experiencias/$id'
     | '/api/infinitepay/webhook'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/auth'
     | '/contato'
+    | '/experiencias'
     | '/galeria'
     | '/passeios'
     | '/reservar'
     | '/sitemap.xml'
     | '/sobre'
-    | '/tour-virtual'
     | '/admin/agenda'
     | '/admin/clientes'
     | '/admin/configuracoes'
+    | '/admin/experiencias'
     | '/admin/galeria'
     | '/admin/passeios'
     | '/admin/reservas'
     | '/admin/veiculos'
+    | '/experiencias/$slug'
     | '/pagamento/cancelado'
     | '/pagamento/sucesso'
     | '/admin'
+    | '/admin/experiencias/$id'
     | '/api/infinitepay/webhook'
   id:
     | '__root__'
@@ -258,22 +291,25 @@ export interface FileRouteTypes {
     | '/admin'
     | '/auth'
     | '/contato'
+    | '/experiencias'
     | '/galeria'
     | '/passeios'
     | '/reservar'
     | '/sitemap.xml'
     | '/sobre'
-    | '/tour-virtual'
     | '/admin/agenda'
     | '/admin/clientes'
     | '/admin/configuracoes'
+    | '/admin/experiencias'
     | '/admin/galeria'
     | '/admin/passeios'
     | '/admin/reservas'
     | '/admin/veiculos'
+    | '/experiencias/$slug'
     | '/pagamento/cancelado'
     | '/pagamento/sucesso'
     | '/admin/'
+    | '/admin/experiencias/$id'
     | '/api/infinitepay/webhook'
   fileRoutesById: FileRoutesById
 }
@@ -282,12 +318,12 @@ export interface RootRouteChildren {
   AdminRoute: typeof AdminRouteWithChildren
   AuthRoute: typeof AuthRoute
   ContatoRoute: typeof ContatoRoute
+  ExperienciasRoute: typeof ExperienciasRouteWithChildren
   GaleriaRoute: typeof GaleriaRoute
   PasseiosRoute: typeof PasseiosRoute
   ReservarRoute: typeof ReservarRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   SobreRoute: typeof SobreRoute
-  TourVirtualRoute: typeof TourVirtualRoute
   PagamentoCanceladoRoute: typeof PagamentoCanceladoRoute
   PagamentoSucessoRoute: typeof PagamentoSucessoRoute
   ApiInfinitepayWebhookRoute: typeof ApiInfinitepayWebhookRoute
@@ -295,13 +331,6 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/tour-virtual': {
-      id: '/tour-virtual'
-      path: '/tour-virtual'
-      fullPath: '/tour-virtual'
-      preLoaderRoute: typeof TourVirtualRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/sobre': {
       id: '/sobre'
       path: '/sobre'
@@ -335,6 +364,13 @@ declare module '@tanstack/react-router' {
       path: '/galeria'
       fullPath: '/galeria'
       preLoaderRoute: typeof GaleriaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/experiencias': {
+      id: '/experiencias'
+      path: '/experiencias'
+      fullPath: '/experiencias'
+      preLoaderRoute: typeof ExperienciasRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/contato': {
@@ -386,6 +422,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PagamentoCanceladoRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/experiencias/$slug': {
+      id: '/experiencias/$slug'
+      path: '/$slug'
+      fullPath: '/experiencias/$slug'
+      preLoaderRoute: typeof ExperienciasSlugRouteImport
+      parentRoute: typeof ExperienciasRoute
+    }
     '/admin/veiculos': {
       id: '/admin/veiculos'
       path: '/veiculos'
@@ -412,6 +455,13 @@ declare module '@tanstack/react-router' {
       path: '/galeria'
       fullPath: '/admin/galeria'
       preLoaderRoute: typeof AdminGaleriaRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/experiencias': {
+      id: '/admin/experiencias'
+      path: '/experiencias'
+      fullPath: '/admin/experiencias'
+      preLoaderRoute: typeof AdminExperienciasRouteImport
       parentRoute: typeof AdminRoute
     }
     '/admin/configuracoes': {
@@ -442,13 +492,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiInfinitepayWebhookRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/experiencias/$id': {
+      id: '/admin/experiencias/$id'
+      path: '/$id'
+      fullPath: '/admin/experiencias/$id'
+      preLoaderRoute: typeof AdminExperienciasIdRouteImport
+      parentRoute: typeof AdminExperienciasRoute
+    }
   }
 }
+
+interface AdminExperienciasRouteChildren {
+  AdminExperienciasIdRoute: typeof AdminExperienciasIdRoute
+}
+
+const AdminExperienciasRouteChildren: AdminExperienciasRouteChildren = {
+  AdminExperienciasIdRoute: AdminExperienciasIdRoute,
+}
+
+const AdminExperienciasRouteWithChildren =
+  AdminExperienciasRoute._addFileChildren(AdminExperienciasRouteChildren)
 
 interface AdminRouteChildren {
   AdminAgendaRoute: typeof AdminAgendaRoute
   AdminClientesRoute: typeof AdminClientesRoute
   AdminConfiguracoesRoute: typeof AdminConfiguracoesRoute
+  AdminExperienciasRoute: typeof AdminExperienciasRouteWithChildren
   AdminGaleriaRoute: typeof AdminGaleriaRoute
   AdminPasseiosRoute: typeof AdminPasseiosRoute
   AdminReservasRoute: typeof AdminReservasRoute
@@ -460,6 +529,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminAgendaRoute: AdminAgendaRoute,
   AdminClientesRoute: AdminClientesRoute,
   AdminConfiguracoesRoute: AdminConfiguracoesRoute,
+  AdminExperienciasRoute: AdminExperienciasRouteWithChildren,
   AdminGaleriaRoute: AdminGaleriaRoute,
   AdminPasseiosRoute: AdminPasseiosRoute,
   AdminReservasRoute: AdminReservasRoute,
@@ -469,17 +539,29 @@ const AdminRouteChildren: AdminRouteChildren = {
 
 const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
 
+interface ExperienciasRouteChildren {
+  ExperienciasSlugRoute: typeof ExperienciasSlugRoute
+}
+
+const ExperienciasRouteChildren: ExperienciasRouteChildren = {
+  ExperienciasSlugRoute: ExperienciasSlugRoute,
+}
+
+const ExperienciasRouteWithChildren = ExperienciasRoute._addFileChildren(
+  ExperienciasRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdminRoute: AdminRouteWithChildren,
   AuthRoute: AuthRoute,
   ContatoRoute: ContatoRoute,
+  ExperienciasRoute: ExperienciasRouteWithChildren,
   GaleriaRoute: GaleriaRoute,
   PasseiosRoute: PasseiosRoute,
   ReservarRoute: ReservarRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   SobreRoute: SobreRoute,
-  TourVirtualRoute: TourVirtualRoute,
   PagamentoCanceladoRoute: PagamentoCanceladoRoute,
   PagamentoSucessoRoute: PagamentoSucessoRoute,
   ApiInfinitepayWebhookRoute: ApiInfinitepayWebhookRoute,

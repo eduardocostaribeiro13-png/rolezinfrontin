@@ -67,6 +67,311 @@ export type Database = {
           },
         ]
       }
+      experience_categories: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+          slug: string
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: string
+          slug: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+          slug?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      experience_gallery: {
+        Row: {
+          caption: string | null
+          created_at: string
+          experience_id: string
+          id: string
+          sort_order: number
+          url: string
+        }
+        Insert: {
+          caption?: string | null
+          created_at?: string
+          experience_id: string
+          id?: string
+          sort_order?: number
+          url: string
+        }
+        Update: {
+          caption?: string | null
+          created_at?: string
+          experience_id?: string
+          id?: string
+          sort_order?: number
+          url?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "experience_gallery_experience_id_fkey"
+            columns: ["experience_id"]
+            isOneToOne: false
+            referencedRelation: "experiences"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      experience_tags: {
+        Row: {
+          experience_id: string
+          id: string
+          tag: string
+        }
+        Insert: {
+          experience_id: string
+          id?: string
+          tag: string
+        }
+        Update: {
+          experience_id?: string
+          id?: string
+          tag?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "experience_tags_experience_id_fkey"
+            columns: ["experience_id"]
+            isOneToOne: false
+            referencedRelation: "experiences"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      experience_vehicle_map: {
+        Row: {
+          experience_id: string
+          vehicle_type_id: string
+        }
+        Insert: {
+          experience_id: string
+          vehicle_type_id: string
+        }
+        Update: {
+          experience_id?: string
+          vehicle_type_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "experience_vehicle_map_experience_id_fkey"
+            columns: ["experience_id"]
+            isOneToOne: false
+            referencedRelation: "experiences"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "experience_vehicle_map_vehicle_type_id_fkey"
+            columns: ["vehicle_type_id"]
+            isOneToOne: false
+            referencedRelation: "experience_vehicle_types"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      experience_vehicle_types: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+          slug: string
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: string
+          slug: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+          slug?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      experience_videos: {
+        Row: {
+          created_at: string
+          experience_id: string
+          id: string
+          kind: string
+          label: string | null
+          sort_order: number
+          url: string
+        }
+        Insert: {
+          created_at?: string
+          experience_id: string
+          id?: string
+          kind: string
+          label?: string | null
+          sort_order?: number
+          url: string
+        }
+        Update: {
+          created_at?: string
+          experience_id?: string
+          id?: string
+          kind?: string
+          label?: string | null
+          sort_order?: number
+          url?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "experience_videos_experience_id_fkey"
+            columns: ["experience_id"]
+            isOneToOne: false
+            referencedRelation: "experiences"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      experiences: {
+        Row: {
+          altitude_m: number
+          badge: string | null
+          category_id: string | null
+          cover_image_url: string | null
+          created_at: string
+          curiosities: string[]
+          description: string | null
+          distance_km: number
+          drone_video_url: string | null
+          duration_hours: number
+          equipment: string[]
+          horizontal_image_url: string | null
+          id: string
+          level: string
+          main_video_url: string | null
+          max_people: number
+          name: string
+          og_image_url: string | null
+          onboard_video_url: string | null
+          points_of_interest: Json
+          popularity: number
+          preview_video_url: string | null
+          price_cents: number
+          route_map_url: string | null
+          seo_description: string | null
+          seo_title: string | null
+          short_description: string | null
+          slug: string
+          sort_order: number
+          status: string
+          tour_slug: string | null
+          updated_at: string
+          vertical_image_url: string | null
+          video_360_url: string | null
+          what_to_bring: string[]
+        }
+        Insert: {
+          altitude_m?: number
+          badge?: string | null
+          category_id?: string | null
+          cover_image_url?: string | null
+          created_at?: string
+          curiosities?: string[]
+          description?: string | null
+          distance_km?: number
+          drone_video_url?: string | null
+          duration_hours?: number
+          equipment?: string[]
+          horizontal_image_url?: string | null
+          id?: string
+          level?: string
+          main_video_url?: string | null
+          max_people?: number
+          name: string
+          og_image_url?: string | null
+          onboard_video_url?: string | null
+          points_of_interest?: Json
+          popularity?: number
+          preview_video_url?: string | null
+          price_cents?: number
+          route_map_url?: string | null
+          seo_description?: string | null
+          seo_title?: string | null
+          short_description?: string | null
+          slug: string
+          sort_order?: number
+          status?: string
+          tour_slug?: string | null
+          updated_at?: string
+          vertical_image_url?: string | null
+          video_360_url?: string | null
+          what_to_bring?: string[]
+        }
+        Update: {
+          altitude_m?: number
+          badge?: string | null
+          category_id?: string | null
+          cover_image_url?: string | null
+          created_at?: string
+          curiosities?: string[]
+          description?: string | null
+          distance_km?: number
+          drone_video_url?: string | null
+          duration_hours?: number
+          equipment?: string[]
+          horizontal_image_url?: string | null
+          id?: string
+          level?: string
+          main_video_url?: string | null
+          max_people?: number
+          name?: string
+          og_image_url?: string | null
+          onboard_video_url?: string | null
+          points_of_interest?: Json
+          popularity?: number
+          preview_video_url?: string | null
+          price_cents?: number
+          route_map_url?: string | null
+          seo_description?: string | null
+          seo_title?: string | null
+          short_description?: string | null
+          slug?: string
+          sort_order?: number
+          status?: string
+          tour_slug?: string | null
+          updated_at?: string
+          vertical_image_url?: string | null
+          video_360_url?: string | null
+          what_to_bring?: string[]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "experiences_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "experience_categories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       gallery: {
         Row: {
           alt_text: string | null
