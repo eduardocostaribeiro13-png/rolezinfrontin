@@ -9,7 +9,6 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as TourVirtualRouteImport } from './routes/tour-virtual'
 import { Route as SobreRouteImport } from './routes/sobre'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as ReservarRouteImport } from './routes/reservar'
@@ -31,11 +30,6 @@ import { Route as AdminClientesRouteImport } from './routes/admin.clientes'
 import { Route as AdminAgendaRouteImport } from './routes/admin.agenda'
 import { Route as ApiInfinitepayWebhookRouteImport } from './routes/api/infinitepay.webhook'
 
-const TourVirtualRoute = TourVirtualRouteImport.update({
-  id: '/tour-virtual',
-  path: '/tour-virtual',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const SobreRoute = SobreRouteImport.update({
   id: '/sobre',
   path: '/sobre',
@@ -147,7 +141,6 @@ export interface FileRoutesByFullPath {
   '/reservar': typeof ReservarRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/sobre': typeof SobreRoute
-  '/tour-virtual': typeof TourVirtualRoute
   '/admin/agenda': typeof AdminAgendaRoute
   '/admin/clientes': typeof AdminClientesRoute
   '/admin/configuracoes': typeof AdminConfiguracoesRoute
@@ -169,7 +162,6 @@ export interface FileRoutesByTo {
   '/reservar': typeof ReservarRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/sobre': typeof SobreRoute
-  '/tour-virtual': typeof TourVirtualRoute
   '/admin/agenda': typeof AdminAgendaRoute
   '/admin/clientes': typeof AdminClientesRoute
   '/admin/configuracoes': typeof AdminConfiguracoesRoute
@@ -193,7 +185,6 @@ export interface FileRoutesById {
   '/reservar': typeof ReservarRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/sobre': typeof SobreRoute
-  '/tour-virtual': typeof TourVirtualRoute
   '/admin/agenda': typeof AdminAgendaRoute
   '/admin/clientes': typeof AdminClientesRoute
   '/admin/configuracoes': typeof AdminConfiguracoesRoute
@@ -218,7 +209,6 @@ export interface FileRouteTypes {
     | '/reservar'
     | '/sitemap.xml'
     | '/sobre'
-    | '/tour-virtual'
     | '/admin/agenda'
     | '/admin/clientes'
     | '/admin/configuracoes'
@@ -240,7 +230,6 @@ export interface FileRouteTypes {
     | '/reservar'
     | '/sitemap.xml'
     | '/sobre'
-    | '/tour-virtual'
     | '/admin/agenda'
     | '/admin/clientes'
     | '/admin/configuracoes'
@@ -263,7 +252,6 @@ export interface FileRouteTypes {
     | '/reservar'
     | '/sitemap.xml'
     | '/sobre'
-    | '/tour-virtual'
     | '/admin/agenda'
     | '/admin/clientes'
     | '/admin/configuracoes'
@@ -287,7 +275,6 @@ export interface RootRouteChildren {
   ReservarRoute: typeof ReservarRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   SobreRoute: typeof SobreRoute
-  TourVirtualRoute: typeof TourVirtualRoute
   PagamentoCanceladoRoute: typeof PagamentoCanceladoRoute
   PagamentoSucessoRoute: typeof PagamentoSucessoRoute
   ApiInfinitepayWebhookRoute: typeof ApiInfinitepayWebhookRoute
@@ -295,13 +282,6 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/tour-virtual': {
-      id: '/tour-virtual'
-      path: '/tour-virtual'
-      fullPath: '/tour-virtual'
-      preLoaderRoute: typeof TourVirtualRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/sobre': {
       id: '/sobre'
       path: '/sobre'
@@ -479,7 +459,6 @@ const rootRouteChildren: RootRouteChildren = {
   ReservarRoute: ReservarRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   SobreRoute: SobreRoute,
-  TourVirtualRoute: TourVirtualRoute,
   PagamentoCanceladoRoute: PagamentoCanceladoRoute,
   PagamentoSucessoRoute: PagamentoSucessoRoute,
   ApiInfinitepayWebhookRoute: ApiInfinitepayWebhookRoute,
