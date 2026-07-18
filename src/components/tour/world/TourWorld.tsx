@@ -131,6 +131,7 @@ pos.setY(
   i,
   terrainHeight * flatten,
 );
+    }
     g.computeVertexNormals();
     return { geometry: g, avgAlt: avg };
   }, [compiled]);
