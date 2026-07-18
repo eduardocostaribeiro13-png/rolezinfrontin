@@ -27,10 +27,12 @@ import { Route as AdminVeiculosRouteImport } from './routes/admin.veiculos'
 import { Route as AdminReservasRouteImport } from './routes/admin.reservas'
 import { Route as AdminPasseiosRouteImport } from './routes/admin.passeios'
 import { Route as AdminGaleriaRouteImport } from './routes/admin.galeria'
+import { Route as AdminExperienciasRouteImport } from './routes/admin.experiencias'
 import { Route as AdminConfiguracoesRouteImport } from './routes/admin.configuracoes'
 import { Route as AdminClientesRouteImport } from './routes/admin.clientes'
 import { Route as AdminAgendaRouteImport } from './routes/admin.agenda'
 import { Route as ApiInfinitepayWebhookRouteImport } from './routes/api/infinitepay.webhook'
+import { Route as AdminExperienciasIdRouteImport } from './routes/admin.experiencias.$id'
 
 const SobreRoute = SobreRouteImport.update({
   id: '/sobre',
@@ -122,6 +124,11 @@ const AdminGaleriaRoute = AdminGaleriaRouteImport.update({
   path: '/galeria',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminExperienciasRoute = AdminExperienciasRouteImport.update({
+  id: '/experiencias',
+  path: '/experiencias',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminConfiguracoesRoute = AdminConfiguracoesRouteImport.update({
   id: '/configuracoes',
   path: '/configuracoes',
@@ -142,6 +149,11 @@ const ApiInfinitepayWebhookRoute = ApiInfinitepayWebhookRouteImport.update({
   path: '/api/infinitepay/webhook',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminExperienciasIdRoute = AdminExperienciasIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => AdminExperienciasRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -157,6 +169,7 @@ export interface FileRoutesByFullPath {
   '/admin/agenda': typeof AdminAgendaRoute
   '/admin/clientes': typeof AdminClientesRoute
   '/admin/configuracoes': typeof AdminConfiguracoesRoute
+  '/admin/experiencias': typeof AdminExperienciasRouteWithChildren
   '/admin/galeria': typeof AdminGaleriaRoute
   '/admin/passeios': typeof AdminPasseiosRoute
   '/admin/reservas': typeof AdminReservasRoute
@@ -165,6 +178,7 @@ export interface FileRoutesByFullPath {
   '/pagamento/cancelado': typeof PagamentoCanceladoRoute
   '/pagamento/sucesso': typeof PagamentoSucessoRoute
   '/admin/': typeof AdminIndexRoute
+  '/admin/experiencias/$id': typeof AdminExperienciasIdRoute
   '/api/infinitepay/webhook': typeof ApiInfinitepayWebhookRoute
 }
 export interface FileRoutesByTo {
@@ -180,6 +194,7 @@ export interface FileRoutesByTo {
   '/admin/agenda': typeof AdminAgendaRoute
   '/admin/clientes': typeof AdminClientesRoute
   '/admin/configuracoes': typeof AdminConfiguracoesRoute
+  '/admin/experiencias': typeof AdminExperienciasRouteWithChildren
   '/admin/galeria': typeof AdminGaleriaRoute
   '/admin/passeios': typeof AdminPasseiosRoute
   '/admin/reservas': typeof AdminReservasRoute
@@ -188,6 +203,7 @@ export interface FileRoutesByTo {
   '/pagamento/cancelado': typeof PagamentoCanceladoRoute
   '/pagamento/sucesso': typeof PagamentoSucessoRoute
   '/admin': typeof AdminIndexRoute
+  '/admin/experiencias/$id': typeof AdminExperienciasIdRoute
   '/api/infinitepay/webhook': typeof ApiInfinitepayWebhookRoute
 }
 export interface FileRoutesById {
@@ -205,6 +221,7 @@ export interface FileRoutesById {
   '/admin/agenda': typeof AdminAgendaRoute
   '/admin/clientes': typeof AdminClientesRoute
   '/admin/configuracoes': typeof AdminConfiguracoesRoute
+  '/admin/experiencias': typeof AdminExperienciasRouteWithChildren
   '/admin/galeria': typeof AdminGaleriaRoute
   '/admin/passeios': typeof AdminPasseiosRoute
   '/admin/reservas': typeof AdminReservasRoute
@@ -213,6 +230,7 @@ export interface FileRoutesById {
   '/pagamento/cancelado': typeof PagamentoCanceladoRoute
   '/pagamento/sucesso': typeof PagamentoSucessoRoute
   '/admin/': typeof AdminIndexRoute
+  '/admin/experiencias/$id': typeof AdminExperienciasIdRoute
   '/api/infinitepay/webhook': typeof ApiInfinitepayWebhookRoute
 }
 export interface FileRouteTypes {
@@ -231,6 +249,7 @@ export interface FileRouteTypes {
     | '/admin/agenda'
     | '/admin/clientes'
     | '/admin/configuracoes'
+    | '/admin/experiencias'
     | '/admin/galeria'
     | '/admin/passeios'
     | '/admin/reservas'
@@ -239,6 +258,7 @@ export interface FileRouteTypes {
     | '/pagamento/cancelado'
     | '/pagamento/sucesso'
     | '/admin/'
+    | '/admin/experiencias/$id'
     | '/api/infinitepay/webhook'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -254,6 +274,7 @@ export interface FileRouteTypes {
     | '/admin/agenda'
     | '/admin/clientes'
     | '/admin/configuracoes'
+    | '/admin/experiencias'
     | '/admin/galeria'
     | '/admin/passeios'
     | '/admin/reservas'
@@ -262,6 +283,7 @@ export interface FileRouteTypes {
     | '/pagamento/cancelado'
     | '/pagamento/sucesso'
     | '/admin'
+    | '/admin/experiencias/$id'
     | '/api/infinitepay/webhook'
   id:
     | '__root__'
@@ -278,6 +300,7 @@ export interface FileRouteTypes {
     | '/admin/agenda'
     | '/admin/clientes'
     | '/admin/configuracoes'
+    | '/admin/experiencias'
     | '/admin/galeria'
     | '/admin/passeios'
     | '/admin/reservas'
@@ -286,6 +309,7 @@ export interface FileRouteTypes {
     | '/pagamento/cancelado'
     | '/pagamento/sucesso'
     | '/admin/'
+    | '/admin/experiencias/$id'
     | '/api/infinitepay/webhook'
   fileRoutesById: FileRoutesById
 }
@@ -433,6 +457,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminGaleriaRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/experiencias': {
+      id: '/admin/experiencias'
+      path: '/experiencias'
+      fullPath: '/admin/experiencias'
+      preLoaderRoute: typeof AdminExperienciasRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/configuracoes': {
       id: '/admin/configuracoes'
       path: '/configuracoes'
@@ -461,13 +492,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiInfinitepayWebhookRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/experiencias/$id': {
+      id: '/admin/experiencias/$id'
+      path: '/$id'
+      fullPath: '/admin/experiencias/$id'
+      preLoaderRoute: typeof AdminExperienciasIdRouteImport
+      parentRoute: typeof AdminExperienciasRoute
+    }
   }
 }
+
+interface AdminExperienciasRouteChildren {
+  AdminExperienciasIdRoute: typeof AdminExperienciasIdRoute
+}
+
+const AdminExperienciasRouteChildren: AdminExperienciasRouteChildren = {
+  AdminExperienciasIdRoute: AdminExperienciasIdRoute,
+}
+
+const AdminExperienciasRouteWithChildren =
+  AdminExperienciasRoute._addFileChildren(AdminExperienciasRouteChildren)
 
 interface AdminRouteChildren {
   AdminAgendaRoute: typeof AdminAgendaRoute
   AdminClientesRoute: typeof AdminClientesRoute
   AdminConfiguracoesRoute: typeof AdminConfiguracoesRoute
+  AdminExperienciasRoute: typeof AdminExperienciasRouteWithChildren
   AdminGaleriaRoute: typeof AdminGaleriaRoute
   AdminPasseiosRoute: typeof AdminPasseiosRoute
   AdminReservasRoute: typeof AdminReservasRoute
@@ -479,6 +529,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminAgendaRoute: AdminAgendaRoute,
   AdminClientesRoute: AdminClientesRoute,
   AdminConfiguracoesRoute: AdminConfiguracoesRoute,
+  AdminExperienciasRoute: AdminExperienciasRouteWithChildren,
   AdminGaleriaRoute: AdminGaleriaRoute,
   AdminPasseiosRoute: AdminPasseiosRoute,
   AdminReservasRoute: AdminReservasRoute,
