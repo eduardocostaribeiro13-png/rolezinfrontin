@@ -63,13 +63,14 @@ export const Route = createFileRoute("/experiencias/$slug")({
 });
 
 function ExperienceDetail() {
-  const initial = Route.useLoaderData();
-  const { data: exp = initial } = useQuery({
+  const initial = Route.useLoaderData() as Experience;
+  const { data } = useQuery({
     queryKey: ["exp", "detail", initial.slug],
     queryFn: () => ExperienceService.getBySlug(initial.slug),
     initialData: initial,
     staleTime: 30_000,
   });
+  const exp: Experience = (data as Experience | undefined) ?? initial;
   if (!exp) return null;
 
   return (
