@@ -40,6 +40,7 @@ type NavItem = {
     | "/admin"
     | "/admin/reservas"
     | "/admin/passeios"
+    | "/admin/experiencias"
     | "/admin/veiculos"
     | "/admin/galeria"
     | "/admin/agenda"
