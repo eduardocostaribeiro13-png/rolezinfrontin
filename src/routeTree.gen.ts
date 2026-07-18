@@ -14,6 +14,7 @@ import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as ReservarRouteImport } from './routes/reservar'
 import { Route as PasseiosRouteImport } from './routes/passeios'
 import { Route as GaleriaRouteImport } from './routes/galeria'
+import { Route as ExperienciasRouteImport } from './routes/experiencias'
 import { Route as ContatoRouteImport } from './routes/contato'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AdminRouteImport } from './routes/admin'
@@ -21,6 +22,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as PagamentoSucessoRouteImport } from './routes/pagamento.sucesso'
 import { Route as PagamentoCanceladoRouteImport } from './routes/pagamento.cancelado'
+import { Route as ExperienciasSlugRouteImport } from './routes/experiencias.$slug'
 import { Route as AdminVeiculosRouteImport } from './routes/admin.veiculos'
 import { Route as AdminReservasRouteImport } from './routes/admin.reservas'
 import { Route as AdminPasseiosRouteImport } from './routes/admin.passeios'
@@ -53,6 +55,11 @@ const PasseiosRoute = PasseiosRouteImport.update({
 const GaleriaRoute = GaleriaRouteImport.update({
   id: '/galeria',
   path: '/galeria',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ExperienciasRoute = ExperienciasRouteImport.update({
+  id: '/experiencias',
+  path: '/experiencias',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ContatoRoute = ContatoRouteImport.update({
@@ -89,6 +96,11 @@ const PagamentoCanceladoRoute = PagamentoCanceladoRouteImport.update({
   id: '/pagamento/cancelado',
   path: '/pagamento/cancelado',
   getParentRoute: () => rootRouteImport,
+} as any)
+const ExperienciasSlugRoute = ExperienciasSlugRouteImport.update({
+  id: '/$slug',
+  path: '/$slug',
+  getParentRoute: () => ExperienciasRoute,
 } as any)
 const AdminVeiculosRoute = AdminVeiculosRouteImport.update({
   id: '/veiculos',
@@ -136,6 +148,7 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AdminRouteWithChildren
   '/auth': typeof AuthRoute
   '/contato': typeof ContatoRoute
+  '/experiencias': typeof ExperienciasRouteWithChildren
   '/galeria': typeof GaleriaRoute
   '/passeios': typeof PasseiosRoute
   '/reservar': typeof ReservarRoute
@@ -148,6 +161,7 @@ export interface FileRoutesByFullPath {
   '/admin/passeios': typeof AdminPasseiosRoute
   '/admin/reservas': typeof AdminReservasRoute
   '/admin/veiculos': typeof AdminVeiculosRoute
+  '/experiencias/$slug': typeof ExperienciasSlugRoute
   '/pagamento/cancelado': typeof PagamentoCanceladoRoute
   '/pagamento/sucesso': typeof PagamentoSucessoRoute
   '/admin/': typeof AdminIndexRoute
@@ -157,6 +171,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/contato': typeof ContatoRoute
+  '/experiencias': typeof ExperienciasRouteWithChildren
   '/galeria': typeof GaleriaRoute
   '/passeios': typeof PasseiosRoute
   '/reservar': typeof ReservarRoute
@@ -169,6 +184,7 @@ export interface FileRoutesByTo {
   '/admin/passeios': typeof AdminPasseiosRoute
   '/admin/reservas': typeof AdminReservasRoute
   '/admin/veiculos': typeof AdminVeiculosRoute
+  '/experiencias/$slug': typeof ExperienciasSlugRoute
   '/pagamento/cancelado': typeof PagamentoCanceladoRoute
   '/pagamento/sucesso': typeof PagamentoSucessoRoute
   '/admin': typeof AdminIndexRoute
@@ -180,6 +196,7 @@ export interface FileRoutesById {
   '/admin': typeof AdminRouteWithChildren
   '/auth': typeof AuthRoute
   '/contato': typeof ContatoRoute
+  '/experiencias': typeof ExperienciasRouteWithChildren
   '/galeria': typeof GaleriaRoute
   '/passeios': typeof PasseiosRoute
   '/reservar': typeof ReservarRoute
@@ -192,6 +209,7 @@ export interface FileRoutesById {
   '/admin/passeios': typeof AdminPasseiosRoute
   '/admin/reservas': typeof AdminReservasRoute
   '/admin/veiculos': typeof AdminVeiculosRoute
+  '/experiencias/$slug': typeof ExperienciasSlugRoute
   '/pagamento/cancelado': typeof PagamentoCanceladoRoute
   '/pagamento/sucesso': typeof PagamentoSucessoRoute
   '/admin/': typeof AdminIndexRoute
@@ -204,6 +222,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/auth'
     | '/contato'
+    | '/experiencias'
     | '/galeria'
     | '/passeios'
     | '/reservar'
@@ -216,6 +235,7 @@ export interface FileRouteTypes {
     | '/admin/passeios'
     | '/admin/reservas'
     | '/admin/veiculos'
+    | '/experiencias/$slug'
     | '/pagamento/cancelado'
     | '/pagamento/sucesso'
     | '/admin/'
@@ -225,6 +245,7 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/contato'
+    | '/experiencias'
     | '/galeria'
     | '/passeios'
     | '/reservar'
@@ -237,6 +258,7 @@ export interface FileRouteTypes {
     | '/admin/passeios'
     | '/admin/reservas'
     | '/admin/veiculos'
+    | '/experiencias/$slug'
     | '/pagamento/cancelado'
     | '/pagamento/sucesso'
     | '/admin'
@@ -247,6 +269,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/auth'
     | '/contato'
+    | '/experiencias'
     | '/galeria'
     | '/passeios'
     | '/reservar'
@@ -259,6 +282,7 @@ export interface FileRouteTypes {
     | '/admin/passeios'
     | '/admin/reservas'
     | '/admin/veiculos'
+    | '/experiencias/$slug'
     | '/pagamento/cancelado'
     | '/pagamento/sucesso'
     | '/admin/'
@@ -270,6 +294,7 @@ export interface RootRouteChildren {
   AdminRoute: typeof AdminRouteWithChildren
   AuthRoute: typeof AuthRoute
   ContatoRoute: typeof ContatoRoute
+  ExperienciasRoute: typeof ExperienciasRouteWithChildren
   GaleriaRoute: typeof GaleriaRoute
   PasseiosRoute: typeof PasseiosRoute
   ReservarRoute: typeof ReservarRoute
@@ -315,6 +340,13 @@ declare module '@tanstack/react-router' {
       path: '/galeria'
       fullPath: '/galeria'
       preLoaderRoute: typeof GaleriaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/experiencias': {
+      id: '/experiencias'
+      path: '/experiencias'
+      fullPath: '/experiencias'
+      preLoaderRoute: typeof ExperienciasRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/contato': {
@@ -365,6 +397,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/pagamento/cancelado'
       preLoaderRoute: typeof PagamentoCanceladoRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/experiencias/$slug': {
+      id: '/experiencias/$slug'
+      path: '/$slug'
+      fullPath: '/experiencias/$slug'
+      preLoaderRoute: typeof ExperienciasSlugRouteImport
+      parentRoute: typeof ExperienciasRoute
     }
     '/admin/veiculos': {
       id: '/admin/veiculos'
@@ -449,11 +488,24 @@ const AdminRouteChildren: AdminRouteChildren = {
 
 const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
 
+interface ExperienciasRouteChildren {
+  ExperienciasSlugRoute: typeof ExperienciasSlugRoute
+}
+
+const ExperienciasRouteChildren: ExperienciasRouteChildren = {
+  ExperienciasSlugRoute: ExperienciasSlugRoute,
+}
+
+const ExperienciasRouteWithChildren = ExperienciasRoute._addFileChildren(
+  ExperienciasRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdminRoute: AdminRouteWithChildren,
   AuthRoute: AuthRoute,
   ContatoRoute: ContatoRoute,
+  ExperienciasRoute: ExperienciasRouteWithChildren,
   GaleriaRoute: GaleriaRoute,
   PasseiosRoute: PasseiosRoute,
   ReservarRoute: ReservarRoute,

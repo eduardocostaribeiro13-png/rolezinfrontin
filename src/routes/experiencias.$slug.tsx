@@ -12,6 +12,7 @@ import {
   Play,
 } from "lucide-react";
 import { ExperienceService } from "@/lib/services/experience-service";
+import type { Experience } from "@/lib/experiences";
 import { VIDEO_KIND_LABEL, brlCents } from "@/lib/experiences";
 
 export const Route = createFileRoute("/experiencias/$slug")({
