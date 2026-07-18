@@ -1,142 +1,100 @@
 
-# Tour Virtual v2 — Simulador GPS 3D com dados reais
+# Centro de Experiências Off-Road
 
-## Escopo e realismo
+Remove todo o módulo 3D atual (Tour Virtual) e cria um novo módulo baseado em vídeos reais, 100% gerenciável pelo Dashboard. Nada mais no site é alterado.
 
-Este é um trabalho grande. Vou entregá-lo em **4 fases incrementais** — cada fase deixa o produto utilizável antes de partir para a próxima. Isso evita 3 dias de build sem preview.
+## Escopo do que muda
 
-Antes de começar, preciso alinhar 3 decisões que travam a implementação:
+**Remover (apenas Tour Virtual):**
+- `src/routes/tour-virtual.tsx`
+- `src/components/tour/**` (TourWorld, WazeMinimap, NavigationHUD, POIPanel, CameraSwitcher, TourVirtualExperience)
+- `src/lib/tour-virtual/**` (data, geo, elevation, route-engine)
+- Dependências 3D não usadas em outras partes: `three`, `@react-three/fiber`, `@react-three/drei`, `@react-three/postprocessing`, `maplibre-gl`, `@turf/turf` (verificar antes de remover)
 
-### Decisões que preciso da sua parte
+**Manter intocado:** navbar, footer, home, reservas, checkout InfinitePay, admin existente, auth, veículos, galeria, tours, contato.
 
-1. **Provedor de tiles/DEM** — o navegador não renderiza terreno real sem um serviço de tiles. As opções viáveis:
-   - **MapTiler** (free tier 100k tiles/mês) — tem Terrain-RGB + tiles vetoriais OSM prontos. Recomendo.
-   - **Mapbox** (free tier 50k loads/mês) — Terrain-RGB nativo, mais polido, requer conta.
-   - **OpenStreetMap tiles públicos + AWS Terrain Tiles** — 100% grátis, sem chave, qualidade inferior.
+**Navbar:** o link atual "Tour Virtual" passa a apontar para `/experiencias` com label "Experiências Off-Road" (única mudança em navegação global).
 
-   Precisarei que você conecte via `add_secret` a chave escolhida (ou confirmar OSM público).
+## Banco de dados (nova migração)
 
-2. **Nível de fidelidade visual**
-   - **A) GPS 3D estilo Waze** (recomendado) — terreno real com relevo, ruas extrudadas, vegetação instanciada estilizada (não fotorrealista), rios/pontes marcados. Roda a 60fps em mobile.
-   - **B) Google Earth-like fotorrealista** — inviável em WebGL puro sem tiles 3D pagos (Cesium Ion / Google Photorealistic 3D Tiles, ~$200/mês).
-
-   Vou assumir **(A)** — é o que fecha com "sensação de navegador GPS moderno + 3D".
-
-3. **Rotas iniciais** — quais 2-3 trajetos reais devem existir no lançamento? Ex.: "Centro → Cachoeira do Amor", "Sede → Morro Azul". Sem isso, uso rotas OSM automáticas entre POIs conhecidos do município.
-
----
-
-## Stack técnica
+Novas tabelas em `public` (sem tocar em nada existente):
 
 ```text
-Renderização 3D   → three.js + @react-three/fiber + @react-three/drei
-Terreno           → three-tile / three-geo (tiles + heightmap DEM)
-Malha viária      → Overpass API (OSM) → GeoJSON → extrusão via three-mesh-bvh
-Minimapa 2D       → maplibre-gl (Waze-style, sem chave)
-Vegetação         → InstancedMesh (10k+ árvores, LOD)
-Física do veículo → cinemática simples ao longo de spline OSM (não engine física)
-Dados de rota     → GeoJSON/GPX loader (turf.js para cálculos geodésicos)
+experience_categories(id, slug, name, sort_order)
+experience_vehicle_types(id, slug, name)         -- Quadriciclo, UTV, etc.
+experiences(
+  id, slug UNIQUE, name, short_description, description,
+  category_id FK, level, duration_hours, distance_km, altitude_m,
+  price_cents, max_people,
+  cover_image_url, horizontal_image_url, vertical_image_url,
+  preview_video_url, main_video_url, drone_video_url,
+  onboard_video_url, video_360_url, route_map_url,
+  equipment TEXT[], what_to_bring TEXT[], curiosities TEXT[],
+  points_of_interest JSONB,
+  badge TEXT,                                    -- Novo|Premium|... (nullable)
+  tour_slug TEXT,                                -- link p/ reserva existente
+  seo_title, seo_description, og_image_url,
+  status TEXT CHECK IN ('PUBLISHED','DRAFT','COMING_SOON'),
+  popularity INT DEFAULT 0,
+  sort_order INT, created_at, updated_at
+)
+experience_gallery(id, experience_id FK CASCADE, url, sort_order)
+experience_videos(id, experience_id FK CASCADE, kind, url, sort_order)
+experience_vehicle_map(experience_id, vehicle_type_id)  -- N:N
+experience_tags(id, experience_id FK, tag)
 ```
 
-Bibliotecas novas a instalar: `three`, `@react-three/fiber`, `@react-three/drei`, `maplibre-gl`, `@turf/turf`, `three-mesh-bvh`.
+- GRANT `SELECT` para `anon` e `authenticated` nas tabelas de leitura pública; escrita restrita a admin via `has_role`.
+- RLS: leitura pública somente onde `status = 'PUBLISHED'`; admin vê tudo e escreve.
+- Storage: novo bucket privado `experiences` (imagens + vídeos), URLs assinadas por 10 anos, mesmo padrão dos buckets atuais.
+- Seed: 2 categorias e 3 tipos de veículos padrão (Quadriciclo, UTV, Buggy) para o admin já ter opções.
 
----
+## Rotas novas (TanStack)
 
-## Arquitetura de arquivos
+- `src/routes/experiencias.tsx` — listagem pública:
+  - Hero com vídeo institucional (URL vinda de `site_settings` se existir; fallback estático).
+  - Grid de cards responsivo carregado via `ExperienceService.listPublished()`.
+  - Busca em tempo real (input controlado, filtro client-side sobre o resultado paginado).
+  - Filtros por categoria/veículo/nível/tag.
+  - Ordenação: recentes, populares, duração asc/desc, distância asc/desc.
+  - Card: capa + `<video muted playsInline preload="metadata">` que dá play no hover (desktop) e autoplay contínuo no mobile via IntersectionObserver.
+- `src/routes/experiencias.$slug.tsx` — página da trilha:
+  - Vídeo principal em destaque, título, descrição.
+  - Blocos dinâmicos: informações, equipamentos, o que levar, POIs, curiosidades, mapa da rota.
+  - Galeria e vídeos extras (drone/onboard/360) só renderizam se existirem no banco.
+  - Botão "Reservar Agora" → `/reservar?tour=<experience.tour_slug>` (fluxo atual intocado).
+  - `head()` dinâmico com SEO title/description/og:image.
 
-```text
-src/lib/tour-virtual/
-  osm-loader.ts          Fetch Overpass → GeoJSON (cacheado)
-  dem-loader.ts          Tiles Terrain-RGB → heightmap
-  route-engine.ts        Segue polyline real, calcula velocidade/altitude/ETA
-  camera-rig.ts          5 câmeras (3ª pessoa, drone, capô, lateral, aérea)
-  poi-registry.ts        POIs de EPF com fotos/descrição/curiosidades
-  geojson-import.ts      Loader plugável para novas rotas
-  data/
-    epf-bounds.ts        Bounding box de Eng. Paulo de Frontin
-    epf-pois.ts          Pontos turísticos com lat/lon
-    routes/              Rotas GeoJSON versionadas no repo
+## Admin novo
 
-src/components/tour/
-  TourWorld.tsx          Canvas r3f principal
-  Terrain.tsx            Mesh do relevo (DEM)
-  RoadNetwork.tsx        Extrusão das ruas OSM
-  Vehicle.tsx            Veículo seguindo route-engine
-  Vegetation.tsx         InstancedMesh de Mata Atlântica
-  Rivers.tsx             LineStrings de água OSM
-  Buildings.tsx          Extrusão de edifícios OSM
-  WazeMinimap.tsx        MapLibre 2D sincronizado
-  NavigationHUD.tsx      Distância/velocidade/altitude/ETA/progresso
-  CameraControls.tsx     Switch entre 5 câmeras
-  POIPanel.tsx           Painel lateral com fotos + botão Reservar
-  TourVirtualExperience.tsx  Composição (substitui a versão atual)
-```
+- `src/routes/admin.experiencias.tsx` — listagem com ações: Nova, Editar, Duplicar, Excluir, Publicar/Rascunho.
+- `src/routes/admin.experiencias.$id.tsx` — formulário completo:
+  - Todos os campos do schema.
+  - Uploads via `StorageService` estendido para o bucket `experiences` (imagens + vídeos).
+  - Galeria e vídeos extras gerenciados em subformulários (add/remove/reorder).
+  - Seleção múltipla de tipos de veículos e tags.
+- Link "Experiências Off-Road" adicionado no menu do admin (uma linha em `admin.tsx`).
 
-Os componentes atuais (`TourScene`, `Minimap`, `HotspotPanel` etc.) serão **removidos** — a arquitetura fictícia com spline aleatória sai por completo.
+## Serviços
 
----
+- `src/lib/services/experience-service.ts`:
+  - `listPublished({ filters, sort, page })`, `getBySlug`, `listAll` (admin), `upsert`, `remove`, `duplicate`, `setStatus`.
+- `StorageService.uploadExperienceMedia(file, kind)` reutilizando o padrão signed-url existente.
 
-## Fases
+## Performance / UX
 
-### Fase 1 — Base geográfica real (fundação)
-- Instala stack 3D e maplibre.
-- Define bounding box de EPF (~22°32'S, 43°40'W).
-- Loader Overpass baixa ruas + rios + edifícios da região (cache em JSON no repo para não bater na API a cada render).
-- Loader DEM baixa heightmap e gera terreno com deslocamento vertical real.
-- Renderiza terreno + ruas OSM extrudadas + minimapa Waze 2D sincronizado.
-- Câmera única (3ª pessoa) seguindo primeira rota real.
+- `loading="lazy"` em imagens, `preload="metadata"` em vídeos.
+- Paginação server-side (`range`) de 12 em 12.
+- Skeletons durante fetch; TanStack Query com `staleTime` de 60s.
+- Prefetch da página de detalhe no hover do card.
 
-**Entregável:** você já vê o município real em 3D com uma rota funcionando.
+## Visual
 
-### Fase 2 — Simulação de rota + HUD navegador
-- `route-engine` interpola posição ao longo da polyline OSM (não spline sintética).
-- Cálculo real de velocidade média, distância restante, altitude (do DEM), ETA, % de progresso.
-- HUD estilo Waze/Google Maps com esses dados.
-- Sistema de 5 câmeras cinematográficas com transição suave.
-- Loader plugável de GeoJSON/GPX para adicionar rotas via arquivo.
+Preto/grafite/laranja (tokens `--brand` existentes), tipografia display atual (Road Rage) nos títulos, cards com hover elevado, microinterações via Framer Motion já instalado. Sem novas dependências pesadas.
 
-### Fase 3 — Ambiente Mata Atlântica
-- InstancedMesh de árvores (3-4 modelos low-poly em rotação/escala aleatória mas seedada — determinístico) posicionadas fora das ruas usando máscara OSM (landuse=forest, natural=wood).
-- Rios OSM renderizados como fitas com shader de água.
-- Pontes destacadas onde ruas cruzam rios.
-- Cercas em `barrier=fence` OSM.
-- Edifícios OSM extrudados com `building:levels`.
-- LOD por distância + frustum culling + instancing (r3f nativo).
+## Ordem de execução
 
-### Fase 4 — POIs turísticos e conversão
-- Registro de POIs de EPF (Cachoeira, mirantes, pontos históricos) com lat/lon reais.
-- Trigger geodésico (turf `distance`): ao passar a <150m de um POI, abre `POIPanel` com fotos, descrição, curiosidades e CTA "Reservar Agora" → `/reservar?tour=...`.
-- Loader final para você adicionar novas rotas dropando GeoJSON em `src/lib/tour-virtual/data/routes/`.
-
----
-
-## Performance — o que garante 60fps
-
-- **Terreno**: 1 mesh 256×256 com displacement map (não geometria densa).
-- **Ruas**: BufferGeometry mergeada única por tipo (`primary`, `residential`, `track`).
-- **Vegetação**: `InstancedMesh` com até 15k instâncias, `frustumCulled: true`, LOD em 3 níveis.
-- **Edifícios**: extrusão apenas dentro do frustum + raio configurável ao redor do veículo.
-- **Minimapa**: `maplibre-gl` em canvas separado (não compete com r3f).
-- **Assets**: modelos de árvore/veículo em GLTF Draco-comprimido em `src/assets/tour-3d/`.
-
----
-
-## Como continuar após lançamento
-
-Adicionar uma rota nova é 1 arquivo:
-
-```text
-src/lib/tour-virtual/data/routes/serra-do-couto.geojson
-```
-
-O `geojson-import.ts` detecta automaticamente e disponibiliza no seletor de rotas.
-
----
-
-## Preciso do seu OK em 3 pontos antes de codar
-
-1. **Tiles/DEM**: MapTiler (recomendo), Mapbox, ou OSM público grátis?
-2. **Fidelidade**: confirma o nível A (GPS 3D estilizado, viável) e não B (Google Earth fotorrealista, inviável sem tiles pagos)?
-3. **Rotas iniciais**: você me passa 2-3 trajetos reais, ou gero automaticamente entre POIs conhecidos do município?
-
-Assim que responder, começo pela Fase 1.
+1. Migração SQL (cria tabelas, GRANTs, RLS, bucket, seeds).  ← precisa aprovação do usuário
+2. Após aprovação: remover arquivos do Tour Virtual antigo + desinstalar deps 3D órfãs.
+3. Criar service, rotas públicas, rotas admin, link no menu admin e ajuste do label na navbar.
+4. Verificar build/typecheck e testar fluxo Reserva a partir de uma experiência publicada.
