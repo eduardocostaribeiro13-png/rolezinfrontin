@@ -35,7 +35,28 @@ function HeroFilled({ exp }: { exp: Experience }) {
       transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
       className="group relative h-[480px] overflow-hidden rounded-3xl bg-[#0E0E0E] shadow-[0_30px_80px_-30px_rgba(0,0,0,0.9)] md:h-[560px] lg:h-[620px]"
     >
-      <div className="absolute inset-0 bg-red-600" />
+      {bg && (
+        <motion.img
+          src={bg}
+          alt={title}
+          initial={{ scale: 1.08 }}
+          animate={{ scale: 1.03 }}
+          transition={{ duration: 2, ease: "easeOut" }}
+          className="absolute inset-0 h-full w-full object-cover transition-transform duration-[1800ms] group-hover:scale-[1.08]"
+        />
+      )}
+
+      {exp.preview_video_url && (
+        <video
+          src={exp.preview_video_url}
+          autoPlay
+          muted
+          loop
+          playsInline
+          preload="metadata"
+          className="absolute inset-0 h-full w-full object-cover opacity-0 transition-opacity duration-700 group-hover:opacity-100"
+        />
+      )}
 
       {/* Cinematic overlays */}
       <div className="absolute inset-0 bg-gradient-to-r from-black via-black/70 to-transparent" />
