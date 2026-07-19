@@ -45,7 +45,7 @@ function HeroFilled({ exp }: { exp: Experience }) {
         className="absolute inset-0 h-full w-full object-cover"
       >
         <source
-          src="https://qlvsopynxpohlsmlfdsw.supabase.co/storage/v1/object/public/VIDEO%201%20GOPRO/download%20(1).mp4"
+          src="https://qlvsopynxpohlsmlfdsw.supabase.co/storage/v1/object/public/VIDEO%201%20GOPRO/video-gopro-saibreira.mp4"
           type="video/mp4"
         />
       </video>
