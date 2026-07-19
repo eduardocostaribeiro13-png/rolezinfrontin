@@ -35,7 +35,15 @@ function HeroFilled({ exp }: { exp: Experience }) {
       transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
       className="group relative h-[480px] overflow-hidden rounded-3xl bg-[#0E0E0E] shadow-[0_30px_80px_-30px_rgba(0,0,0,0.9)] md:h-[560px] lg:h-[620px]"
     >
-      <video autoPlay muted loop playsInline preload="auto" className="absolute inset-0 h-full w-full object-cover">
+      <video
+        autoPlay
+        muted
+        loop
+        playsInline
+        preload="auto"
+        disablePictureInPicture
+        className="absolute inset-0 h-full w-full object-cover"
+      >
         <source
           src="https://qlvsopynxpohlsmlfdsw.supabase.co/storage/v1/object/public/VIDEO%201%20GOPRO/download%20(1).mp4"
           type="video/mp4"
