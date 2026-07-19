@@ -1,13 +1,6 @@
 import { motion } from "framer-motion";
 import { Link } from "@tanstack/react-router";
-import {
-  Camera,
-  ChevronRight,
-  Film,
-  Globe2,
-  Sparkles,
-  Video,
-} from "lucide-react";
+import { Camera, ChevronRight, Film, Globe2, Sparkles, Video } from "lucide-react";
 import type { Experience } from "@/lib/experiences";
 import { HeroSkeleton } from "./ExperienceSkeleton";
 
@@ -33,8 +26,7 @@ function HeroFilled({ exp }: { exp: Experience }) {
   const title = exp.name;
   const subtitle = exp.category?.name ?? "Centro de Experiências";
   const description =
-    exp.short_description ??
-    "Trilhas, cachoeiras e mirantes de Engenheiro Paulo de Frontin filmados em cinema real.";
+    exp.short_description ?? "Trilhas, cachoeiras e mirantes de Engenheiro Paulo de Frontin filmados em cinema real.";
 
   return (
     <motion.div
@@ -43,27 +35,12 @@ function HeroFilled({ exp }: { exp: Experience }) {
       transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
       className="group relative h-[480px] overflow-hidden rounded-3xl bg-[#0E0E0E] shadow-[0_30px_80px_-30px_rgba(0,0,0,0.9)] md:h-[560px] lg:h-[620px]"
     >
-      {bg && (
-        <motion.img
-          src={bg}
-          alt={title}
-          initial={{ scale: 1.08 }}
-          animate={{ scale: 1.03 }}
-          transition={{ duration: 2, ease: "easeOut" }}
-          className="absolute inset-0 h-full w-full object-cover transition-transform duration-[1800ms] group-hover:scale-[1.08]"
+      <video autoPlay muted loop playsInline preload="auto" className="absolute inset-0 h-full w-full object-cover">
+        <source
+          src="https://qlvsopynxpohlsmlfdsw.supabase.co/storage/v1/object/public/VIDEO%201%20GOPRO/download%20(1).mp4"
+          type="video/mp4"
         />
-      )}
-      {exp.preview_video_url && (
-        <video
-          src={exp.preview_video_url}
-          autoPlay
-          muted
-          loop
-          playsInline
-          preload="metadata"
-          className="absolute inset-0 h-full w-full object-cover opacity-0 transition-opacity duration-700 group-hover:opacity-100"
-        />
-      )}
+      </video>
 
       {/* Cinematic overlays */}
       <div className="absolute inset-0 bg-gradient-to-r from-black via-black/70 to-transparent" />
@@ -208,9 +185,8 @@ function HeroEmptyState() {
           transition={{ delay: 0.45 }}
           className="mt-5 max-w-xl text-sm leading-relaxed text-[#BEBEBE] md:text-base"
         >
-          Cadastre uma experiência em destaque pelo painel administrativo para
-          preencher automaticamente esta área com vídeos, imagens e descrição da
-          trilha.
+          Cadastre uma experiência em destaque pelo painel administrativo para preencher automaticamente esta área com
+          vídeos, imagens e descrição da trilha.
         </motion.p>
 
         <motion.div
