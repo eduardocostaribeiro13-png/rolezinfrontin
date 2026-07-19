@@ -54,7 +54,7 @@ function HeroFilled({ exp }: { exp: Experience }) {
           loop
           playsInline
           preload="metadata"
-          className="absolute inset-0 h-full w-full object-cover opacity-0 transition-opacity duration-700 group-hover:opacity-100"
+          className="absolute inset-0 h-full w-full object-cover opacity-100"
         />
       )}
 
