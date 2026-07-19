@@ -1,16 +1,7 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
-import {
-  ArrowLeft,
-  Clock,
-  Ruler,
-  Mountain,
-  Users,
-  Sparkles,
-  MapPin,
-  Play,
-} from "lucide-react";
+import { ArrowLeft, Clock, Ruler, Mountain, Users, Sparkles, MapPin, Play } from "lucide-react";
 import { ExperienceService } from "@/lib/services/experience-service";
 import type { Experience } from "@/lib/experiences";
 import { VIDEO_KIND_LABEL, brlCents } from "@/lib/experiences";
@@ -30,7 +21,10 @@ export const Route = createFileRoute("/experiencias/$slug")({
       return { meta: [{ title: "Experiência não encontrada" }, { name: "robots", content: "noindex" }] };
     }
     const title = loaderData.seo_title || `${loaderData.name} — Rolezin Frontin`;
-    const description = loaderData.seo_description || loaderData.short_description || "Experiência off-road em Engenheiro Paulo de Frontin.";
+    const description =
+      loaderData.seo_description ||
+      loaderData.short_description ||
+      "Experiência off-road em Engenheiro Paulo de Frontin.";
     const image = loaderData.og_image_url || loaderData.cover_image_url || undefined;
     return {
       meta: [
@@ -39,7 +33,12 @@ export const Route = createFileRoute("/experiencias/$slug")({
         { property: "og:title", content: title },
         { property: "og:description", content: description },
         { property: "og:type", content: "article" },
-        ...(image ? [{ property: "og:image", content: image }, { name: "twitter:card", content: "summary_large_image" }] : []),
+        ...(image
+          ? [
+              { property: "og:image", content: image },
+              { name: "twitter:card", content: "summary_large_image" },
+            ]
+          : []),
       ],
       links: [{ rel: "canonical", href: `/experiencias/${loaderData.slug}` }],
     };
@@ -56,7 +55,9 @@ export const Route = createFileRoute("/experiencias/$slug")({
   ),
   errorComponent: ({ error }) => (
     <div className="min-h-dvh grid place-items-center p-8">
-      <p role="alert" className="text-sm text-destructive">Erro: {error.message}</p>
+      <p role="alert" className="text-sm text-destructive">
+        Erro: {error.message}
+      </p>
     </div>
   ),
   component: ExperienceDetail,
@@ -78,30 +79,16 @@ function ExperienceDetail() {
       {/* HERO VIDEO */}
       <section className="relative h-[70vh] min-h-[520px] w-full overflow-hidden bg-black">
         <video
-  src="https://qlvsopynxpohlsmlfdsw.supabase.co/storage/v1/object/public/VIDEO%201%20GOPRO/video-gopro-saibreira.mp4"
-  poster={exp.horizontal_image_url ?? exp.cover_image_url ?? undefined}
-  autoPlay
-  muted
-  loop
-  playsInline
-  controls
-  className="absolute inset-0 h-full w-full object-cover"
-/>
-            poster={exp.horizontal_image_url ?? exp.cover_image_url ?? undefined}
-            autoPlay
-            muted
-            loop
-            playsInline
-            controls
-            className="absolute inset-0 h-full w-full object-cover"
-          />
-        ) : exp.horizontal_image_url || exp.cover_image_url ? (
-          <img
-            src={exp.horizontal_image_url ?? exp.cover_image_url ?? ""}
-            alt={exp.name}
-            className="absolute inset-0 h-full w-full object-cover"
-          />
-        ) : null}
+          src="https://qlvsopynxpohlsmlfdsw.supabase.co/storage/v1/object/public/VIDEO%201%20GOPRO/video-gopro-saibreira.mp4"
+          poster={exp.horizontal_image_url ?? exp.cover_image_url ?? undefined}
+          autoPlay
+          muted
+          loop
+          playsInline
+          controls
+          className="absolute inset-0 h-full w-full object-cover"
+        />
+
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent" />
 
         <div className="relative z-10 container-x flex h-full flex-col items-start justify-end pb-14 pt-24">
@@ -111,18 +98,17 @@ function ExperienceDetail() {
           >
             <ArrowLeft className="h-3.5 w-3.5" /> Todas as trilhas
           </Link>
+
           {exp.category && (
-            <span className="font-mono text-xs uppercase tracking-[0.35em] text-brand">
-              {exp.category.name}
-            </span>
+            <span className="font-mono text-xs uppercase tracking-[0.35em] text-brand">{exp.category.name}</span>
           )}
+
           <h1 className="mt-3 font-display text-5xl leading-[0.95] tracking-wide text-white sm:text-6xl md:text-7xl">
             {exp.name}
           </h1>
+
           {exp.short_description && (
-            <p className="mt-4 max-w-2xl text-base text-white/80 md:text-lg">
-              {exp.short_description}
-            </p>
+            <p className="mt-4 max-w-2xl text-base text-white/80 md:text-lg">{exp.short_description}</p>
           )}
         </div>
       </section>
@@ -138,17 +124,11 @@ function ExperienceDetail() {
             <div className="flex items-center justify-between rounded-xl bg-brand/10 p-4 md:justify-end md:gap-4">
               {exp.price_cents > 0 && (
                 <div>
-                  <p className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
-                    A partir de
-                  </p>
+                  <p className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">A partir de</p>
                   <p className="font-display text-2xl text-brand">{brlCents(exp.price_cents)}</p>
                 </div>
               )}
-              <Link
-                to="/reservar"
-                search={exp.tour_slug ? { tour: exp.tour_slug } : {}}
-                className="btn-brand text-xs"
-              >
+              <Link to="/reservar" search={exp.tour_slug ? { tour: exp.tour_slug } : {}} className="btn-brand text-xs">
                 Reservar Agora
               </Link>
             </div>
@@ -230,7 +210,11 @@ function ExperienceDetail() {
 
           {exp.route_map_url && (
             <Block title="Mapa da rota">
-              <img src={exp.route_map_url} alt={`Mapa — ${exp.name}`} className="w-full rounded-xl border border-border/60" />
+              <img
+                src={exp.route_map_url}
+                alt={`Mapa — ${exp.name}`}
+                className="w-full rounded-xl border border-border/60"
+              />
             </Block>
           )}
         </div>
@@ -243,7 +227,9 @@ function ExperienceDetail() {
               <p className="mb-3 font-mono text-[10px] uppercase tracking-widest text-muted-foreground">Tags</p>
               <div className="flex flex-wrap gap-2">
                 {exp.tags.map((t) => (
-                  <span key={t} className="rounded-full border border-border/60 px-3 py-1 text-xs">{t}</span>
+                  <span key={t} className="rounded-full border border-border/60 px-3 py-1 text-xs">
+                    {t}
+                  </span>
                 ))}
               </div>
             </div>
