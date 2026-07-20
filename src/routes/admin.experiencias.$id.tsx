@@ -2,7 +2,7 @@ import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { ArrowLeft, Plus, Trash2, Upload, Loader2 } from "lucide-react";
+import { ArrowLeft, Plus, Trash2, Upload, Loader2, ArrowUp, ArrowDown } from "lucide-react";
 import { ExperienceService } from "@/lib/services/experience-service";
 import { StorageService, type ExperienceMediaKind } from "@/lib/services/storage-service";
 import {
@@ -237,6 +237,9 @@ function AdminExperienciaEdit() {
           <Field label="Ordem" >
             <Input type="number" value={form.sort_order} onChange={(e) => set("sort_order", Number(e.target.value))} />
           </Field>
+          <Field label="Popularidade">
+            <Input type="number" value={form.popularity} onChange={(e) => set("popularity", Number(e.target.value))} />
+          </Field>
         </div>
       </Section>
 
@@ -268,13 +271,12 @@ function AdminExperienciaEdit() {
       </Section>
 
       {/* Imagens */}
-      <Section title="Imagens">
+      <Section title="Hero & Imagens principais">
         <div className="grid gap-4 md:grid-cols-3">
           <MediaImage label="Capa" kind="cover" url={form.cover_image_url} onChange={(u) => set("cover_image_url", u)} />
           <MediaImage label="Horizontal" kind="horizontal" url={form.horizontal_image_url} onChange={(u) => set("horizontal_image_url", u)} />
           <MediaImage label="Vertical" kind="vertical" url={form.vertical_image_url} onChange={(u) => set("vertical_image_url", u)} />
           <MediaImage label="Mapa da rota" kind="map" url={form.route_map_url} onChange={(u) => set("route_map_url", u)} />
-          <MediaImage label="Imagem de compartilhamento (OG)" kind="cover" url={form.og_image_url} onChange={(u) => set("og_image_url", u)} />
         </div>
       </Section>
 
@@ -310,7 +312,7 @@ function AdminExperienciaEdit() {
       </Section>
 
       {/* SEO */}
-      <Section title="SEO">
+      <Section title="SEO & Compartilhamento">
         <div className="grid gap-4 md:grid-cols-2">
           <Field label="Título SEO">
             <Input value={form.seo_title ?? ""} onChange={(e) => set("seo_title", e.target.value)} />
@@ -318,6 +320,23 @@ function AdminExperienciaEdit() {
           <Field label="Descrição SEO">
             <Input value={form.seo_description ?? ""} onChange={(e) => set("seo_description", e.target.value)} />
           </Field>
+          <MediaImage label="Imagem Open Graph" kind="cover" url={form.og_image_url} onChange={(u) => set("og_image_url", u)} />
+          <div className="rounded-xl border border-border/60 bg-background overflow-hidden">
+            <div className="aspect-[1.91/1] w-full bg-muted overflow-hidden">
+              {form.og_image_url || form.cover_image_url ? (
+                <img src={form.og_image_url ?? form.cover_image_url ?? ""} alt="" className="h-full w-full object-cover" />
+              ) : (
+                <div className="flex h-full items-center justify-center text-xs text-muted-foreground">Sem imagem</div>
+              )}
+            </div>
+            <div className="p-3">
+              <p className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground">Preview</p>
+              <p className="mt-1 font-medium truncate">{form.seo_title || form.name || "Título"}</p>
+              <p className="text-xs text-muted-foreground line-clamp-2">
+                {form.seo_description || form.short_description || "Descrição"}
+              </p>
+            </div>
+          </div>
         </div>
       </Section>
 
@@ -478,35 +497,89 @@ function POIEditor({ items, onChange }: { items: POI[]; onChange: (v: POI[]) => 
 
 function GalleryEditor({ items, onChange }: { items: ExperienceGalleryItem[]; onChange: (v: ExperienceGalleryItem[]) => void }) {
   const [uploading, setUploading] = useState(false);
-  const add = async (file: File) => {
+  const addFiles = async (files: FileList) => {
     setUploading(true);
     try {
-      const url = await StorageService.uploadExperienceMedia(file, "gallery");
-      onChange([...items, { id: crypto.randomUUID(), url, caption: null, sort_order: items.length }]);
+      const uploaded: ExperienceGalleryItem[] = [];
+      for (const file of Array.from(files)) {
+        if (!file.type.startsWith("image/")) continue;
+        const url = await StorageService.uploadExperienceMedia(file, "gallery");
+        uploaded.push({ id: crypto.randomUUID(), url, caption: null, sort_order: items.length + uploaded.length });
+      }
+      if (uploaded.length) onChange([...items, ...uploaded]);
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "Erro");
     } finally {
       setUploading(false);
     }
   };
+  const move = (i: number, dir: -1 | 1) => {
+    const j = i + dir;
+    if (j < 0 || j >= items.length) return;
+    const next = [...items];
+    [next[i], next[j]] = [next[j], next[i]];
+    onChange(next.map((x, k) => ({ ...x, sort_order: k })));
+  };
   return (
     <div>
-      <label className="flex h-28 cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed border-border/60 hover:border-brand/60">
+      <label
+        className="flex h-28 cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed border-border/60 hover:border-brand/60"
+        onDragOver={(e) => e.preventDefault()}
+        onDrop={(e) => {
+          e.preventDefault();
+          if (e.dataTransfer.files?.length) void addFiles(e.dataTransfer.files);
+        }}
+      >
         {uploading ? <Loader2 className="h-5 w-5 animate-spin text-brand" /> : <Plus className="h-5 w-5 text-muted-foreground" />}
-        <span className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">Adicionar imagem</span>
-        <input type="file" accept="image/*" className="hidden" onChange={(e) => e.target.files?.[0] && add(e.target.files[0])} />
+        <span className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
+          {uploading ? "Enviando…" : "Adicionar imagens (múltiplas)"}
+        </span>
+        <input
+          type="file"
+          accept="image/*"
+          multiple
+          className="hidden"
+          onChange={(e) => e.target.files && addFiles(e.target.files)}
+        />
       </label>
       {items.length > 0 && (
-        <div className="mt-4 grid gap-3 sm:grid-cols-3 md:grid-cols-4">
+        <div className="mt-4 grid gap-3 sm:grid-cols-2 md:grid-cols-3">
           {items.map((g, i) => (
-            <div key={g.id} className="relative overflow-hidden rounded-lg border border-border/60">
-              <img src={g.url} alt="" className="aspect-square w-full object-cover" />
-              <button
-                onClick={() => onChange(items.filter((_, j) => j !== i))}
-                className="absolute right-1 top-1 rounded-full bg-black/70 p-1 text-white hover:text-destructive"
-              >
-                <Trash2 className="h-3.5 w-3.5" />
-              </button>
+            <div key={g.id} className="rounded-lg border border-border/60 overflow-hidden bg-background">
+              <div className="relative">
+                <img src={g.url} alt="" className="aspect-square w-full object-cover" />
+                <div className="absolute right-1 top-1 flex gap-1">
+                  <button
+                    onClick={() => move(i, -1)}
+                    disabled={i === 0}
+                    className="rounded-full bg-black/70 p-1 text-white hover:text-brand disabled:opacity-40"
+                    title="Mover para cima"
+                  >
+                    <ArrowUp className="h-3.5 w-3.5" />
+                  </button>
+                  <button
+                    onClick={() => move(i, 1)}
+                    disabled={i === items.length - 1}
+                    className="rounded-full bg-black/70 p-1 text-white hover:text-brand disabled:opacity-40"
+                    title="Mover para baixo"
+                  >
+                    <ArrowDown className="h-3.5 w-3.5" />
+                  </button>
+                  <button
+                    onClick={() => onChange(items.filter((_, j) => j !== i).map((x, k) => ({ ...x, sort_order: k })))}
+                    className="rounded-full bg-black/70 p-1 text-white hover:text-destructive"
+                    title="Remover"
+                  >
+                    <Trash2 className="h-3.5 w-3.5" />
+                  </button>
+                </div>
+              </div>
+              <Input
+                value={g.caption ?? ""}
+                onChange={(e) => onChange(items.map((x, j) => (j === i ? { ...x, caption: e.target.value } : x)))}
+                placeholder="Legenda"
+                className="h-8 rounded-none border-0 border-t border-border/60 text-xs"
+              />
             </div>
           ))}
         </div>
@@ -515,14 +588,25 @@ function GalleryEditor({ items, onChange }: { items: ExperienceGalleryItem[]; on
   );
 }
 
+const VIDEO_KIND_TO_STORAGE: Record<ExperienceVideoKind, ExperienceMediaKind> = {
+  drone: "drone",
+  onboard: "onboard",
+  helmet: "main",
+  side: "main",
+  "360": "video360",
+  extra: "main",
+};
+
 function ExtraVideosEditor({ items, onChange }: { items: ExperienceExtraVideo[]; onChange: (v: ExperienceExtraVideo[]) => void }) {
   const [uploading, setUploading] = useState<ExperienceVideoKind | null>(null);
   const add = async (file: File, kind: ExperienceVideoKind) => {
     if (!file.type.startsWith("video/")) return toast.error("Selecione um vídeo");
+    if (file.size > 200 * 1024 * 1024) return toast.error("Máx. 200 MB");
     setUploading(kind);
     try {
-      const url = await StorageService.uploadExperienceMedia(file, "main");
+      const url = await StorageService.uploadExperienceMedia(file, VIDEO_KIND_TO_STORAGE[kind]);
       onChange([...items, { id: crypto.randomUUID(), kind, url, label: null, sort_order: items.length }]);
+      toast.success("Vídeo enviado");
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "Erro");
     } finally {
