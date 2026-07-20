@@ -313,7 +313,7 @@ function AdminExperienciaEdit() {
       </Section>
 
       {/* SEO */}
-      <Section title="SEO">
+      <Section title="SEO & Compartilhamento">
         <div className="grid gap-4 md:grid-cols-2">
           <Field label="Título SEO">
             <Input value={form.seo_title ?? ""} onChange={(e) => set("seo_title", e.target.value)} />
@@ -321,6 +321,23 @@ function AdminExperienciaEdit() {
           <Field label="Descrição SEO">
             <Input value={form.seo_description ?? ""} onChange={(e) => set("seo_description", e.target.value)} />
           </Field>
+          <MediaImage label="Imagem Open Graph" kind="cover" url={form.og_image_url} onChange={(u) => set("og_image_url", u)} />
+          <div className="rounded-xl border border-border/60 bg-background overflow-hidden">
+            <div className="aspect-[1.91/1] w-full bg-muted overflow-hidden">
+              {form.og_image_url || form.cover_image_url ? (
+                <img src={form.og_image_url ?? form.cover_image_url ?? ""} alt="" className="h-full w-full object-cover" />
+              ) : (
+                <div className="flex h-full items-center justify-center text-xs text-muted-foreground">Sem imagem</div>
+              )}
+            </div>
+            <div className="p-3">
+              <p className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground">Preview</p>
+              <p className="mt-1 font-medium truncate">{form.seo_title || form.name || "Título"}</p>
+              <p className="text-xs text-muted-foreground line-clamp-2">
+                {form.seo_description || form.short_description || "Descrição"}
+              </p>
+            </div>
+          </div>
         </div>
       </Section>
 
