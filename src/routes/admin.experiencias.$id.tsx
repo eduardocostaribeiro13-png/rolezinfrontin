@@ -237,6 +237,9 @@ function AdminExperienciaEdit() {
           <Field label="Ordem" >
             <Input type="number" value={form.sort_order} onChange={(e) => set("sort_order", Number(e.target.value))} />
           </Field>
+          <Field label="Popularidade">
+            <Input type="number" value={form.popularity} onChange={(e) => set("popularity", Number(e.target.value))} />
+          </Field>
         </div>
       </Section>
 
