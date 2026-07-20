@@ -271,13 +271,12 @@ function AdminExperienciaEdit() {
       </Section>
 
       {/* Imagens */}
-      <Section title="Imagens">
+      <Section title="Hero & Imagens principais">
         <div className="grid gap-4 md:grid-cols-3">
           <MediaImage label="Capa" kind="cover" url={form.cover_image_url} onChange={(u) => set("cover_image_url", u)} />
           <MediaImage label="Horizontal" kind="horizontal" url={form.horizontal_image_url} onChange={(u) => set("horizontal_image_url", u)} />
           <MediaImage label="Vertical" kind="vertical" url={form.vertical_image_url} onChange={(u) => set("vertical_image_url", u)} />
           <MediaImage label="Mapa da rota" kind="map" url={form.route_map_url} onChange={(u) => set("route_map_url", u)} />
-          <MediaImage label="Imagem de compartilhamento (OG)" kind="cover" url={form.og_image_url} onChange={(u) => set("og_image_url", u)} />
         </div>
       </Section>
 
