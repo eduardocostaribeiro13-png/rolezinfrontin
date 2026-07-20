@@ -306,88 +306,36 @@ function AdminExperienciaEdit() {
         </Field>
       </Section>
 
-      {/* HERO VISUAL */}
-      <Section title="Hero da Experiência">
-        <div className="space-y-8">
-          {/* Preview */}
-          <div className="overflow-hidden rounded-2xl border border-border/60 bg-background">
-            <div className="relative aspect-[16/8] bg-muted">
-              {form.cover_image_url ? (
-                <img src={form.cover_image_url} alt="" className="h-full w-full object-cover" />
-              ) : (
-                <div className="flex h-full items-center justify-center text-sm text-muted-foreground">
-                  Nenhuma imagem enviada
-                </div>
-              )}
+      {/* Imagens */}
+      <Section title="Hero & Imagens principais">
+        <div className="grid gap-4 md:grid-cols-3">
+          <MediaImage
+            label="Capa"
+            kind="cover"
+            url={form.cover_image_url}
+            onChange={(u) => set("cover_image_url", u)}
+          />
 
-              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+          <MediaImage
+            label="Horizontal"
+            kind="horizontal"
+            url={form.horizontal_image_url}
+            onChange={(u) => set("horizontal_image_url", u)}
+          />
 
-              <div className="absolute bottom-8 left-8">
-                <p className="font-mono text-[10px] uppercase tracking-[0.35em] text-brand">Preview Hero</p>
+          <MediaImage
+            label="Vertical"
+            kind="vertical"
+            url={form.vertical_image_url}
+            onChange={(u) => set("vertical_image_url", u)}
+          />
 
-                <h2 className="mt-2 text-4xl font-bold text-white">{form.name || "Nome da Experiência"}</h2>
-
-                <p className="mt-3 max-w-xl text-sm text-white/80">
-                  {form.short_description || "Descrição curta aparecerá aqui."}
-                </p>
-              </div>
-            </div>
-          </div>
-
-          {/* Uploads */}
-
-          <div className="grid gap-6 lg:grid-cols-2">
-            <div>
-              <h3 className="mb-3 font-semibold">Imagem Principal</h3>
-
-              <MediaImage
-                label="Imagem Hero"
-                kind="cover"
-                url={form.cover_image_url}
-                onChange={(u) => set("cover_image_url", u)}
-              />
-            </div>
-
-            <div>
-              <h3 className="mb-3 font-semibold">Vídeo Principal</h3>
-
-              <VideoField
-                label="Vídeo Hero"
-                kind="main"
-                url={form.main_video_url}
-                onChange={(u) => set("main_video_url", u)}
-              />
-            </div>
-          </div>
-
-          {/* Imagens auxiliares */}
-
-          <div>
-            <h3 className="mb-4 text-lg font-semibold">Imagens Auxiliares</h3>
-
-            <div className="grid gap-5 md:grid-cols-3">
-              <MediaImage
-                label="Horizontal"
-                kind="horizontal"
-                url={form.horizontal_image_url}
-                onChange={(u) => set("horizontal_image_url", u)}
-              />
-
-              <MediaImage
-                label="Vertical"
-                kind="vertical"
-                url={form.vertical_image_url}
-                onChange={(u) => set("vertical_image_url", u)}
-              />
-
-              <MediaImage
-                label="Mapa da Rota"
-                kind="map"
-                url={form.route_map_url}
-                onChange={(u) => set("route_map_url", u)}
-              />
-            </div>
-          </div>
+          <MediaImage
+            label="Mapa da rota"
+            kind="map"
+            url={form.route_map_url}
+            onChange={(u) => set("route_map_url", u)}
+          />
         </div>
       </Section>
 
