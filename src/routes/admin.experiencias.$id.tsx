@@ -497,35 +497,89 @@ function POIEditor({ items, onChange }: { items: POI[]; onChange: (v: POI[]) => 
 
 function GalleryEditor({ items, onChange }: { items: ExperienceGalleryItem[]; onChange: (v: ExperienceGalleryItem[]) => void }) {
   const [uploading, setUploading] = useState(false);
-  const add = async (file: File) => {
+  const addFiles = async (files: FileList) => {
     setUploading(true);
     try {
-      const url = await StorageService.uploadExperienceMedia(file, "gallery");
-      onChange([...items, { id: crypto.randomUUID(), url, caption: null, sort_order: items.length }]);
+      const uploaded: ExperienceGalleryItem[] = [];
+      for (const file of Array.from(files)) {
+        if (!file.type.startsWith("image/")) continue;
+        const url = await StorageService.uploadExperienceMedia(file, "gallery");
+        uploaded.push({ id: crypto.randomUUID(), url, caption: null, sort_order: items.length + uploaded.length });
+      }
+      if (uploaded.length) onChange([...items, ...uploaded]);
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "Erro");
     } finally {
       setUploading(false);
     }
   };
+  const move = (i: number, dir: -1 | 1) => {
+    const j = i + dir;
+    if (j < 0 || j >= items.length) return;
+    const next = [...items];
+    [next[i], next[j]] = [next[j], next[i]];
+    onChange(next.map((x, k) => ({ ...x, sort_order: k })));
+  };
   return (
     <div>
-      <label className="flex h-28 cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed border-border/60 hover:border-brand/60">
+      <label
+        className="flex h-28 cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed border-border/60 hover:border-brand/60"
+        onDragOver={(e) => e.preventDefault()}
+        onDrop={(e) => {
+          e.preventDefault();
+          if (e.dataTransfer.files?.length) void addFiles(e.dataTransfer.files);
+        }}
+      >
         {uploading ? <Loader2 className="h-5 w-5 animate-spin text-brand" /> : <Plus className="h-5 w-5 text-muted-foreground" />}
-        <span className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">Adicionar imagem</span>
-        <input type="file" accept="image/*" className="hidden" onChange={(e) => e.target.files?.[0] && add(e.target.files[0])} />
+        <span className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
+          {uploading ? "Enviando…" : "Adicionar imagens (múltiplas)"}
+        </span>
+        <input
+          type="file"
+          accept="image/*"
+          multiple
+          className="hidden"
+          onChange={(e) => e.target.files && addFiles(e.target.files)}
+        />
       </label>
       {items.length > 0 && (
-        <div className="mt-4 grid gap-3 sm:grid-cols-3 md:grid-cols-4">
+        <div className="mt-4 grid gap-3 sm:grid-cols-2 md:grid-cols-3">
           {items.map((g, i) => (
-            <div key={g.id} className="relative overflow-hidden rounded-lg border border-border/60">
-              <img src={g.url} alt="" className="aspect-square w-full object-cover" />
-              <button
-                onClick={() => onChange(items.filter((_, j) => j !== i))}
-                className="absolute right-1 top-1 rounded-full bg-black/70 p-1 text-white hover:text-destructive"
-              >
-                <Trash2 className="h-3.5 w-3.5" />
-              </button>
+            <div key={g.id} className="rounded-lg border border-border/60 overflow-hidden bg-background">
+              <div className="relative">
+                <img src={g.url} alt="" className="aspect-square w-full object-cover" />
+                <div className="absolute right-1 top-1 flex gap-1">
+                  <button
+                    onClick={() => move(i, -1)}
+                    disabled={i === 0}
+                    className="rounded-full bg-black/70 p-1 text-white hover:text-brand disabled:opacity-40"
+                    title="Mover para cima"
+                  >
+                    <ArrowUp className="h-3.5 w-3.5" />
+                  </button>
+                  <button
+                    onClick={() => move(i, 1)}
+                    disabled={i === items.length - 1}
+                    className="rounded-full bg-black/70 p-1 text-white hover:text-brand disabled:opacity-40"
+                    title="Mover para baixo"
+                  >
+                    <ArrowDown className="h-3.5 w-3.5" />
+                  </button>
+                  <button
+                    onClick={() => onChange(items.filter((_, j) => j !== i).map((x, k) => ({ ...x, sort_order: k })))}
+                    className="rounded-full bg-black/70 p-1 text-white hover:text-destructive"
+                    title="Remover"
+                  >
+                    <Trash2 className="h-3.5 w-3.5" />
+                  </button>
+                </div>
+              </div>
+              <Input
+                value={g.caption ?? ""}
+                onChange={(e) => onChange(items.map((x, j) => (j === i ? { ...x, caption: e.target.value } : x)))}
+                placeholder="Legenda"
+                className="h-8 rounded-none border-0 border-t border-border/60 text-xs"
+              />
             </div>
           ))}
         </div>
@@ -534,14 +588,25 @@ function GalleryEditor({ items, onChange }: { items: ExperienceGalleryItem[]; on
   );
 }
 
+const VIDEO_KIND_TO_STORAGE: Record<ExperienceVideoKind, ExperienceMediaKind> = {
+  drone: "drone",
+  onboard: "onboard",
+  helmet: "main",
+  side: "main",
+  "360": "video360",
+  extra: "main",
+};
+
 function ExtraVideosEditor({ items, onChange }: { items: ExperienceExtraVideo[]; onChange: (v: ExperienceExtraVideo[]) => void }) {
   const [uploading, setUploading] = useState<ExperienceVideoKind | null>(null);
   const add = async (file: File, kind: ExperienceVideoKind) => {
     if (!file.type.startsWith("video/")) return toast.error("Selecione um vídeo");
+    if (file.size > 200 * 1024 * 1024) return toast.error("Máx. 200 MB");
     setUploading(kind);
     try {
-      const url = await StorageService.uploadExperienceMedia(file, "main");
+      const url = await StorageService.uploadExperienceMedia(file, VIDEO_KIND_TO_STORAGE[kind]);
       onChange([...items, { id: crypto.randomUUID(), kind, url, label: null, sort_order: items.length }]);
+      toast.success("Vídeo enviado");
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "Erro");
     } finally {
