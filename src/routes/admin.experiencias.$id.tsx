@@ -106,7 +106,10 @@ function AdminExperienciaEdit() {
 
   const save = useMutation({
     mutationFn: async (payload: FormState) => {
-      const tags = tagsInput.split(",").map((t) => t.trim()).filter(Boolean);
+      const tags = tagsInput
+        .split(",")
+        .map((t) => t.trim())
+        .filter(Boolean);
       return ExperienceService.upsert({ ...payload, tags });
     },
     onSuccess: (newId) => {
@@ -125,14 +128,13 @@ function AdminExperienciaEdit() {
   return (
     <div className="max-w-5xl space-y-8">
       <div className="flex items-center justify-between gap-4">
-        <Link to="/admin/experiencias" className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-brand">
+        <Link
+          to="/admin/experiencias"
+          className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-brand"
+        >
           <ArrowLeft className="h-4 w-4" /> Voltar
         </Link>
-        <button
-          onClick={() => save.mutate(form)}
-          disabled={save.isPending}
-          className="btn-brand text-xs"
-        >
+        <button onClick={() => save.mutate(form)} disabled={save.isPending} className="btn-brand text-xs">
           {save.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : "Salvar"}
         </button>
       </div>
@@ -160,7 +162,11 @@ function AdminExperienciaEdit() {
             <Input value={form.slug} onChange={(e) => set("slug", slugify(e.target.value))} />
           </Field>
           <Field label="Descrição curta" className="md:col-span-2">
-            <Textarea rows={2} value={form.short_description ?? ""} onChange={(e) => set("short_description", e.target.value)} />
+            <Textarea
+              rows={2}
+              value={form.short_description ?? ""}
+              onChange={(e) => set("short_description", e.target.value)}
+            />
           </Field>
           <Field label="Descrição completa" className="md:col-span-2">
             <Textarea rows={6} value={form.description ?? ""} onChange={(e) => set("description", e.target.value)} />
@@ -173,7 +179,9 @@ function AdminExperienciaEdit() {
             >
               <option value="">—</option>
               {cats.map((c) => (
-                <option key={c.id} value={c.id}>{c.name}</option>
+                <option key={c.id} value={c.id}>
+                  {c.name}
+                </option>
               ))}
             </select>
           </Field>
@@ -184,21 +192,37 @@ function AdminExperienciaEdit() {
               className="w-full rounded-md border border-border/60 bg-background px-3 py-2 text-sm"
             >
               {EXPERIENCE_LEVELS.map((l) => (
-                <option key={l} value={l}>{l}</option>
+                <option key={l} value={l}>
+                  {l}
+                </option>
               ))}
             </select>
           </Field>
           <Field label="Duração (horas)">
-            <Input type="number" step="0.5" value={form.duration_hours} onChange={(e) => set("duration_hours", Number(e.target.value))} />
+            <Input
+              type="number"
+              step="0.5"
+              value={form.duration_hours}
+              onChange={(e) => set("duration_hours", Number(e.target.value))}
+            />
           </Field>
           <Field label="Distância (km)">
-            <Input type="number" step="0.1" value={form.distance_km} onChange={(e) => set("distance_km", Number(e.target.value))} />
+            <Input
+              type="number"
+              step="0.1"
+              value={form.distance_km}
+              onChange={(e) => set("distance_km", Number(e.target.value))}
+            />
           </Field>
           <Field label="Altitude (m)">
             <Input type="number" value={form.altitude_m} onChange={(e) => set("altitude_m", Number(e.target.value))} />
           </Field>
           <Field label="Preço (centavos R$)">
-            <Input type="number" value={form.price_cents} onChange={(e) => set("price_cents", Number(e.target.value))} />
+            <Input
+              type="number"
+              value={form.price_cents}
+              onChange={(e) => set("price_cents", Number(e.target.value))}
+            />
           </Field>
           <Field label="Máx. pessoas">
             <Input type="number" value={form.max_people} onChange={(e) => set("max_people", Number(e.target.value))} />
@@ -210,7 +234,11 @@ function AdminExperienciaEdit() {
               className="w-full rounded-md border border-border/60 bg-background px-3 py-2 text-sm"
             >
               <option value="">—</option>
-              {EXPERIENCE_BADGES.map((b) => <option key={b} value={b}>{b}</option>)}
+              {EXPERIENCE_BADGES.map((b) => (
+                <option key={b} value={b}>
+                  {b}
+                </option>
+              ))}
             </select>
           </Field>
           <Field label="Status">
@@ -231,10 +259,14 @@ function AdminExperienciaEdit() {
               className="w-full rounded-md border border-border/60 bg-background px-3 py-2 text-sm"
             >
               <option value="">— sem vínculo —</option>
-              {tours.map((t) => <option key={t.id} value={t.slug}>{t.name}</option>)}
+              {tours.map((t) => (
+                <option key={t.id} value={t.slug}>
+                  {t.name}
+                </option>
+              ))}
             </select>
           </Field>
-          <Field label="Ordem" >
+          <Field label="Ordem">
             <Input type="number" value={form.sort_order} onChange={(e) => set("sort_order", Number(e.target.value))} />
           </Field>
           <Field label="Popularidade">
@@ -266,27 +298,126 @@ function AdminExperienciaEdit() {
           })}
         </div>
         <Field label="Tags (separadas por vírgula)" className="mt-4">
-          <Input value={tagsInput} onChange={(e) => setTagsInput(e.target.value)} placeholder="cachoeira, drone, familia" />
+          <Input
+            value={tagsInput}
+            onChange={(e) => setTagsInput(e.target.value)}
+            placeholder="cachoeira, drone, familia"
+          />
         </Field>
       </Section>
 
-      {/* Imagens */}
-      <Section title="Hero & Imagens principais">
-        <div className="grid gap-4 md:grid-cols-3">
-          <MediaImage label="Capa" kind="cover" url={form.cover_image_url} onChange={(u) => set("cover_image_url", u)} />
-          <MediaImage label="Horizontal" kind="horizontal" url={form.horizontal_image_url} onChange={(u) => set("horizontal_image_url", u)} />
-          <MediaImage label="Vertical" kind="vertical" url={form.vertical_image_url} onChange={(u) => set("vertical_image_url", u)} />
-          <MediaImage label="Mapa da rota" kind="map" url={form.route_map_url} onChange={(u) => set("route_map_url", u)} />
+      {/* HERO VISUAL */}
+      <Section title="Hero da Experiência">
+        <div className="space-y-8">
+          {/* Preview */}
+          <div className="overflow-hidden rounded-2xl border border-border/60 bg-background">
+            <div className="relative aspect-[16/8] bg-muted">
+              {form.cover_image_url ? (
+                <img src={form.cover_image_url} alt="" className="h-full w-full object-cover" />
+              ) : (
+                <div className="flex h-full items-center justify-center text-sm text-muted-foreground">
+                  Nenhuma imagem enviada
+                </div>
+              )}
+
+              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+
+              <div className="absolute bottom-8 left-8">
+                <p className="font-mono text-[10px] uppercase tracking-[0.35em] text-brand">Preview Hero</p>
+
+                <h2 className="mt-2 text-4xl font-bold text-white">{form.name || "Nome da Experiência"}</h2>
+
+                <p className="mt-3 max-w-xl text-sm text-white/80">
+                  {form.short_description || "Descrição curta aparecerá aqui."}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Uploads */}
+
+          <div className="grid gap-6 lg:grid-cols-2">
+            <div>
+              <h3 className="mb-3 font-semibold">Imagem Principal</h3>
+
+              <MediaImage
+                label="Imagem Hero"
+                kind="cover"
+                url={form.cover_image_url}
+                onChange={(u) => set("cover_image_url", u)}
+              />
+            </div>
+
+            <div>
+              <h3 className="mb-3 font-semibold">Vídeo Principal</h3>
+
+              <VideoField
+                label="Vídeo Hero"
+                kind="main"
+                url={form.main_video_url}
+                onChange={(u) => set("main_video_url", u)}
+              />
+            </div>
+          </div>
+
+          {/* Imagens auxiliares */}
+
+          <div>
+            <h3 className="mb-4 text-lg font-semibold">Imagens Auxiliares</h3>
+
+            <div className="grid gap-5 md:grid-cols-3">
+              <MediaImage
+                label="Horizontal"
+                kind="horizontal"
+                url={form.horizontal_image_url}
+                onChange={(u) => set("horizontal_image_url", u)}
+              />
+
+              <MediaImage
+                label="Vertical"
+                kind="vertical"
+                url={form.vertical_image_url}
+                onChange={(u) => set("vertical_image_url", u)}
+              />
+
+              <MediaImage
+                label="Mapa da Rota"
+                kind="map"
+                url={form.route_map_url}
+                onChange={(u) => set("route_map_url", u)}
+              />
+            </div>
+          </div>
         </div>
       </Section>
 
       {/* Vídeos principais */}
       <Section title="Vídeos principais">
         <div className="grid gap-4 md:grid-cols-2">
-          <VideoField label="Vídeo principal" kind="main" url={form.main_video_url} onChange={(u) => set("main_video_url", u)} />
-          <VideoField label="Preview (autoplay hover)" kind="preview" url={form.preview_video_url} onChange={(u) => set("preview_video_url", u)} />
-          <VideoField label="Drone" kind="drone" url={form.drone_video_url} onChange={(u) => set("drone_video_url", u)} />
-          <VideoField label="Onboard / GoPro" kind="onboard" url={form.onboard_video_url} onChange={(u) => set("onboard_video_url", u)} />
+          <VideoField
+            label="Vídeo principal"
+            kind="main"
+            url={form.main_video_url}
+            onChange={(u) => set("main_video_url", u)}
+          />
+          <VideoField
+            label="Preview (autoplay hover)"
+            kind="preview"
+            url={form.preview_video_url}
+            onChange={(u) => set("preview_video_url", u)}
+          />
+          <VideoField
+            label="Drone"
+            kind="drone"
+            url={form.drone_video_url}
+            onChange={(u) => set("drone_video_url", u)}
+          />
+          <VideoField
+            label="Onboard / GoPro"
+            kind="onboard"
+            url={form.onboard_video_url}
+            onChange={(u) => set("onboard_video_url", u)}
+          />
           <VideoField label="360°" kind="video360" url={form.video_360_url} onChange={(u) => set("video_360_url", u)} />
         </div>
       </Section>
@@ -320,11 +451,20 @@ function AdminExperienciaEdit() {
           <Field label="Descrição SEO">
             <Input value={form.seo_description ?? ""} onChange={(e) => set("seo_description", e.target.value)} />
           </Field>
-          <MediaImage label="Imagem Open Graph" kind="cover" url={form.og_image_url} onChange={(u) => set("og_image_url", u)} />
+          <MediaImage
+            label="Imagem Open Graph"
+            kind="cover"
+            url={form.og_image_url}
+            onChange={(u) => set("og_image_url", u)}
+          />
           <div className="rounded-xl border border-border/60 bg-background overflow-hidden">
             <div className="aspect-[1.91/1] w-full bg-muted overflow-hidden">
               {form.og_image_url || form.cover_image_url ? (
-                <img src={form.og_image_url ?? form.cover_image_url ?? ""} alt="" className="h-full w-full object-cover" />
+                <img
+                  src={form.og_image_url ?? form.cover_image_url ?? ""}
+                  alt=""
+                  className="h-full w-full object-cover"
+                />
               ) : (
                 <div className="flex h-full items-center justify-center text-xs text-muted-foreground">Sem imagem</div>
               )}
@@ -361,13 +501,25 @@ function Section({ title, children }: { title: string; children: React.ReactNode
 function Field({ label, children, className = "" }: { label: string; children: React.ReactNode; className?: string }) {
   return (
     <div className={className}>
-      <Label className="mb-1.5 block font-mono text-[10px] uppercase tracking-widest text-muted-foreground">{label}</Label>
+      <Label className="mb-1.5 block font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
+        {label}
+      </Label>
       {children}
     </div>
   );
 }
 
-function MediaImage({ label, kind, url, onChange }: { label: string; kind: ExperienceMediaKind; url: string | null; onChange: (u: string | null) => void }) {
+function MediaImage({
+  label,
+  kind,
+  url,
+  onChange,
+}: {
+  label: string;
+  kind: ExperienceMediaKind;
+  url: string | null;
+  onChange: (u: string | null) => void;
+}) {
   return (
     <ImageUpload
       label={label}
@@ -378,7 +530,17 @@ function MediaImage({ label, kind, url, onChange }: { label: string; kind: Exper
   );
 }
 
-function VideoField({ label, kind, url, onChange }: { label: string; kind: ExperienceMediaKind; url: string | null; onChange: (u: string | null) => void }) {
+function VideoField({
+  label,
+  kind,
+  url,
+  onChange,
+}: {
+  label: string;
+  kind: ExperienceMediaKind;
+  url: string | null;
+  onChange: (u: string | null) => void;
+}) {
   const [uploading, setUploading] = useState(false);
   const onFile = async (f: File) => {
     if (!f.type.startsWith("video/")) return toast.error("Selecione um vídeo");
@@ -396,18 +558,26 @@ function VideoField({ label, kind, url, onChange }: { label: string; kind: Exper
   };
   return (
     <div>
-      <Label className="mb-1.5 block font-mono text-[10px] uppercase tracking-widest text-muted-foreground">{label}</Label>
+      <Label className="mb-1.5 block font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
+        {label}
+      </Label>
       {url ? (
         <div className="rounded-xl border border-border/60 bg-black overflow-hidden">
           <video src={url} controls className="aspect-video w-full" />
           <div className="flex items-center justify-between gap-2 border-t border-border/60 bg-card p-2">
             <span className="truncate text-xs text-muted-foreground">Vídeo salvo</span>
-            <button onClick={() => onChange(null)} className="text-xs text-destructive">Remover</button>
+            <button onClick={() => onChange(null)} className="text-xs text-destructive">
+              Remover
+            </button>
           </div>
         </div>
       ) : (
         <label className="flex h-32 cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed border-border/60 hover:border-brand/60">
-          {uploading ? <Loader2 className="h-6 w-6 animate-spin text-brand" /> : <Upload className="h-6 w-6 text-muted-foreground" />}
+          {uploading ? (
+            <Loader2 className="h-6 w-6 animate-spin text-brand" />
+          ) : (
+            <Upload className="h-6 w-6 text-muted-foreground" />
+          )}
           <span className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
             {uploading ? "Enviando…" : "Selecionar vídeo"}
           </span>
@@ -427,7 +597,9 @@ function ListEditor({ label, items, onChange }: { label: string; items: string[]
   const [val, setVal] = useState("");
   return (
     <div>
-      <Label className="mb-1.5 block font-mono text-[10px] uppercase tracking-widest text-muted-foreground">{label}</Label>
+      <Label className="mb-1.5 block font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
+        {label}
+      </Label>
       <div className="flex gap-2">
         <Input value={val} onChange={(e) => setVal(e.target.value)} placeholder="Adicionar item" />
         <button
@@ -443,7 +615,10 @@ function ListEditor({ label, items, onChange }: { label: string; items: string[]
       </div>
       <ul className="mt-3 space-y-1">
         {items.map((it, i) => (
-          <li key={i} className="flex items-center gap-2 rounded-md border border-border/60 bg-background px-3 py-2 text-sm">
+          <li
+            key={i}
+            className="flex items-center gap-2 rounded-md border border-border/60 bg-background px-3 py-2 text-sm"
+          >
             <span className="flex-1">{it}</span>
             <button onClick={() => onChange(items.filter((_, j) => j !== i))} className="text-destructive">
               <Trash2 className="h-3.5 w-3.5" />
@@ -495,7 +670,13 @@ function POIEditor({ items, onChange }: { items: POI[]; onChange: (v: POI[]) => 
   );
 }
 
-function GalleryEditor({ items, onChange }: { items: ExperienceGalleryItem[]; onChange: (v: ExperienceGalleryItem[]) => void }) {
+function GalleryEditor({
+  items,
+  onChange,
+}: {
+  items: ExperienceGalleryItem[];
+  onChange: (v: ExperienceGalleryItem[]) => void;
+}) {
   const [uploading, setUploading] = useState(false);
   const addFiles = async (files: FileList) => {
     setUploading(true);
@@ -530,7 +711,11 @@ function GalleryEditor({ items, onChange }: { items: ExperienceGalleryItem[]; on
           if (e.dataTransfer.files?.length) void addFiles(e.dataTransfer.files);
         }}
       >
-        {uploading ? <Loader2 className="h-5 w-5 animate-spin text-brand" /> : <Plus className="h-5 w-5 text-muted-foreground" />}
+        {uploading ? (
+          <Loader2 className="h-5 w-5 animate-spin text-brand" />
+        ) : (
+          <Plus className="h-5 w-5 text-muted-foreground" />
+        )}
         <span className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
           {uploading ? "Enviando…" : "Adicionar imagens (múltiplas)"}
         </span>
@@ -597,7 +782,13 @@ const VIDEO_KIND_TO_STORAGE: Record<ExperienceVideoKind, ExperienceMediaKind> = 
   extra: "main",
 };
 
-function ExtraVideosEditor({ items, onChange }: { items: ExperienceExtraVideo[]; onChange: (v: ExperienceExtraVideo[]) => void }) {
+function ExtraVideosEditor({
+  items,
+  onChange,
+}: {
+  items: ExperienceExtraVideo[];
+  onChange: (v: ExperienceExtraVideo[]) => void;
+}) {
   const [uploading, setUploading] = useState<ExperienceVideoKind | null>(null);
   const add = async (file: File, kind: ExperienceVideoKind) => {
     if (!file.type.startsWith("video/")) return toast.error("Selecione um vídeo");
@@ -621,7 +812,12 @@ function ExtraVideosEditor({ items, onChange }: { items: ExperienceExtraVideo[];
           <label key={k} className="btn-outline-brand text-xs cursor-pointer">
             {uploading === k ? <Loader2 className="h-4 w-4 animate-spin" /> : <Plus className="h-4 w-4" />}
             {VIDEO_KIND_LABEL[k]}
-            <input type="file" accept="video/*" className="hidden" onChange={(e) => e.target.files?.[0] && add(e.target.files[0], k)} />
+            <input
+              type="file"
+              accept="video/*"
+              className="hidden"
+              onChange={(e) => e.target.files?.[0] && add(e.target.files[0], k)}
+            />
           </label>
         ))}
       </div>
