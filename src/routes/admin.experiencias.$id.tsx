@@ -2,7 +2,7 @@ import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { ArrowLeft, Plus, Trash2, Upload, Loader2 } from "lucide-react";
+import { ArrowLeft, Plus, Trash2, Upload, Loader2, ArrowUp, ArrowDown } from "lucide-react";
 import { ExperienceService } from "@/lib/services/experience-service";
 import { StorageService, type ExperienceMediaKind } from "@/lib/services/storage-service";
 import {
