@@ -69,6 +69,7 @@ const EMPTY: FormState = {
 };
 
 function AdminExperienciaEdit() {
+  console.log("ROTA EDIT ABERTA");
   const { id } = Route.useParams();
   const isNew = id === "new";
   const navigate = useNavigate();
