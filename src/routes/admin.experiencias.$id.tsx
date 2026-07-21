@@ -493,7 +493,7 @@ function VideoField({
   const [uploading, setUploading] = useState(false);
   const onFile = async (f: File) => {
     if (!f.type.startsWith("video/")) return toast.error("Selecione um vídeo");
-    if (f.size > 200 * 1024 * 1024) return toast.error("Máx. 200 MB");
+    if (f.size > 50 * 1024 * 1024) return toast.error("Máx. 50 MB por vídeo");
     setUploading(true);
     try {
       const u = await StorageService.uploadExperienceMedia(f, kind);
