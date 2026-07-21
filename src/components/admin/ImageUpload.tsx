@@ -26,8 +26,8 @@ export function ImageUpload({ value, onChange, upload, label, className }: Props
         toast.error("Selecione um arquivo de imagem.");
         return;
       }
-      if (file.size > 8 * 1024 * 1024) {
-        toast.error("A imagem deve ter até 8 MB.");
+      if (file.size > 20 * 1024 * 1024) {
+        toast.error("A imagem deve ter até 20 MB.");
         return;
       }
       setUploading(true);

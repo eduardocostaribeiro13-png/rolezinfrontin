@@ -493,7 +493,7 @@ function VideoField({
   const [uploading, setUploading] = useState(false);
   const onFile = async (f: File) => {
     if (!f.type.startsWith("video/")) return toast.error("Selecione um vídeo");
-    if (f.size > 200 * 1024 * 1024) return toast.error("Máx. 200 MB");
+    if (f.size > 50 * 1024 * 1024) return toast.error("Máx. 50 MB por vídeo");
     setUploading(true);
     try {
       const u = await StorageService.uploadExperienceMedia(f, kind);
@@ -741,7 +741,7 @@ function ExtraVideosEditor({
   const [uploading, setUploading] = useState<ExperienceVideoKind | null>(null);
   const add = async (file: File, kind: ExperienceVideoKind) => {
     if (!file.type.startsWith("video/")) return toast.error("Selecione um vídeo");
-    if (file.size > 200 * 1024 * 1024) return toast.error("Máx. 200 MB");
+    if (file.size > 50 * 1024 * 1024) return toast.error("Máx. 50 MB por vídeo");
     setUploading(kind);
     try {
       const url = await StorageService.uploadExperienceMedia(file, VIDEO_KIND_TO_STORAGE[kind]);
