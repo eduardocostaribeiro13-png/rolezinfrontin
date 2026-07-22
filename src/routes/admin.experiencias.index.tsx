@@ -18,7 +18,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Skeleton } from "@/components/ui/skeleton";
 
-export const Route = createFileRoute("/admin/experiencias")({
+export const Route = createFileRoute("/admin/experiencias/")({
   component: AdminExperiencias,
 });
 
