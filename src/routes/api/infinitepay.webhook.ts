@@ -114,4 +114,5 @@ export const Route = createFileRoute("/api/infinitepay/webhook")({
       },
     },
   },
-});
+} as any);
+
