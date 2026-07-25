@@ -15,6 +15,36 @@ export const Route = createFileRoute("/api/infinitepay/webhook")({
   server: {
     handlers: {
       POST: async ({ request }) => {
+        // Verify shared webhook secret before trusting the payload.
+        // The secret is embedded in the webhook_url query string when the
+        // checkout link is created, so only InfinitePay callbacks reaching
+        // that exact URL are honored.
+        const expectedSecret = process.env.INFINITEPAY_WEBHOOK_SECRET;
+        if (!expectedSecret) {
+          console.error("[webhook] INFINITEPAY_WEBHOOK_SECRET not configured");
+          return Response.json(
+            { success: false, message: "Webhook not configured" },
+            { status: 500 },
+          );
+        }
+        const url = new URL(request.url);
+        const providedSecret =
+          url.searchParams.get("secret") ??
+          request.headers.get("x-webhook-secret") ??
+          "";
+        const a = new TextEncoder().encode(providedSecret);
+        const b = new TextEncoder().encode(expectedSecret);
+        let ok = a.length === b.length;
+        for (let i = 0; i < a.length && i < b.length; i++) {
+          if (a[i] !== b[i]) ok = false;
+        }
+        if (!ok) {
+          return Response.json(
+            { success: false, message: "Unauthorized" },
+            { status: 401 },
+          );
+        }
+
         let body: WebhookBody;
         try {
           body = (await request.json()) as WebhookBody;
