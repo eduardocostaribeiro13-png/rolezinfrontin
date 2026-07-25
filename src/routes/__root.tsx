@@ -67,6 +67,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { property: "og:site_name", content: "Rolezin Frontin Off Road" },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
+      { name: "google-site-verification", content: "9Qcudn13O_QvTtORd9SZumz0Pv-8mt-Jofc477RBk1o" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
