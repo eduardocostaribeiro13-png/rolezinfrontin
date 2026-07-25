@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useMemo, useState } from "react";
+import { cloneElement, isValidElement, useEffect, useId, useMemo, useState, type ReactElement } from "react";
 import { z } from "zod";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
@@ -571,10 +571,16 @@ function StepClient({
 }
 
 function Field({ label, error, children }: { label: string; error?: string; children: React.ReactNode }) {
+  const id = useId();
+  const control = isValidElement(children)
+    ? cloneElement(children as ReactElement<{ id?: string }>, { id })
+    : children;
   return (
     <div>
-      <Label className="text-xs font-mono uppercase tracking-widest text-muted-foreground">{label}</Label>
-      <div className="mt-2">{children}</div>
+      <Label htmlFor={id} className="text-xs font-mono uppercase tracking-widest text-muted-foreground">
+        {label}
+      </Label>
+      <div className="mt-2">{control}</div>
       {error && <p className="mt-1 text-xs text-destructive">{error}</p>}
     </div>
   );
