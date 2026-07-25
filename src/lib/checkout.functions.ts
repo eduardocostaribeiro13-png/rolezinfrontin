@@ -5,14 +5,10 @@ import { z } from "zod";
 const input = z.object({
   vehicle_id: z.string().uuid(),
   tour_slug: z.string().min(1),
-  tour_name: z.string().min(1),
   reservation_date: z.string().min(1),
   reservation_time: z.string().min(1),
   adults: z.number().int().min(1).max(50),
   kids: z.number().int().min(0).max(50),
-  duration_hours: z.number().int().min(1).max(24).default(1),
-  price_per_hour: z.number().positive(),
-  total_price: z.number().positive(),
   customer_name: z.string().trim().min(3).max(120),
   customer_email: z.string().trim().email().max(200),
   customer_phone: z.string().trim().min(8).max(30),
@@ -96,13 +92,42 @@ export const createCheckout = createServerFn({ method: "POST" })
       throw new Error("Veículo indisponível");
     }
 
+    // 3b) Authoritative price + duration lookup from the tours table.
+    // NEVER trust client-supplied price or duration values.
+    const { data: tour, error: tourError } = await supabaseAdmin
+      .from("tours" as never)
+      .select("name,price_per_hour_cents,duration_hours,status")
+      .eq("slug", data.tour_slug)
+      .maybeSingle<{
+        name: string;
+        price_per_hour_cents: number;
+        duration_hours: number;
+        status: string;
+      }>();
+
+    if (
+      tourError ||
+      !tour ||
+      tour.status !== "ACTIVE" ||
+      !tour.price_per_hour_cents ||
+      tour.price_per_hour_cents <= 0 ||
+      !tour.duration_hours ||
+      tour.duration_hours <= 0
+    ) {
+      throw new Error("Passeio indisponível");
+    }
+
     const orderNsu = crypto.randomUUID();
-    const pricePerHourCents = Math.round(data.price_per_hour * 100);
-    const hours = data.duration_hours;
-    // Single source of truth: total = price_per_hour × hours.
+    const pricePerHourCents = tour.price_per_hour_cents;
+    const hours = Math.max(1, Math.round(Number(tour.duration_hours)));
+    // Single source of truth: total = server price_per_hour × server hours.
     const priceCents = pricePerHourCents * hours;
     const quantity = data.adults + data.kids;
     const appUrl = process.env.APP_URL ?? getAppUrl();
+    const webhookSecret = process.env.INFINITEPAY_WEBHOOK_SECRET;
+    if (!webhookSecret) {
+      throw new Error("INFINITEPAY_WEBHOOK_SECRET não configurado");
+    }
     const expiresAt = new Date(
       Date.now() + PENDING_TTL_MINUTES * 60 * 1000,
     ).toISOString();
@@ -114,7 +139,7 @@ export const createCheckout = createServerFn({ method: "POST" })
         order_nsu: orderNsu,
         vehicle_id: data.vehicle_id,
         tour_slug: data.tour_slug,
-        tour_name: data.tour_name,
+        tour_name: tour.name,
         vehicle: vehicle.name,
         reservation_date: data.reservation_date,
         reservation_time: data.reservation_time,
@@ -146,7 +171,7 @@ export const createCheckout = createServerFn({ method: "POST" })
     const payload = {
       handle,
       redirect_url: `${appUrl}/pagamento/sucesso?order=${orderNsu}`,
-      webhook_url: `${appUrl}/api/infinitepay/webhook`,
+      webhook_url: `${appUrl}/api/infinitepay/webhook?secret=${encodeURIComponent(webhookSecret)}`,
       order_nsu: orderNsu,
       customer: {
         name: data.customer_name,
@@ -157,7 +182,7 @@ export const createCheckout = createServerFn({ method: "POST" })
         {
           quantity: 1,
           price: priceCents,
-          description: `${data.tour_name} — ${hours}h`,
+          description: `${tour.name} — ${hours}h`,
         },
       ],
     };
