@@ -7,18 +7,8 @@ export const claimAdminIfWhitelistedFn = createServerFn({ method: "POST" })
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const userId = context.userId;
 
-    const { data: userRow, error: userErr } = await supabaseAdmin
-      .from("users" as never)
-      .select("email")
-      .eq("id", userId)
-      .maybeSingle()
-      .overrideTypes<{ email: string | null }>();
-    // Fallback: query auth schema directly via admin API
-    let email: string | null = (userRow as { email: string | null } | null)?.email ?? null;
-    if (userErr || !email) {
-      const { data: authUser } = await supabaseAdmin.auth.admin.getUserById(userId);
-      email = authUser?.user?.email ?? null;
-    }
+    const { data: authUser } = await supabaseAdmin.auth.admin.getUserById(userId);
+    const email = authUser?.user?.email ?? null;
     if (!email) return false;
 
     const { data: wl } = await supabaseAdmin
@@ -32,7 +22,6 @@ export const claimAdminIfWhitelistedFn = createServerFn({ method: "POST" })
       .from("user_roles")
       .insert({ user_id: userId, role: "admin" });
     if (insErr && !String(insErr.message).toLowerCase().includes("duplicate")) {
-      // ignore conflicts, surface other errors
       throw new Error("Failed to claim admin role");
     }
     return true;

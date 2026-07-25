@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import type { Session } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
+import { claimAdminIfWhitelistedFn } from "@/lib/admin.functions";
 
 export type AdminAuthState = {
   loading: boolean;
@@ -11,7 +12,7 @@ export type AdminAuthState = {
 /**
  * useAdminAuth — client-side hook to read the current Supabase session and
  * whether the signed-in user has the admin role. Attempts a one-time claim
- * via `claim_admin_if_whitelisted` on first login for whitelisted emails.
+ * via a protected server function on first login for whitelisted emails.
  */
 export function useAdminAuth(): AdminAuthState {
   const [session, setSession] = useState<Session | null>(null);
@@ -30,11 +31,11 @@ export function useAdminAuth(): AdminAuthState {
         return;
       }
       // Try claim (idempotent, only succeeds for whitelisted emails).
-      await (supabase.rpc as unknown as (
-        fn: string,
-      ) => Promise<{ data: unknown; error: unknown }>)(
-        "claim_admin_if_whitelisted",
-      );
+      try {
+        await claimAdminIfWhitelistedFn();
+      } catch {
+        // ignore — not whitelisted or transient error
+      }
       const { data, error } = await supabase
         .from("user_roles" as never)
         .select("role")
