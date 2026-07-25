@@ -14,7 +14,8 @@ type WebhookBody = {
 export const Route = createFileRoute("/api/infinitepay/webhook")({
   server: {
     handlers: {
-      POST: async ({ request }) => {
+      POST: async ({ request }: { request: Request }) => {
+
         // Verify shared webhook secret before trusting the payload.
         // The secret is embedded in the webhook_url query string when the
         // checkout link is created, so only InfinitePay callbacks reaching
