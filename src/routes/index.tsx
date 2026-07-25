@@ -25,22 +25,37 @@ import { TourService } from "@/lib/services/tour-service";
 import { Skeleton } from "@/components/ui/skeleton";
 import { waQuickBooking } from "@/lib/whatsapp";
 
+const HOME_TITLE = "Rolezin Frontin Off Road — Quadriciclo no RJ";
+const HOME_DESC =
+  "Passeios de quadriciclo e UTV em Engenheiro Paulo de Frontin, RJ. Guias experientes, segurança e fotos incluídas.";
+const HOME_URL = "https://rolezinfrontin.lovable.app/";
+
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Rolezin Frontin Off Road — Passeios de Quadriciclo em Eng. Paulo de Frontin, RJ" },
-      {
-        name: "description",
-        content:
-          "Viva uma aventura off road inesquecível em Engenheiro Paulo de Frontin. Passeios de quadriciclo e UTV com guias experientes, segurança e fotos incluídas.",
-      },
-      {
-        property: "og:title",
-        content: "Rolezin Frontin Off Road — Passeios de Quadriciclo em Eng. Paulo de Frontin, RJ",
-      },
-      { property: "og:image", content: "/assets/hero.jpg" },
+      { title: HOME_TITLE },
+      { name: "description", content: HOME_DESC },
+      { property: "og:title", content: HOME_TITLE },
+      { property: "og:description", content: HOME_DESC },
+      { property: "og:url", content: HOME_URL },
+      { name: "twitter:title", content: HOME_TITLE },
+      { name: "twitter:description", content: HOME_DESC },
     ],
-    links: [{ rel: "canonical", href: "/" }],
+    links: [{ rel: "canonical", href: HOME_URL }],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "FAQPage",
+          mainEntity: faqs.map((f) => ({
+            "@type": "Question",
+            name: f.q,
+            acceptedAnswer: { "@type": "Answer", text: f.a },
+          })),
+        }),
+      },
+    ],
   }),
   component: HomePage,
 });
