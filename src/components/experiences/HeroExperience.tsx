@@ -1,7 +1,9 @@
 import { motion } from "framer-motion";
+import { useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
-import { Camera, ChevronRight, Film, Globe2, Sparkles, Video } from "lucide-react";
+import { Camera, ChevronRight, Film, Globe2, MapPin, Sparkles, Video } from "lucide-react";
 import type { Experience } from "@/lib/experiences";
+import { AdminService } from "@/lib/services/admin-service";
 import { HeroSkeleton } from "./ExperienceSkeleton";
 
 type Props = {
@@ -27,6 +29,20 @@ function HeroFilled({ exp }: { exp: Experience }) {
   const subtitle = exp.category?.name ?? "Centro de Experiências";
   const description =
     exp.short_description ?? "Trilhas, cachoeiras e mirantes de Engenheiro Paulo de Frontin filmados em cinema real.";
+
+  // Link do Google Maps configurável no painel admin (Configurações > Empresa).
+  const { data: settings } = useQuery({
+    queryKey: ["site-settings", "maps"],
+    queryFn: () => AdminService.getSettings(),
+    staleTime: 5 * 60 * 1000,
+  });
+  const mapsHref =
+    settings?.maps_url?.trim() ||
+    `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+      settings?.address?.trim() || "Engenheiro Paulo de Frontin, RJ",
+    )}`;
+
+
 
   return (
     <motion.div
@@ -94,13 +110,14 @@ function HeroFilled({ exp }: { exp: Experience }) {
           transition={{ delay: 0.55 }}
           className="mt-7 flex flex-wrap items-center gap-5"
         >
-          <Link
-            to="/experiencias/$slug"
-            params={{ slug: exp.slug }}
+          <a
+            href={mapsHref}
+            target="_blank"
+            rel="noopener noreferrer"
             className="inline-flex items-center gap-2 rounded-full bg-[#FFC107] px-7 py-3.5 text-xs font-bold uppercase tracking-[0.2em] text-black shadow-[0_15px_40px_-10px_rgba(255,193,7,0.6)] transition-all hover:scale-[1.03] hover:bg-[#FFD54F]"
           >
-            Assistir experiência <ChevronRight className="h-4 w-4" />
-          </Link>
+            Ver localização <MapPin className="h-4 w-4" />
+          </a>
 
           <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-[11px] font-medium uppercase tracking-widest text-white/70">
             <IconTag icon={<Video className="h-3.5 w-3.5" />} label="Drone" />

@@ -70,6 +70,8 @@ export type SiteSettings = {
   email_message: string | null;
   voucher_message: string | null;
   logo_url: string | null;
+  /** Link completo do Google Maps usado no botão de localização. */
+  maps_url: string | null;
 };
 
 export const AdminService = {

@@ -27,6 +27,7 @@ const EMPTY: SiteSettings = {
   email_message: "",
   voucher_message: "",
   logo_url: "",
+  maps_url: "",
 };
 
 function AdminSettings() {
@@ -56,6 +57,7 @@ function AdminSettings() {
         email_message: form.email_message,
         voucher_message: form.voucher_message,
         logo_url: form.logo_url,
+        maps_url: form.maps_url,
       }),
     onSuccess: () => {
       toast.success("Configurações salvas");
@@ -96,6 +98,14 @@ function AdminSettings() {
           </Two>
           <Field label="Endereço">
             <Input value={form.address ?? ""} onChange={(e) => set("address", e.target.value)} />
+          </Field>
+          <Field label="Link do Google Maps (botão de localização)">
+            <Input
+              type="url"
+              placeholder="https://maps.google.com/?q=..."
+              value={form.maps_url ?? ""}
+              onChange={(e) => set("maps_url", e.target.value)}
+            />
           </Field>
           <Field label="Horário de funcionamento">
             <Input value={form.business_hours ?? ""} onChange={(e) => set("business_hours", e.target.value)} />
