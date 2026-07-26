@@ -41,7 +41,12 @@ export const Route = createFileRoute("/")({
       { name: "twitter:title", content: HOME_TITLE },
       { name: "twitter:description", content: HOME_DESC },
     ],
-    links: [{ rel: "canonical", href: HOME_URL }],
+    links: [
+      { rel: "canonical", href: HOME_URL },
+      // LCP candidates: fetch the hero background and the lettering headline early.
+      { rel: "preload", as: "image", href: heroImg, fetchpriority: "high" },
+      { rel: "preload", as: "image", href: heroTitleImg, fetchpriority: "high" },
+    ],
     scripts: [
       {
         type: "application/ld+json",
