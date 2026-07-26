@@ -99,6 +99,14 @@ function AdminSettings() {
           <Field label="Endereço">
             <Input value={form.address ?? ""} onChange={(e) => set("address", e.target.value)} />
           </Field>
+          <Field label="Link do Google Maps (botão de localização)">
+            <Input
+              type="url"
+              placeholder="https://maps.google.com/?q=..."
+              value={form.maps_url ?? ""}
+              onChange={(e) => set("maps_url", e.target.value)}
+            />
+          </Field>
           <Field label="Horário de funcionamento">
             <Input value={form.business_hours ?? ""} onChange={(e) => set("business_hours", e.target.value)} />
           </Field>
