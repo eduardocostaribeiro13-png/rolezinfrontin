@@ -27,6 +27,7 @@ const EMPTY: SiteSettings = {
   email_message: "",
   voucher_message: "",
   logo_url: "",
+  maps_url: "",
 };
 
 function AdminSettings() {
