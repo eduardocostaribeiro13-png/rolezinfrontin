@@ -122,8 +122,10 @@ function Hero() {
             <img
               src={heroTitleImg}
               alt="A aventura começa aqui"
-              width={1600}
-              height={912}
+              width={1400}
+              height={933}
+              loading="eager"
+              decoding="async"
               fetchPriority="high"
               className="w-full max-w-[36rem] sm:max-w-[42rem] md:max-w-[52rem] lg:max-w-[60rem] h-auto select-none drop-shadow-[0_20px_40px_rgba(0,0,0,0.6)]"
               draggable={false}
