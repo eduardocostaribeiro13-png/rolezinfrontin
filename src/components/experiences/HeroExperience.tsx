@@ -29,6 +29,20 @@ function HeroFilled({ exp }: { exp: Experience }) {
   const description =
     exp.short_description ?? "Trilhas, cachoeiras e mirantes de Engenheiro Paulo de Frontin filmados em cinema real.";
 
+  // Link do Google Maps configurável no painel admin (Configurações > Empresa).
+  const { data: settings } = useQuery({
+    queryKey: ["site-settings", "maps"],
+    queryFn: () => AdminService.getSettings(),
+    staleTime: 5 * 60 * 1000,
+  });
+  const mapsHref =
+    settings?.maps_url?.trim() ||
+    `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+      settings?.address?.trim() || "Engenheiro Paulo de Frontin, RJ",
+    )}`;
+
+
+
   return (
     <motion.div
       initial={{ opacity: 0, scale: 0.98 }}
