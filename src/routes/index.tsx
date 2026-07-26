@@ -41,7 +41,12 @@ export const Route = createFileRoute("/")({
       { name: "twitter:title", content: HOME_TITLE },
       { name: "twitter:description", content: HOME_DESC },
     ],
-    links: [{ rel: "canonical", href: HOME_URL }],
+    links: [
+      { rel: "canonical", href: HOME_URL },
+      // LCP candidates: fetch the hero background and the lettering headline early.
+      { rel: "preload", as: "image", href: heroImg, fetchpriority: "high" },
+      { rel: "preload", as: "image", href: heroTitleImg, fetchpriority: "high" },
+    ],
     scripts: [
       {
         type: "application/ld+json",
@@ -94,8 +99,10 @@ function Hero() {
           src={heroImg}
           alt="Quadriciclo amarelo em trilha off road nas montanhas de Engenheiro Paulo de Frontin"
           className="h-full w-full object-cover object-[65%_center] md:object-center"
-          width={1920}
-          height={1280}
+          width={1717}
+          height={916}
+          loading="eager"
+          decoding="async"
           fetchPriority="high"
         />
       </div>
@@ -115,8 +122,10 @@ function Hero() {
             <img
               src={heroTitleImg}
               alt="A aventura começa aqui"
-              width={1600}
-              height={912}
+              width={1400}
+              height={933}
+              loading="eager"
+              decoding="async"
               fetchPriority="high"
               className="w-full max-w-[36rem] sm:max-w-[42rem] md:max-w-[52rem] lg:max-w-[60rem] h-auto select-none drop-shadow-[0_20px_40px_rgba(0,0,0,0.6)]"
               draggable={false}
