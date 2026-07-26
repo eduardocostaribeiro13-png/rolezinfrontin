@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { useQuery } from "@tanstack/react-query";
-import { Camera, Film, Globe2, MapPin, Sparkles, Video } from "lucide-react";
+import { Link } from "@tanstack/react-router";
+import { Camera, ChevronRight, Film, Globe2, MapPin, Sparkles, Video } from "lucide-react";
 import type { Experience } from "@/lib/experiences";
 import { AdminService } from "@/lib/services/admin-service";
 import { HeroSkeleton } from "./ExperienceSkeleton";
