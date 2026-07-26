@@ -527,6 +527,7 @@ export type Database = {
           id: number
           instagram: string | null
           logo_url: string | null
+          maps_url: string | null
           phone: string | null
           updated_at: string
           voucher_message: string | null
@@ -543,6 +544,7 @@ export type Database = {
           id?: number
           instagram?: string | null
           logo_url?: string | null
+          maps_url?: string | null
           phone?: string | null
           updated_at?: string
           voucher_message?: string | null
@@ -559,6 +561,7 @@ export type Database = {
           id?: number
           instagram?: string | null
           logo_url?: string | null
+          maps_url?: string | null
           phone?: string | null
           updated_at?: string
           voucher_message?: string | null
