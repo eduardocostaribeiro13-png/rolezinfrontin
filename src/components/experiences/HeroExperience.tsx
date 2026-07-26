@@ -94,13 +94,14 @@ function HeroFilled({ exp }: { exp: Experience }) {
           transition={{ delay: 0.55 }}
           className="mt-7 flex flex-wrap items-center gap-5"
         >
-          <Link
-            to="/experiencias/$slug"
-            params={{ slug: exp.slug }}
+          <a
+            href={mapsHref}
+            target="_blank"
+            rel="noopener noreferrer"
             className="inline-flex items-center gap-2 rounded-full bg-[#FFC107] px-7 py-3.5 text-xs font-bold uppercase tracking-[0.2em] text-black shadow-[0_15px_40px_-10px_rgba(255,193,7,0.6)] transition-all hover:scale-[1.03] hover:bg-[#FFD54F]"
           >
-            Assistir experiência <ChevronRight className="h-4 w-4" />
-          </Link>
+            Ver localização <MapPin className="h-4 w-4" />
+          </a>
 
           <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-[11px] font-medium uppercase tracking-widest text-white/70">
             <IconTag icon={<Video className="h-3.5 w-3.5" />} label="Drone" />
