@@ -57,6 +57,7 @@ function AdminSettings() {
         email_message: form.email_message,
         voucher_message: form.voucher_message,
         logo_url: form.logo_url,
+        maps_url: form.maps_url,
       }),
     onSuccess: () => {
       toast.success("Configurações salvas");
