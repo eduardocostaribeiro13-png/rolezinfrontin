@@ -103,7 +103,7 @@ export function Footer() {
       <div className="border-t border-border/60 py-6">
         <div className="container-x flex flex-col md:flex-row items-center justify-between gap-3 text-xs text-muted-foreground">
           <p>© {new Date().getFullYear()} Rolezin Frontin Off Road. Todos os direitos reservados.</p>
-          <p className="font-mono uppercase tracking-widest">Feito com adrenalina no RJ</p>
+          <p className="font-mono uppercase tracking-widest">RibeiroMarketingLTDA</p>
         </div>
       </div>
     </footer>
