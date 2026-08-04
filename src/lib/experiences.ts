@@ -131,3 +131,41 @@ export function slugify(input: string): string {
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-+|-+$/g, "");
 }
+
+/** Um vídeo navegável da experiência (campos fixos + vídeos extras do dashboard). */
+export type ExperienceVideoEntry = {
+  key: string;
+  kind: ExperienceVideoKind | "main" | "preview";
+  title: string;
+  url: string;
+};
+
+const FIXED_VIDEO_FIELDS: Array<{
+  key: string;
+  kind: ExperienceVideoEntry["kind"];
+  title: string;
+  field: keyof Experience;
+}> = [
+  { key: "principal", kind: "main", title: "Vídeo Principal", field: "main_video_url" },
+  { key: "drone", kind: "drone", title: "Vista de Drone", field: "drone_video_url" },
+  { key: "onboard", kind: "onboard", title: "GoPro Onboard", field: "onboard_video_url" },
+  { key: "360", kind: "360", title: "Vídeo 360°", field: "video_360_url" },
+  { key: "preview", kind: "preview", title: "Prévia", field: "preview_video_url" },
+];
+
+export function collectExperienceVideos(exp: Experience): ExperienceVideoEntry[] {
+  const list: ExperienceVideoEntry[] = [];
+  for (const f of FIXED_VIDEO_FIELDS) {
+    const url = exp[f.field] as string | null;
+    if (url) list.push({ key: f.key, kind: f.kind, title: f.title, url });
+  }
+  for (const v of exp.videos) {
+    list.push({
+      key: v.id,
+      kind: v.kind,
+      title: v.label || VIDEO_KIND_LABEL[v.kind],
+      url: v.url,
+    });
+  }
+  return list;
+}
