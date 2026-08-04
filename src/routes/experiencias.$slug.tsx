@@ -161,19 +161,32 @@ function ExperienceDetail() {
             </Block>
           )}
 
-          {exp.videos.length > 0 && (
-            <Block title="Vídeos extras">
+          {videos.length > 0 && (
+            <Block title="Vídeos">
               <div className="grid gap-4 sm:grid-cols-2">
-                {exp.videos.map((v) => (
-                  <div key={v.id} className="overflow-hidden rounded-xl border border-border/60 bg-black">
+                {videos.map((v) => (
+                  <Link
+                    key={v.key}
+                    to="/experiencias/$slug/video/$videoKey"
+                    params={{ slug: exp.slug, videoKey: v.key }}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="group overflow-hidden rounded-xl border border-border/60 bg-black transition hover:border-brand"
+                  >
                     <div className="flex items-center justify-between border-b border-border/60 bg-card px-4 py-2">
                       <span className="font-mono text-[10px] uppercase tracking-widest text-brand">
-                        {v.label || VIDEO_KIND_LABEL[v.kind]}
+                        {v.title}
                       </span>
-                      <Play className="h-3.5 w-3.5 text-muted-foreground" />
+                      <Play className="h-3.5 w-3.5 text-muted-foreground transition group-hover:text-brand" />
                     </div>
-                    <video src={v.url} controls preload="metadata" className="aspect-video w-full" />
-                  </div>
+                    <video
+                      src={v.url}
+                      muted
+                      playsInline
+                      preload="metadata"
+                      className="pointer-events-none aspect-video w-full object-cover opacity-85 transition group-hover:opacity-100"
+                    />
+                  </Link>
                 ))}
               </div>
             </Block>
