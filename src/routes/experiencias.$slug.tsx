@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import { ArrowLeft, Clock, Ruler, Mountain, Users, Sparkles, MapPin, Play } from "lucide-react";
 import { ExperienceService } from "@/lib/services/experience-service";
 import type { Experience } from "@/lib/experiences";
-import { VIDEO_KIND_LABEL, brlCents } from "@/lib/experiences";
+import { brlCents, collectExperienceVideos } from "@/lib/experiences";
 
 export const Route = createFileRoute("/experiencias/$slug")({
   loader: async ({ params, context }) => {
@@ -73,6 +73,7 @@ function ExperienceDetail() {
   });
   const exp: Experience = (data as Experience | undefined) ?? initial;
   if (!exp) return null;
+  const videos = collectExperienceVideos(exp);
 
   return (
     <div className="min-h-dvh bg-background">
