@@ -9,69 +9,35 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as IndexRouteImport } from './routes/index'
-import { Route as AdminRouteImport } from './routes/admin'
-import { Route as AuthRouteImport } from './routes/auth'
-import { Route as ContatoRouteImport } from './routes/contato'
-import { Route as ExperienciasRouteImport } from './routes/experiencias'
-import { Route as GaleriaRouteImport } from './routes/galeria'
-import { Route as PasseiosRouteImport } from './routes/passeios'
-import { Route as ReservarRouteImport } from './routes/reservar'
-import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as SobreRouteImport } from './routes/sobre'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as ReservarRouteImport } from './routes/reservar'
+import { Route as PasseiosRouteImport } from './routes/passeios'
+import { Route as GaleriaRouteImport } from './routes/galeria'
+import { Route as ExperienciasRouteImport } from './routes/experiencias'
+import { Route as ContatoRouteImport } from './routes/contato'
+import { Route as AuthRouteImport } from './routes/auth'
+import { Route as AdminRouteImport } from './routes/admin'
+import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
-import { Route as AdminAgendaRouteImport } from './routes/admin.agenda'
-import { Route as AdminClientesRouteImport } from './routes/admin.clientes'
-import { Route as AdminConfiguracoesRouteImport } from './routes/admin.configuracoes'
-import { Route as AdminGaleriaRouteImport } from './routes/admin.galeria'
-import { Route as AdminPasseiosRouteImport } from './routes/admin.passeios'
-import { Route as AdminReservasRouteImport } from './routes/admin.reservas'
-import { Route as AdminVeiculosRouteImport } from './routes/admin.veiculos'
-import { Route as ExperienciasSlugRouteImport } from './routes/experiencias.$slug'
-import { Route as PagamentoCanceladoRouteImport } from './routes/pagamento.cancelado'
 import { Route as PagamentoSucessoRouteImport } from './routes/pagamento.sucesso'
+import { Route as PagamentoCanceladoRouteImport } from './routes/pagamento.cancelado'
+import { Route as ExperienciasSlugRouteImport } from './routes/experiencias.$slug'
+import { Route as AdminVeiculosRouteImport } from './routes/admin.veiculos'
+import { Route as AdminReservasRouteImport } from './routes/admin.reservas'
+import { Route as AdminPasseiosRouteImport } from './routes/admin.passeios'
+import { Route as AdminGaleriaRouteImport } from './routes/admin.galeria'
+import { Route as AdminConfiguracoesRouteImport } from './routes/admin.configuracoes'
+import { Route as AdminClientesRouteImport } from './routes/admin.clientes'
+import { Route as AdminAgendaRouteImport } from './routes/admin.agenda'
 import { Route as AdminExperienciasIndexRouteImport } from './routes/admin.experiencias.index'
-import { Route as AdminExperienciasIdRouteImport } from './routes/admin.experiencias.$id'
 import { Route as ApiInfinitepayWebhookRouteImport } from './routes/api/infinitepay.webhook'
+import { Route as AdminExperienciasIdRouteImport } from './routes/admin.experiencias.$id'
+import { Route as ExperienciasSlugVideoVideoKeyRouteImport } from './routes/experiencias.$slug.video.$videoKey'
 
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AdminRoute = AdminRouteImport.update({
-  id: '/admin',
-  path: '/admin',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AuthRoute = AuthRouteImport.update({
-  id: '/auth',
-  path: '/auth',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ContatoRoute = ContatoRouteImport.update({
-  id: '/contato',
-  path: '/contato',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ExperienciasRoute = ExperienciasRouteImport.update({
-  id: '/experiencias',
-  path: '/experiencias',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const GaleriaRoute = GaleriaRouteImport.update({
-  id: '/galeria',
-  path: '/galeria',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PasseiosRoute = PasseiosRouteImport.update({
-  id: '/passeios',
-  path: '/passeios',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ReservarRoute = ReservarRouteImport.update({
-  id: '/reservar',
-  path: '/reservar',
+const SobreRoute = SobreRouteImport.update({
+  id: '/sobre',
+  path: '/sobre',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
@@ -79,9 +45,44 @@ const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   path: '/sitemap.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
-const SobreRoute = SobreRouteImport.update({
-  id: '/sobre',
-  path: '/sobre',
+const ReservarRoute = ReservarRouteImport.update({
+  id: '/reservar',
+  path: '/reservar',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PasseiosRoute = PasseiosRouteImport.update({
+  id: '/passeios',
+  path: '/passeios',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GaleriaRoute = GaleriaRouteImport.update({
+  id: '/galeria',
+  path: '/galeria',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ExperienciasRoute = ExperienciasRouteImport.update({
+  id: '/experiencias',
+  path: '/experiencias',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ContatoRoute = ContatoRouteImport.update({
+  id: '/contato',
+  path: '/contato',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminRoute = AdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminIndexRoute = AdminIndexRouteImport.update({
@@ -89,29 +90,24 @@ const AdminIndexRoute = AdminIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AdminRoute,
 } as any)
-const AdminAgendaRoute = AdminAgendaRouteImport.update({
-  id: '/agenda',
-  path: '/agenda',
-  getParentRoute: () => AdminRoute,
+const PagamentoSucessoRoute = PagamentoSucessoRouteImport.update({
+  id: '/pagamento/sucesso',
+  path: '/pagamento/sucesso',
+  getParentRoute: () => rootRouteImport,
 } as any)
-const AdminClientesRoute = AdminClientesRouteImport.update({
-  id: '/clientes',
-  path: '/clientes',
-  getParentRoute: () => AdminRoute,
+const PagamentoCanceladoRoute = PagamentoCanceladoRouteImport.update({
+  id: '/pagamento/cancelado',
+  path: '/pagamento/cancelado',
+  getParentRoute: () => rootRouteImport,
 } as any)
-const AdminConfiguracoesRoute = AdminConfiguracoesRouteImport.update({
-  id: '/configuracoes',
-  path: '/configuracoes',
-  getParentRoute: () => AdminRoute,
+const ExperienciasSlugRoute = ExperienciasSlugRouteImport.update({
+  id: '/$slug',
+  path: '/$slug',
+  getParentRoute: () => ExperienciasRoute,
 } as any)
-const AdminGaleriaRoute = AdminGaleriaRouteImport.update({
-  id: '/galeria',
-  path: '/galeria',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminPasseiosRoute = AdminPasseiosRouteImport.update({
-  id: '/passeios',
-  path: '/passeios',
+const AdminVeiculosRoute = AdminVeiculosRouteImport.update({
+  id: '/veiculos',
+  path: '/veiculos',
   getParentRoute: () => AdminRoute,
 } as any)
 const AdminReservasRoute = AdminReservasRouteImport.update({
@@ -119,34 +115,34 @@ const AdminReservasRoute = AdminReservasRouteImport.update({
   path: '/reservas',
   getParentRoute: () => AdminRoute,
 } as any)
-const AdminVeiculosRoute = AdminVeiculosRouteImport.update({
-  id: '/veiculos',
-  path: '/veiculos',
+const AdminPasseiosRoute = AdminPasseiosRouteImport.update({
+  id: '/passeios',
+  path: '/passeios',
   getParentRoute: () => AdminRoute,
 } as any)
-const ExperienciasSlugRoute = ExperienciasSlugRouteImport.update({
-  id: '/$slug',
-  path: '/$slug',
-  getParentRoute: () => ExperienciasRoute,
+const AdminGaleriaRoute = AdminGaleriaRouteImport.update({
+  id: '/galeria',
+  path: '/galeria',
+  getParentRoute: () => AdminRoute,
 } as any)
-const PagamentoCanceladoRoute = PagamentoCanceladoRouteImport.update({
-  id: '/pagamento/cancelado',
-  path: '/pagamento/cancelado',
-  getParentRoute: () => rootRouteImport,
+const AdminConfiguracoesRoute = AdminConfiguracoesRouteImport.update({
+  id: '/configuracoes',
+  path: '/configuracoes',
+  getParentRoute: () => AdminRoute,
 } as any)
-const PagamentoSucessoRoute = PagamentoSucessoRouteImport.update({
-  id: '/pagamento/sucesso',
-  path: '/pagamento/sucesso',
-  getParentRoute: () => rootRouteImport,
+const AdminClientesRoute = AdminClientesRouteImport.update({
+  id: '/clientes',
+  path: '/clientes',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminAgendaRoute = AdminAgendaRouteImport.update({
+  id: '/agenda',
+  path: '/agenda',
+  getParentRoute: () => AdminRoute,
 } as any)
 const AdminExperienciasIndexRoute = AdminExperienciasIndexRouteImport.update({
   id: '/experiencias/',
   path: '/experiencias/',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminExperienciasIdRoute = AdminExperienciasIdRouteImport.update({
-  id: '/experiencias/$id',
-  path: '/experiencias/$id',
   getParentRoute: () => AdminRoute,
 } as any)
 const ApiInfinitepayWebhookRoute = ApiInfinitepayWebhookRouteImport.update({
@@ -154,6 +150,17 @@ const ApiInfinitepayWebhookRoute = ApiInfinitepayWebhookRouteImport.update({
   path: '/api/infinitepay/webhook',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminExperienciasIdRoute = AdminExperienciasIdRouteImport.update({
+  id: '/experiencias/$id',
+  path: '/experiencias/$id',
+  getParentRoute: () => AdminRoute,
+} as any)
+const ExperienciasSlugVideoVideoKeyRoute =
+  ExperienciasSlugVideoVideoKeyRouteImport.update({
+    id: '/video/$videoKey',
+    path: '/video/$videoKey',
+    getParentRoute: () => ExperienciasSlugRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -173,13 +180,14 @@ export interface FileRoutesByFullPath {
   '/admin/passeios': typeof AdminPasseiosRoute
   '/admin/reservas': typeof AdminReservasRoute
   '/admin/veiculos': typeof AdminVeiculosRoute
-  '/experiencias/$slug': typeof ExperienciasSlugRoute
+  '/experiencias/$slug': typeof ExperienciasSlugRouteWithChildren
   '/pagamento/cancelado': typeof PagamentoCanceladoRoute
   '/pagamento/sucesso': typeof PagamentoSucessoRoute
   '/admin/': typeof AdminIndexRoute
   '/admin/experiencias/$id': typeof AdminExperienciasIdRoute
   '/api/infinitepay/webhook': typeof ApiInfinitepayWebhookRoute
   '/admin/experiencias/': typeof AdminExperienciasIndexRoute
+  '/experiencias/$slug/video/$videoKey': typeof ExperienciasSlugVideoVideoKeyRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -198,13 +206,14 @@ export interface FileRoutesByTo {
   '/admin/passeios': typeof AdminPasseiosRoute
   '/admin/reservas': typeof AdminReservasRoute
   '/admin/veiculos': typeof AdminVeiculosRoute
-  '/experiencias/$slug': typeof ExperienciasSlugRoute
+  '/experiencias/$slug': typeof ExperienciasSlugRouteWithChildren
   '/pagamento/cancelado': typeof PagamentoCanceladoRoute
   '/pagamento/sucesso': typeof PagamentoSucessoRoute
   '/admin': typeof AdminIndexRoute
   '/admin/experiencias/$id': typeof AdminExperienciasIdRoute
   '/api/infinitepay/webhook': typeof ApiInfinitepayWebhookRoute
   '/admin/experiencias': typeof AdminExperienciasIndexRoute
+  '/experiencias/$slug/video/$videoKey': typeof ExperienciasSlugVideoVideoKeyRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -225,13 +234,14 @@ export interface FileRoutesById {
   '/admin/passeios': typeof AdminPasseiosRoute
   '/admin/reservas': typeof AdminReservasRoute
   '/admin/veiculos': typeof AdminVeiculosRoute
-  '/experiencias/$slug': typeof ExperienciasSlugRoute
+  '/experiencias/$slug': typeof ExperienciasSlugRouteWithChildren
   '/pagamento/cancelado': typeof PagamentoCanceladoRoute
   '/pagamento/sucesso': typeof PagamentoSucessoRoute
   '/admin/': typeof AdminIndexRoute
   '/admin/experiencias/$id': typeof AdminExperienciasIdRoute
   '/api/infinitepay/webhook': typeof ApiInfinitepayWebhookRoute
   '/admin/experiencias/': typeof AdminExperienciasIndexRoute
+  '/experiencias/$slug/video/$videoKey': typeof ExperienciasSlugVideoVideoKeyRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -260,6 +270,7 @@ export interface FileRouteTypes {
     | '/admin/experiencias/$id'
     | '/api/infinitepay/webhook'
     | '/admin/experiencias/'
+    | '/experiencias/$slug/video/$videoKey'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -285,6 +296,7 @@ export interface FileRouteTypes {
     | '/admin/experiencias/$id'
     | '/api/infinitepay/webhook'
     | '/admin/experiencias'
+    | '/experiencias/$slug/video/$videoKey'
   id:
     | '__root__'
     | '/'
@@ -311,6 +323,7 @@ export interface FileRouteTypes {
     | '/admin/experiencias/$id'
     | '/api/infinitepay/webhook'
     | '/admin/experiencias/'
+    | '/experiencias/$slug/video/$videoKey'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -331,60 +344,11 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/admin': {
-      id: '/admin'
-      path: '/admin'
-      fullPath: '/admin'
-      preLoaderRoute: typeof AdminRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/auth': {
-      id: '/auth'
-      path: '/auth'
-      fullPath: '/auth'
-      preLoaderRoute: typeof AuthRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/contato': {
-      id: '/contato'
-      path: '/contato'
-      fullPath: '/contato'
-      preLoaderRoute: typeof ContatoRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/experiencias': {
-      id: '/experiencias'
-      path: '/experiencias'
-      fullPath: '/experiencias'
-      preLoaderRoute: typeof ExperienciasRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/galeria': {
-      id: '/galeria'
-      path: '/galeria'
-      fullPath: '/galeria'
-      preLoaderRoute: typeof GaleriaRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/passeios': {
-      id: '/passeios'
-      path: '/passeios'
-      fullPath: '/passeios'
-      preLoaderRoute: typeof PasseiosRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/reservar': {
-      id: '/reservar'
-      path: '/reservar'
-      fullPath: '/reservar'
-      preLoaderRoute: typeof ReservarRouteImport
+    '/sobre': {
+      id: '/sobre'
+      path: '/sobre'
+      fullPath: '/sobre'
+      preLoaderRoute: typeof SobreRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/sitemap.xml': {
@@ -394,11 +358,60 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SitemapDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/sobre': {
-      id: '/sobre'
-      path: '/sobre'
-      fullPath: '/sobre'
-      preLoaderRoute: typeof SobreRouteImport
+    '/reservar': {
+      id: '/reservar'
+      path: '/reservar'
+      fullPath: '/reservar'
+      preLoaderRoute: typeof ReservarRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/passeios': {
+      id: '/passeios'
+      path: '/passeios'
+      fullPath: '/passeios'
+      preLoaderRoute: typeof PasseiosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/galeria': {
+      id: '/galeria'
+      path: '/galeria'
+      fullPath: '/galeria'
+      preLoaderRoute: typeof GaleriaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/experiencias': {
+      id: '/experiencias'
+      path: '/experiencias'
+      fullPath: '/experiencias'
+      preLoaderRoute: typeof ExperienciasRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/contato': {
+      id: '/contato'
+      path: '/contato'
+      fullPath: '/contato'
+      preLoaderRoute: typeof ContatoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin/': {
@@ -408,39 +421,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminIndexRouteImport
       parentRoute: typeof AdminRoute
     }
-    '/admin/agenda': {
-      id: '/admin/agenda'
-      path: '/agenda'
-      fullPath: '/admin/agenda'
-      preLoaderRoute: typeof AdminAgendaRouteImport
-      parentRoute: typeof AdminRoute
+    '/pagamento/sucesso': {
+      id: '/pagamento/sucesso'
+      path: '/pagamento/sucesso'
+      fullPath: '/pagamento/sucesso'
+      preLoaderRoute: typeof PagamentoSucessoRouteImport
+      parentRoute: typeof rootRouteImport
     }
-    '/admin/clientes': {
-      id: '/admin/clientes'
-      path: '/clientes'
-      fullPath: '/admin/clientes'
-      preLoaderRoute: typeof AdminClientesRouteImport
-      parentRoute: typeof AdminRoute
+    '/pagamento/cancelado': {
+      id: '/pagamento/cancelado'
+      path: '/pagamento/cancelado'
+      fullPath: '/pagamento/cancelado'
+      preLoaderRoute: typeof PagamentoCanceladoRouteImport
+      parentRoute: typeof rootRouteImport
     }
-    '/admin/configuracoes': {
-      id: '/admin/configuracoes'
-      path: '/configuracoes'
-      fullPath: '/admin/configuracoes'
-      preLoaderRoute: typeof AdminConfiguracoesRouteImport
-      parentRoute: typeof AdminRoute
+    '/experiencias/$slug': {
+      id: '/experiencias/$slug'
+      path: '/$slug'
+      fullPath: '/experiencias/$slug'
+      preLoaderRoute: typeof ExperienciasSlugRouteImport
+      parentRoute: typeof ExperienciasRoute
     }
-    '/admin/galeria': {
-      id: '/admin/galeria'
-      path: '/galeria'
-      fullPath: '/admin/galeria'
-      preLoaderRoute: typeof AdminGaleriaRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/passeios': {
-      id: '/admin/passeios'
-      path: '/passeios'
-      fullPath: '/admin/passeios'
-      preLoaderRoute: typeof AdminPasseiosRouteImport
+    '/admin/veiculos': {
+      id: '/admin/veiculos'
+      path: '/veiculos'
+      fullPath: '/admin/veiculos'
+      preLoaderRoute: typeof AdminVeiculosRouteImport
       parentRoute: typeof AdminRoute
     }
     '/admin/reservas': {
@@ -450,33 +456,40 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminReservasRouteImport
       parentRoute: typeof AdminRoute
     }
-    '/admin/veiculos': {
-      id: '/admin/veiculos'
-      path: '/veiculos'
-      fullPath: '/admin/veiculos'
-      preLoaderRoute: typeof AdminVeiculosRouteImport
+    '/admin/passeios': {
+      id: '/admin/passeios'
+      path: '/passeios'
+      fullPath: '/admin/passeios'
+      preLoaderRoute: typeof AdminPasseiosRouteImport
       parentRoute: typeof AdminRoute
     }
-    '/experiencias/$slug': {
-      id: '/experiencias/$slug'
-      path: '/$slug'
-      fullPath: '/experiencias/$slug'
-      preLoaderRoute: typeof ExperienciasSlugRouteImport
-      parentRoute: typeof ExperienciasRoute
+    '/admin/galeria': {
+      id: '/admin/galeria'
+      path: '/galeria'
+      fullPath: '/admin/galeria'
+      preLoaderRoute: typeof AdminGaleriaRouteImport
+      parentRoute: typeof AdminRoute
     }
-    '/pagamento/cancelado': {
-      id: '/pagamento/cancelado'
-      path: '/pagamento/cancelado'
-      fullPath: '/pagamento/cancelado'
-      preLoaderRoute: typeof PagamentoCanceladoRouteImport
-      parentRoute: typeof rootRouteImport
+    '/admin/configuracoes': {
+      id: '/admin/configuracoes'
+      path: '/configuracoes'
+      fullPath: '/admin/configuracoes'
+      preLoaderRoute: typeof AdminConfiguracoesRouteImport
+      parentRoute: typeof AdminRoute
     }
-    '/pagamento/sucesso': {
-      id: '/pagamento/sucesso'
-      path: '/pagamento/sucesso'
-      fullPath: '/pagamento/sucesso'
-      preLoaderRoute: typeof PagamentoSucessoRouteImport
-      parentRoute: typeof rootRouteImport
+    '/admin/clientes': {
+      id: '/admin/clientes'
+      path: '/clientes'
+      fullPath: '/admin/clientes'
+      preLoaderRoute: typeof AdminClientesRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/agenda': {
+      id: '/admin/agenda'
+      path: '/agenda'
+      fullPath: '/admin/agenda'
+      preLoaderRoute: typeof AdminAgendaRouteImport
+      parentRoute: typeof AdminRoute
     }
     '/admin/experiencias/': {
       id: '/admin/experiencias/'
@@ -485,6 +498,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminExperienciasIndexRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/api/infinitepay/webhook': {
+      id: '/api/infinitepay/webhook'
+      path: '/api/infinitepay/webhook'
+      fullPath: '/api/infinitepay/webhook'
+      preLoaderRoute: typeof ApiInfinitepayWebhookRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/experiencias/$id': {
       id: '/admin/experiencias/$id'
       path: '/experiencias/$id'
@@ -492,12 +512,12 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminExperienciasIdRouteImport
       parentRoute: typeof AdminRoute
     }
-    '/api/infinitepay/webhook': {
-      id: '/api/infinitepay/webhook'
-      path: '/api/infinitepay/webhook'
-      fullPath: '/api/infinitepay/webhook'
-      preLoaderRoute: typeof ApiInfinitepayWebhookRouteImport
-      parentRoute: typeof rootRouteImport
+    '/experiencias/$slug/video/$videoKey': {
+      id: '/experiencias/$slug/video/$videoKey'
+      path: '/video/$videoKey'
+      fullPath: '/experiencias/$slug/video/$videoKey'
+      preLoaderRoute: typeof ExperienciasSlugVideoVideoKeyRouteImport
+      parentRoute: typeof ExperienciasSlugRoute
     }
   }
 }
@@ -530,12 +550,23 @@ const AdminRouteChildren: AdminRouteChildren = {
 
 const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
 
+interface ExperienciasSlugRouteChildren {
+  ExperienciasSlugVideoVideoKeyRoute: typeof ExperienciasSlugVideoVideoKeyRoute
+}
+
+const ExperienciasSlugRouteChildren: ExperienciasSlugRouteChildren = {
+  ExperienciasSlugVideoVideoKeyRoute: ExperienciasSlugVideoVideoKeyRoute,
+}
+
+const ExperienciasSlugRouteWithChildren =
+  ExperienciasSlugRoute._addFileChildren(ExperienciasSlugRouteChildren)
+
 interface ExperienciasRouteChildren {
-  ExperienciasSlugRoute: typeof ExperienciasSlugRoute
+  ExperienciasSlugRoute: typeof ExperienciasSlugRouteWithChildren
 }
 
 const ExperienciasRouteChildren: ExperienciasRouteChildren = {
-  ExperienciasSlugRoute: ExperienciasSlugRoute,
+  ExperienciasSlugRoute: ExperienciasSlugRouteWithChildren,
 }
 
 const ExperienciasRouteWithChildren = ExperienciasRoute._addFileChildren(
@@ -560,13 +591,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}

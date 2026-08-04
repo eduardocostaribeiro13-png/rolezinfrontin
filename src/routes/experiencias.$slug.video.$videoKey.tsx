@@ -62,7 +62,11 @@ export const Route = createFileRoute("/experiencias/$slug/video/$videoKey")({
 });
 
 function VideoPage() {
-  const { exp, video, videos } = Route.useLoaderData();
+  const { exp, video, videos } = Route.useLoaderData() as {
+    exp: Experience;
+    video: ExperienceVideoEntry;
+    videos: ExperienceVideoEntry[];
+  };
 
   return (
     <div className="min-h-dvh bg-background">
