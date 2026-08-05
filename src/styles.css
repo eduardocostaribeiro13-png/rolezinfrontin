@@ -144,6 +144,16 @@
   border: 1px solid color-mix(in oklab, var(--color-brand) 12%, transparent);
 }
 
+@utility card-premium {
+  border-radius: 1.25rem;
+  border: 1px solid color-mix(in oklab, var(--color-border) 70%, transparent);
+  background: color-mix(in oklab, var(--color-card) 85%, transparent);
+  padding: 1.25rem;
+  box-shadow: 0 24px 60px -40px rgb(0 0 0 / 0.8);
+  transition: border-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+
 @utility btn-brand {
   display: inline-flex;
   align-items: center;
