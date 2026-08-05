@@ -1,0 +1,1 @@
+UPDATE public.experiences SET main_video_url = 'https://qlvsopynxpohlsmlfdsw.supabase.co/storage/v1/object/public/VIDEO%201%20GOPRO/video-gopro-saibreira.mp4' WHERE slug = 'lago-azul' AND main_video_url IS NULL;
