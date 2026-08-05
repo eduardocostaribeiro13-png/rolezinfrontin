@@ -197,6 +197,15 @@ function ExperienceDetail() {
             </Block>
           )}
 
+          {videos.length === 0 && (
+            <Block title="Vídeos">
+              <p className="rounded-xl border border-border/60 bg-card p-5 text-sm text-muted-foreground">
+                Nenhum vídeo cadastrado para esta experiência. Adicione os links/uploads em
+                Admin → Experiências → editar (Vídeo Principal, Drone, Onboard, 360°, Prévia ou Vídeos extras).
+              </p>
+            </Block>
+          )}
+
           {exp.points_of_interest.length > 0 && (
             <Block title="Pontos turísticos">
               <ul className="space-y-3">
