@@ -8,7 +8,7 @@ import { ExperienceSearch } from "@/components/experiences/ExperienceSearch";
 import { ExperienceCategories } from "@/components/experiences/ExperienceCategories";
 import { ExperienceGrid } from "@/components/experiences/ExperienceGrid";
 
-export const Route = createFileRoute("/experiencias")({
+export const Route = createFileRoute("/experiencias/")({
   head: () => ({
     meta: [
       { title: "Centro de Experiências Off-Road — Rolezin Frontin" },

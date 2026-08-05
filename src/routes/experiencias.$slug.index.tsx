@@ -6,7 +6,7 @@ import { ExperienceService } from "@/lib/services/experience-service";
 import type { Experience } from "@/lib/experiences";
 import { brlCents, collectExperienceVideos } from "@/lib/experiences";
 
-export const Route = createFileRoute("/experiencias/$slug")({
+export const Route = createFileRoute("/experiencias/$slug/")({
   loader: async ({ params, context }) => {
     const data = await context.queryClient.ensureQueryData({
       queryKey: ["exp", "detail", params.slug],
