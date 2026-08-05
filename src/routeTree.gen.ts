@@ -13,7 +13,6 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as ContatoRouteImport } from './routes/contato'
-import { Route as ExperienciasRouteImport } from './routes/experiencias'
 import { Route as GaleriaRouteImport } from './routes/galeria'
 import { Route as PasseiosRouteImport } from './routes/passeios'
 import { Route as ReservarRouteImport } from './routes/reservar'
@@ -27,12 +26,13 @@ import { Route as AdminGaleriaRouteImport } from './routes/admin.galeria'
 import { Route as AdminPasseiosRouteImport } from './routes/admin.passeios'
 import { Route as AdminReservasRouteImport } from './routes/admin.reservas'
 import { Route as AdminVeiculosRouteImport } from './routes/admin.veiculos'
-import { Route as ExperienciasSlugRouteImport } from './routes/experiencias.$slug'
+import { Route as ExperienciasIndexRouteImport } from './routes/experiencias.index'
 import { Route as PagamentoCanceladoRouteImport } from './routes/pagamento.cancelado'
 import { Route as PagamentoSucessoRouteImport } from './routes/pagamento.sucesso'
 import { Route as AdminExperienciasIndexRouteImport } from './routes/admin.experiencias.index'
 import { Route as AdminExperienciasIdRouteImport } from './routes/admin.experiencias.$id'
 import { Route as ApiInfinitepayWebhookRouteImport } from './routes/api/infinitepay.webhook'
+import { Route as ExperienciasSlugIndexRouteImport } from './routes/experiencias.$slug.index'
 import { Route as ExperienciasSlugVideoVideoKeyRouteImport } from './routes/experiencias.$slug.video.$videoKey'
 
 const IndexRoute = IndexRouteImport.update({
@@ -53,11 +53,6 @@ const AuthRoute = AuthRouteImport.update({
 const ContatoRoute = ContatoRouteImport.update({
   id: '/contato',
   path: '/contato',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ExperienciasRoute = ExperienciasRouteImport.update({
-  id: '/experiencias',
-  path: '/experiencias',
   getParentRoute: () => rootRouteImport,
 } as any)
 const GaleriaRoute = GaleriaRouteImport.update({
@@ -125,10 +120,10 @@ const AdminVeiculosRoute = AdminVeiculosRouteImport.update({
   path: '/veiculos',
   getParentRoute: () => AdminRoute,
 } as any)
-const ExperienciasSlugRoute = ExperienciasSlugRouteImport.update({
-  id: '/$slug',
-  path: '/$slug',
-  getParentRoute: () => ExperienciasRoute,
+const ExperienciasIndexRoute = ExperienciasIndexRouteImport.update({
+  id: '/experiencias/',
+  path: '/experiencias/',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const PagamentoCanceladoRoute = PagamentoCanceladoRouteImport.update({
   id: '/pagamento/cancelado',
@@ -155,11 +150,16 @@ const ApiInfinitepayWebhookRoute = ApiInfinitepayWebhookRouteImport.update({
   path: '/api/infinitepay/webhook',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ExperienciasSlugIndexRoute = ExperienciasSlugIndexRouteImport.update({
+  id: '/experiencias/$slug/',
+  path: '/experiencias/$slug/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ExperienciasSlugVideoVideoKeyRoute =
   ExperienciasSlugVideoVideoKeyRouteImport.update({
-    id: '/video/$videoKey',
-    path: '/video/$videoKey',
-    getParentRoute: () => ExperienciasSlugRoute,
+    id: '/experiencias/$slug/video/$videoKey',
+    path: '/experiencias/$slug/video/$videoKey',
+    getParentRoute: () => rootRouteImport,
   } as any)
 
 export interface FileRoutesByFullPath {
@@ -167,7 +167,6 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AdminRouteWithChildren
   '/auth': typeof AuthRoute
   '/contato': typeof ContatoRoute
-  '/experiencias': typeof ExperienciasRouteWithChildren
   '/galeria': typeof GaleriaRoute
   '/passeios': typeof PasseiosRoute
   '/reservar': typeof ReservarRoute
@@ -180,20 +179,20 @@ export interface FileRoutesByFullPath {
   '/admin/passeios': typeof AdminPasseiosRoute
   '/admin/reservas': typeof AdminReservasRoute
   '/admin/veiculos': typeof AdminVeiculosRoute
-  '/experiencias/$slug': typeof ExperienciasSlugRouteWithChildren
   '/pagamento/cancelado': typeof PagamentoCanceladoRoute
   '/pagamento/sucesso': typeof PagamentoSucessoRoute
   '/admin/': typeof AdminIndexRoute
+  '/experiencias/': typeof ExperienciasIndexRoute
   '/admin/experiencias/$id': typeof AdminExperienciasIdRoute
   '/api/infinitepay/webhook': typeof ApiInfinitepayWebhookRoute
   '/admin/experiencias/': typeof AdminExperienciasIndexRoute
+  '/experiencias/$slug/': typeof ExperienciasSlugIndexRoute
   '/experiencias/$slug/video/$videoKey': typeof ExperienciasSlugVideoVideoKeyRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/contato': typeof ContatoRoute
-  '/experiencias': typeof ExperienciasRouteWithChildren
   '/galeria': typeof GaleriaRoute
   '/passeios': typeof PasseiosRoute
   '/reservar': typeof ReservarRoute
@@ -206,13 +205,14 @@ export interface FileRoutesByTo {
   '/admin/passeios': typeof AdminPasseiosRoute
   '/admin/reservas': typeof AdminReservasRoute
   '/admin/veiculos': typeof AdminVeiculosRoute
-  '/experiencias/$slug': typeof ExperienciasSlugRouteWithChildren
   '/pagamento/cancelado': typeof PagamentoCanceladoRoute
   '/pagamento/sucesso': typeof PagamentoSucessoRoute
   '/admin': typeof AdminIndexRoute
+  '/experiencias': typeof ExperienciasIndexRoute
   '/admin/experiencias/$id': typeof AdminExperienciasIdRoute
   '/api/infinitepay/webhook': typeof ApiInfinitepayWebhookRoute
   '/admin/experiencias': typeof AdminExperienciasIndexRoute
+  '/experiencias/$slug': typeof ExperienciasSlugIndexRoute
   '/experiencias/$slug/video/$videoKey': typeof ExperienciasSlugVideoVideoKeyRoute
 }
 export interface FileRoutesById {
@@ -221,7 +221,6 @@ export interface FileRoutesById {
   '/admin': typeof AdminRouteWithChildren
   '/auth': typeof AuthRoute
   '/contato': typeof ContatoRoute
-  '/experiencias': typeof ExperienciasRouteWithChildren
   '/galeria': typeof GaleriaRoute
   '/passeios': typeof PasseiosRoute
   '/reservar': typeof ReservarRoute
@@ -234,13 +233,14 @@ export interface FileRoutesById {
   '/admin/passeios': typeof AdminPasseiosRoute
   '/admin/reservas': typeof AdminReservasRoute
   '/admin/veiculos': typeof AdminVeiculosRoute
-  '/experiencias/$slug': typeof ExperienciasSlugRouteWithChildren
   '/pagamento/cancelado': typeof PagamentoCanceladoRoute
   '/pagamento/sucesso': typeof PagamentoSucessoRoute
   '/admin/': typeof AdminIndexRoute
+  '/experiencias/': typeof ExperienciasIndexRoute
   '/admin/experiencias/$id': typeof AdminExperienciasIdRoute
   '/api/infinitepay/webhook': typeof ApiInfinitepayWebhookRoute
   '/admin/experiencias/': typeof AdminExperienciasIndexRoute
+  '/experiencias/$slug/': typeof ExperienciasSlugIndexRoute
   '/experiencias/$slug/video/$videoKey': typeof ExperienciasSlugVideoVideoKeyRoute
 }
 export interface FileRouteTypes {
@@ -250,7 +250,6 @@ export interface FileRouteTypes {
     | '/admin'
     | '/auth'
     | '/contato'
-    | '/experiencias'
     | '/galeria'
     | '/passeios'
     | '/reservar'
@@ -263,20 +262,20 @@ export interface FileRouteTypes {
     | '/admin/passeios'
     | '/admin/reservas'
     | '/admin/veiculos'
-    | '/experiencias/$slug'
     | '/pagamento/cancelado'
     | '/pagamento/sucesso'
     | '/admin/'
+    | '/experiencias/'
     | '/admin/experiencias/$id'
     | '/api/infinitepay/webhook'
     | '/admin/experiencias/'
+    | '/experiencias/$slug/'
     | '/experiencias/$slug/video/$videoKey'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/auth'
     | '/contato'
-    | '/experiencias'
     | '/galeria'
     | '/passeios'
     | '/reservar'
@@ -289,13 +288,14 @@ export interface FileRouteTypes {
     | '/admin/passeios'
     | '/admin/reservas'
     | '/admin/veiculos'
-    | '/experiencias/$slug'
     | '/pagamento/cancelado'
     | '/pagamento/sucesso'
     | '/admin'
+    | '/experiencias'
     | '/admin/experiencias/$id'
     | '/api/infinitepay/webhook'
     | '/admin/experiencias'
+    | '/experiencias/$slug'
     | '/experiencias/$slug/video/$videoKey'
   id:
     | '__root__'
@@ -303,7 +303,6 @@ export interface FileRouteTypes {
     | '/admin'
     | '/auth'
     | '/contato'
-    | '/experiencias'
     | '/galeria'
     | '/passeios'
     | '/reservar'
@@ -316,13 +315,14 @@ export interface FileRouteTypes {
     | '/admin/passeios'
     | '/admin/reservas'
     | '/admin/veiculos'
-    | '/experiencias/$slug'
     | '/pagamento/cancelado'
     | '/pagamento/sucesso'
     | '/admin/'
+    | '/experiencias/'
     | '/admin/experiencias/$id'
     | '/api/infinitepay/webhook'
     | '/admin/experiencias/'
+    | '/experiencias/$slug/'
     | '/experiencias/$slug/video/$videoKey'
   fileRoutesById: FileRoutesById
 }
@@ -331,7 +331,6 @@ export interface RootRouteChildren {
   AdminRoute: typeof AdminRouteWithChildren
   AuthRoute: typeof AuthRoute
   ContatoRoute: typeof ContatoRoute
-  ExperienciasRoute: typeof ExperienciasRouteWithChildren
   GaleriaRoute: typeof GaleriaRoute
   PasseiosRoute: typeof PasseiosRoute
   ReservarRoute: typeof ReservarRoute
@@ -339,7 +338,10 @@ export interface RootRouteChildren {
   SobreRoute: typeof SobreRoute
   PagamentoCanceladoRoute: typeof PagamentoCanceladoRoute
   PagamentoSucessoRoute: typeof PagamentoSucessoRoute
+  ExperienciasIndexRoute: typeof ExperienciasIndexRoute
   ApiInfinitepayWebhookRoute: typeof ApiInfinitepayWebhookRoute
+  ExperienciasSlugIndexRoute: typeof ExperienciasSlugIndexRoute
+  ExperienciasSlugVideoVideoKeyRoute: typeof ExperienciasSlugVideoVideoKeyRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -370,13 +372,6 @@ declare module '@tanstack/react-router' {
       path: '/contato'
       fullPath: '/contato'
       preLoaderRoute: typeof ContatoRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/experiencias': {
-      id: '/experiencias'
-      path: '/experiencias'
-      fullPath: '/experiencias'
-      preLoaderRoute: typeof ExperienciasRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/galeria': {
@@ -470,12 +465,12 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminVeiculosRouteImport
       parentRoute: typeof AdminRoute
     }
-    '/experiencias/$slug': {
-      id: '/experiencias/$slug'
-      path: '/$slug'
-      fullPath: '/experiencias/$slug'
-      preLoaderRoute: typeof ExperienciasSlugRouteImport
-      parentRoute: typeof ExperienciasRoute
+    '/experiencias/': {
+      id: '/experiencias/'
+      path: '/experiencias'
+      fullPath: '/experiencias/'
+      preLoaderRoute: typeof ExperienciasIndexRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/pagamento/cancelado': {
       id: '/pagamento/cancelado'
@@ -512,12 +507,19 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiInfinitepayWebhookRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/experiencias/$slug/': {
+      id: '/experiencias/$slug/'
+      path: '/experiencias/$slug'
+      fullPath: '/experiencias/$slug/'
+      preLoaderRoute: typeof ExperienciasSlugIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/experiencias/$slug/video/$videoKey': {
       id: '/experiencias/$slug/video/$videoKey'
-      path: '/video/$videoKey'
+      path: '/experiencias/$slug/video/$videoKey'
       fullPath: '/experiencias/$slug/video/$videoKey'
       preLoaderRoute: typeof ExperienciasSlugVideoVideoKeyRouteImport
-      parentRoute: typeof ExperienciasSlugRoute
+      parentRoute: typeof rootRouteImport
     }
   }
 }
@@ -550,35 +552,11 @@ const AdminRouteChildren: AdminRouteChildren = {
 
 const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
 
-interface ExperienciasSlugRouteChildren {
-  ExperienciasSlugVideoVideoKeyRoute: typeof ExperienciasSlugVideoVideoKeyRoute
-}
-
-const ExperienciasSlugRouteChildren: ExperienciasSlugRouteChildren = {
-  ExperienciasSlugVideoVideoKeyRoute: ExperienciasSlugVideoVideoKeyRoute,
-}
-
-const ExperienciasSlugRouteWithChildren =
-  ExperienciasSlugRoute._addFileChildren(ExperienciasSlugRouteChildren)
-
-interface ExperienciasRouteChildren {
-  ExperienciasSlugRoute: typeof ExperienciasSlugRouteWithChildren
-}
-
-const ExperienciasRouteChildren: ExperienciasRouteChildren = {
-  ExperienciasSlugRoute: ExperienciasSlugRouteWithChildren,
-}
-
-const ExperienciasRouteWithChildren = ExperienciasRoute._addFileChildren(
-  ExperienciasRouteChildren,
-)
-
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdminRoute: AdminRouteWithChildren,
   AuthRoute: AuthRoute,
   ContatoRoute: ContatoRoute,
-  ExperienciasRoute: ExperienciasRouteWithChildren,
   GaleriaRoute: GaleriaRoute,
   PasseiosRoute: PasseiosRoute,
   ReservarRoute: ReservarRoute,
@@ -586,7 +564,10 @@ const rootRouteChildren: RootRouteChildren = {
   SobreRoute: SobreRoute,
   PagamentoCanceladoRoute: PagamentoCanceladoRoute,
   PagamentoSucessoRoute: PagamentoSucessoRoute,
+  ExperienciasIndexRoute: ExperienciasIndexRoute,
   ApiInfinitepayWebhookRoute: ApiInfinitepayWebhookRoute,
+  ExperienciasSlugIndexRoute: ExperienciasSlugIndexRoute,
+  ExperienciasSlugVideoVideoKeyRoute: ExperienciasSlugVideoVideoKeyRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
