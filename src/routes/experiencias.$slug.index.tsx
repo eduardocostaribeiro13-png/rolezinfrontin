@@ -80,7 +80,11 @@ function ExperienceDetail() {
       {/* HERO VIDEO */}
       <section className="relative h-[70vh] min-h-[520px] w-full overflow-hidden bg-black">
         <video
-          src="https://qlvsopynxpohlsmlfdsw.supabase.co/storage/v1/object/public/VIDEO%201%20GOPRO/video-gopro-saibreira.mp4"
+          src={
+            exp.main_video_url ??
+            exp.preview_video_url ??
+            "https://qlvsopynxpohlsmlfdsw.supabase.co/storage/v1/object/public/VIDEO%201%20GOPRO/video-gopro-saibreira.mp4"
+          }
           poster={exp.horizontal_image_url ?? exp.cover_image_url ?? undefined}
           autoPlay
           muted
