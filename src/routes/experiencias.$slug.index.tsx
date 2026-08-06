@@ -131,7 +131,7 @@ function ExperienceDetail() {
   return (
     <div className="min-h-dvh bg-background">
       {/* ================= HERO ================= */}
-      <section className="relative min-h-[62vh] w-full overflow-hidden bg-black md:min-h-[72vh]">
+      <section className="relative min-h-[62vh] w-full overflow-hidden bg-black md:h-[660px]">
         {heroImage ? (
           <img
             src={heroImage}
@@ -145,10 +145,10 @@ function ExperienceDetail() {
         <div className="absolute inset-0 bg-gradient-to-r from-black via-black/75 to-transparent" />
         <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-black/60" />
 
-        <div className="container-x relative z-10 flex min-h-[62vh] flex-col justify-center pb-28 pt-28 md:min-h-[72vh] md:pb-36">
+        <div className="container-x relative z-10 flex h-full min-h-[62vh] flex-col justify-center pb-24 pt-28 md:min-h-0 md:pb-28">
           <Link
             to="/experiencias"
-            className="absolute left-4 top-6 inline-flex items-center gap-2 rounded-md border border-white/15 bg-black/60 px-3 py-2 font-mono text-[10px] uppercase tracking-widest text-white backdrop-blur-md transition hover:border-brand hover:text-brand md:left-8"
+            className="absolute left-4 top-24 inline-flex items-center gap-2 rounded-md border border-white/15 bg-black/60 px-3 py-2 font-mono text-[10px] uppercase tracking-widest text-white backdrop-blur-md transition hover:border-brand hover:text-brand md:left-8"
           >
             <ArrowLeft className="h-3.5 w-3.5" /> Todas as experiências
           </Link>
@@ -190,12 +190,12 @@ function ExperienceDetail() {
       {/* ================= PAINEL FLUTUANTE ================= */}
       <section className="container-x relative z-20 -mt-16 md:-mt-20">
         <div className="mx-auto max-w-5xl overflow-hidden rounded-xl border border-border/60 bg-card/95 shadow-2xl backdrop-blur">
-          <div className="grid grid-cols-2 divide-border/60 sm:grid-cols-3 lg:grid-cols-5 lg:divide-x">
+          <div className="grid grid-cols-2 divide-border/60 sm:grid-cols-3 lg:grid-cols-6 lg:divide-x">
             <Stat icon={<Clock />} label="Duração" value={`${exp.duration_hours}h`} />
             <Stat icon={<Ruler />} label="Distância" value={`${exp.distance_km} km`} />
             <Stat icon={<Mountain />} label="Altitude" value={`${exp.altitude_m} m`} />
             <Stat icon={<Users />} label="Máx." value={`${exp.max_people}p`} />
-            <div className="col-span-2 flex items-center justify-between gap-4 border-t border-border/60 p-4 sm:col-span-1 lg:border-t-0">
+            <div className="col-span-2 flex items-center justify-between gap-4 border-t border-border/60 p-4 sm:col-span-1 lg:col-span-2 lg:border-t-0">
               {exp.price_cents > 0 && (
                 <div className="flex items-center gap-3">
                   <Tag className="h-5 w-5 text-brand" />
