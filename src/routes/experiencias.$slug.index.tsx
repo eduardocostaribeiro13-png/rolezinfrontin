@@ -131,7 +131,7 @@ function ExperienceDetail() {
   return (
     <div className="min-h-dvh bg-background">
       {/* ================= HERO ================= */}
-      <section className="relative min-h-[62vh] w-full overflow-hidden bg-black md:h-[660px]">
+      <section className="relative min-h-[62vh] w-full overflow-hidden bg-black md:min-h-0 md:h-[660px]">
         {heroImage ? (
           <img
             src={heroImage}
