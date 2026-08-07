@@ -83,10 +83,6 @@ function AdminExperienciaEdit() {
     queryKey: ["exp", "vehicles"],
     queryFn: () => ExperienceService.listVehicleTypes(),
   });
-  const { data: tours = [] } = useQuery({
-    queryKey: ["admin", "tours-list-min"],
-    queryFn: () => TourService.listAll(),
-  });
 
   const { data: existing, isLoading } = useQuery({
     queryKey: ["admin", "experience", id],
