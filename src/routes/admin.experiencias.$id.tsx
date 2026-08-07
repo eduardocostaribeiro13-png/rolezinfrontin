@@ -20,7 +20,6 @@ import { ImageUpload } from "@/components/admin/ImageUpload";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { TourService } from "@/lib/services/tour-service";
 
 export const Route = createFileRoute("/admin/experiencias/$id")({
   component: AdminExperienciaEdit,
