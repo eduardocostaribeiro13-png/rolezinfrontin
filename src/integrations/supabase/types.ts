@@ -413,6 +413,7 @@ export type Database = {
           customer_state: string | null
           customer_whatsapp: string | null
           duration_hours: number
+          experience_id: string | null
           expires_at: string | null
           id: string
           installments: number | null
@@ -447,6 +448,7 @@ export type Database = {
           customer_state?: string | null
           customer_whatsapp?: string | null
           duration_hours?: number
+          experience_id?: string | null
           expires_at?: string | null
           id?: string
           installments?: number | null
@@ -481,6 +483,7 @@ export type Database = {
           customer_state?: string | null
           customer_whatsapp?: string | null
           duration_hours?: number
+          experience_id?: string | null
           expires_at?: string | null
           id?: string
           installments?: number | null
@@ -506,6 +509,13 @@ export type Database = {
           vehicle_id?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "reservations_experience_id_fkey"
+            columns: ["experience_id"]
+            isOneToOne: false
+            referencedRelation: "experiences"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "reservations_vehicle_id_fkey"
             columns: ["vehicle_id"]
