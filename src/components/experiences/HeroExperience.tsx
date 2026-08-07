@@ -1,10 +1,9 @@
 import { motion } from "framer-motion";
-import { useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
-import { Camera, ChevronRight, Film, Globe2, MapPin, Sparkles, Video } from "lucide-react";
+import { Camera, ChevronRight, Film, Globe2, Sparkles, Video } from "lucide-react";
 import type { Experience } from "@/lib/experiences";
-import { AdminService } from "@/lib/services/admin-service";
 import { HeroSkeleton } from "./ExperienceSkeleton";
+
 
 type Props = {
   exp?: Experience | null;
@@ -30,17 +29,6 @@ function HeroFilled({ exp }: { exp: Experience }) {
   const description =
     exp.short_description ?? "Trilhas, cachoeiras e mirantes de Engenheiro Paulo de Frontin filmados em cinema real.";
 
-  // Link do Google Maps configurável no painel admin (Configurações > Empresa).
-  const { data: settings } = useQuery({
-    queryKey: ["site-settings", "maps"],
-    queryFn: () => AdminService.getSettings(),
-    staleTime: 5 * 60 * 1000,
-  });
-  const mapsHref =
-    settings?.maps_url?.trim() ||
-    `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
-      settings?.address?.trim() || "Engenheiro Paulo de Frontin, RJ",
-    )}`;
 
 
 
