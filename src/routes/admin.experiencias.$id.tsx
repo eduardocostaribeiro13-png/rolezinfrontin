@@ -20,7 +20,6 @@ import { ImageUpload } from "@/components/admin/ImageUpload";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { TourService } from "@/lib/services/tour-service";
 
 export const Route = createFileRoute("/admin/experiencias/$id")({
   component: AdminExperienciaEdit,
@@ -82,10 +81,6 @@ function AdminExperienciaEdit() {
   const { data: vehicles = [] } = useQuery({
     queryKey: ["exp", "vehicles"],
     queryFn: () => ExperienceService.listVehicleTypes(),
-  });
-  const { data: tours = [] } = useQuery({
-    queryKey: ["admin", "tours-list-min"],
-    queryFn: () => TourService.listAll(),
   });
 
   const { data: existing, isLoading } = useQuery({
@@ -253,20 +248,9 @@ function AdminExperienciaEdit() {
               <option value="COMING_SOON">Em breve</option>
             </select>
           </Field>
-          <Field label="Passeio para reserva (tour)">
-            <select
-              value={form.tour_slug ?? ""}
-              onChange={(e) => set("tour_slug", e.target.value || null)}
-              className="w-full rounded-md border border-border/60 bg-background px-3 py-2 text-sm"
-            >
-              <option value="">— sem vínculo —</option>
-              {tours.map((t) => (
-                <option key={t.id} value={t.slug}>
-                  {t.name}
-                </option>
-              ))}
-            </select>
-          </Field>
+          {/* Campo "Passeio para reserva (tour)" removido: a experiência é
+              reservável diretamente por slug/ID, sem vínculo com Passeios. */}
+
           <Field label="Ordem">
             <Input type="number" value={form.sort_order} onChange={(e) => set("sort_order", Number(e.target.value))} />
           </Field>

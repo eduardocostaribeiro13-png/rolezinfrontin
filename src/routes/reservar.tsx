@@ -13,19 +13,22 @@ import {
   ChevronLeft,
   ChevronRight,
   Clock,
-  CreditCard,
   Loader2,
+  MessageCircle,
 } from "lucide-react";
-import { brl, brlCents, type Tour } from "@/lib/tours";
+import { brl, brlCents } from "@/lib/tours";
 import { useQuery } from "@tanstack/react-query";
-import { TourService } from "@/lib/services/tour-service";
+import { ExperienceService } from "@/lib/services/experience-service";
+import { AdminService } from "@/lib/services/admin-service";
+import { slugify, type Experience } from "@/lib/experiences";
 import { Calendar } from "@/components/ui/calendar";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
-import { createCheckout } from "@/lib/checkout.functions";
+import { requestReservation } from "@/lib/reservation-request.functions";
+import { WHATSAPP_NUMBER } from "@/lib/whatsapp";
 import {
   useFullyBookedDates,
   useTakenTimes,
@@ -34,16 +37,19 @@ import {
 } from "@/lib/hooks/use-availability";
 import type { Vehicle } from "@/lib/services/vehicle-service";
 
-const searchSchema = z.object({ tour: z.string().optional() });
+const searchSchema = z.object({
+  experience: z.string().optional(),
+  tour: z.string().optional(),
+});
 
 export const Route = createFileRoute("/reservar")({
   head: () => ({
     meta: [
-      { title: "Reservar Passeio — Rolezin Frontin Off Road" },
+      { title: "Reservar Experiência — Rolezin Frontin Off Road" },
       {
         name: "description",
         content:
-          "Reserve seu passeio de quadriciclo ou UTV em Engenheiro Paulo de Frontin. Escolha veículo, data e horário em tempo real.",
+          "Reserve sua experiência off-road em Engenheiro Paulo de Frontin. Escolha veículo, data e horário e finalize pelo WhatsApp.",
       },
     ],
     links: [{ rel: "canonical", href: "/reservar" }],
@@ -52,7 +58,8 @@ export const Route = createFileRoute("/reservar")({
   component: ReservarPage,
 });
 
-const STEPS = ["Passeio", "Veículo", "Data", "Horário", "Dados", "Revisão"] as const;
+const STEPS = ["Experiência", "Veículo", "Data", "Horário", "Dados", "Revisão"] as const;
+
 
 const clientSchema = z.object({
   nome: z.string().trim().min(3, "Informe seu nome completo").max(100),
@@ -71,20 +78,22 @@ function toISODate(d: Date) {
 }
 
 function ReservarPage() {
-  const { tour: initialSlug } = Route.useSearch();
-  const [step, setStep] = useState(0);
-  const { data: tours } = useQuery({
-    queryKey: ["tours", "public"],
-    queryFn: () => TourService.list(),
+  const { experience: initialSlug } = Route.useSearch();
+  const [step, setStep] = useState(initialSlug ? 1 : 0);
+  const [exp, setExp] = useState<Experience | null>(null);
+
+  // Pré-seleção via ?experience=slug — carrega a experiência completa
+  // (inclui vehicle_type_ids para filtrar os veículos).
+  const { data: preselected } = useQuery({
+    queryKey: ["experience", "by-slug", initialSlug],
+    queryFn: () => ExperienceService.getBySlug(initialSlug!),
+    enabled: !!initialSlug,
     staleTime: 60_000,
   });
-  const [tour, setTour] = useState<Tour | null>(null);
   useEffect(() => {
-    if (!tour && initialSlug && tours) {
-      const t = tours.find((x) => x.slug === initialSlug);
-      if (t) setTour(t);
-    }
-  }, [initialSlug, tours, tour]);
+    if (!exp && preselected && preselected.status === "PUBLISHED") setExp(preselected);
+  }, [preselected, exp]);
+
   const [vehicle, setVehicle] = useState<Vehicle | null>(null);
   const [date, setDate] = useState<Date | undefined>();
   const [time, setTime] = useState<string | null>(null);
@@ -97,18 +106,23 @@ function ReservarPage() {
     setTime(null);
   }, [vehicle?.id, date]);
 
-  // Single source of truth for pricing: the tour's price per hour × tour duration (from DB).
-  const pricePerHour = useMemo(() => {
-    if (tour) return tour.price_per_hour_cents / 100;
-    if (vehicle && vehicle.price_cents > 0) return vehicle.price_cents / 100;
-    return 0;
-  }, [vehicle, tour]);
-  const hours = tour?.duration_hours ?? 1;
-  const total = useMemo(() => pricePerHour * hours, [pricePerHour, hours]);
-  const quantity = vehicle?.capacity ?? tour?.max_people ?? 1;
+  const { data: settings } = useQuery({
+    queryKey: ["site-settings", "public"],
+    queryFn: () => AdminService.getSettings(),
+    staleTime: 300_000,
+  });
+
+  // Fonte única de preço/duração: a própria experiência (dados do banco).
+  const hours = exp?.duration_hours ?? 1;
+  const total = useMemo(() => (exp ? exp.price_cents / 100 : 0), [exp]);
+  const pricePerHour = useMemo(
+    () => (hours > 0 ? total / hours : 0),
+    [total, hours],
+  );
+  const quantity = vehicle?.capacity ?? exp?.max_people ?? 1;
 
   const canAdvance = () => {
-    if (step === 0) return !!tour;
+    if (step === 0) return !!exp;
     if (step === 1) return !!vehicle;
     if (step === 2) return !!date;
     if (step === 3) return !!time;
@@ -129,60 +143,64 @@ function ReservarPage() {
   const next = () => canAdvance() && setStep((s) => Math.min(s + 1, STEPS.length - 1));
   const back = () => setStep((s) => Math.max(s - 1, 0));
 
-  const submitCheckout = useServerFn(createCheckout);
+  const submitRequest = useServerFn(requestReservation);
   const [submitting, setSubmitting] = useState(false);
 
   const confirm = async () => {
     if (submitting) return;
-    if (!tour || !vehicle || !date || !time) {
-      console.warn("[checkout] dados incompletos", { tour, vehicle, date, time });
-      toast.error("Complete todas as etapas antes de pagar.");
+    if (!exp || !vehicle || !date || !time) {
+      toast.error("Complete todas as etapas antes de solicitar.");
       return;
     }
     setSubmitting(true);
-    const payload = {
-      vehicle_id: vehicle.id,
-      tour_slug: tour.slug,
-      tour_name: tour.name,
-      reservation_date: toISODate(date),
-      reservation_time: time,
-      adults: quantity,
-      kids: 0,
-      duration_hours: hours,
-      price_per_hour: pricePerHour,
-      total_price: total,
-      customer_name: cliente.nome,
-      customer_email: cliente.email,
-      customer_phone: cliente.telefone,
-      customer_whatsapp: cliente.whatsapp,
-      customer_city: cliente.cidade,
-      customer_state: cliente.estado,
-      notes: cliente.observacoes,
-    };
-    console.log("[checkout] enviando payload", payload);
     try {
-      const res = await submitCheckout({ data: payload });
-      console.log("[checkout] resposta", res);
-      if (!res?.url) {
-        toast.error("Não foi possível iniciar o pagamento. Tente novamente.");
-        setSubmitting(false);
-        return;
-      }
-      // Redireciona para a URL externa da InfinitePay (não usar router interno).
-      window.location.assign(res.url);
+      const res = await submitRequest({
+        data: {
+          experience_slug: exp.slug,
+          vehicle_id: vehicle.id,
+          reservation_date: toISODate(date),
+          reservation_time: time,
+          customer_name: cliente.nome,
+          customer_email: cliente.email,
+          customer_phone: cliente.telefone,
+          customer_whatsapp: cliente.whatsapp,
+          customer_city: cliente.cidade,
+          customer_state: cliente.estado,
+          notes: cliente.observacoes,
+        },
+      });
+
+      const message = buildWhatsAppMessage({
+        experienceName: res.experience_name,
+        vehicleName: res.vehicle_name,
+        date,
+        time,
+        hours: res.duration_hours,
+        quantity: res.quantity,
+        totalCents: res.total_cents,
+        cliente,
+      });
+      const phone = (settings?.whatsapp || WHATSAPP_NUMBER).replace(/\D/g, "");
+      toast.success("Solicitação registrada! Aguardando confirmação da equipe.");
+      window.open(
+        `https://wa.me/${phone}?text=${encodeURIComponent(message)}`,
+        "_blank",
+        "noopener,noreferrer",
+      );
+      setSubmitting(false);
     } catch (e) {
       const msg = e instanceof Error ? e.message : String(e);
-      console.error("[checkout] erro", e);
       if (msg.includes("acabou de ser reservado") || msg.includes("indisponível")) {
         toast.error(msg);
         setTime(null);
         setStep(3);
       } else {
-        toast.error("Não foi possível iniciar o pagamento. Tente novamente.");
+        toast.error("Não foi possível registrar a solicitação. Tente novamente.");
       }
       setSubmitting(false);
     }
   };
+
 
   return (
     <div className="pt-32 pb-24">
@@ -223,8 +241,14 @@ function ReservarPage() {
                 exit={{ opacity: 0, y: -16 }}
                 transition={{ duration: 0.3 }}
               >
-                {step === 0 && <StepTour selected={tour} onSelect={setTour} />}
-                {step === 1 && <StepVehicle selected={vehicle} onSelect={setVehicle} />}
+                {step === 0 && <StepExperience selected={exp} onSelect={setExp} />}
+                {step === 1 && (
+                  <StepVehicle
+                    selected={vehicle}
+                    onSelect={setVehicle}
+                    allowedTypeIds={exp?.vehicle_type_ids ?? []}
+                  />
+                )}
                 {step === 2 && (
                   <StepDate
                     date={date}
@@ -243,7 +267,7 @@ function ReservarPage() {
                 {step === 4 && <StepClient value={cliente} onChange={setCliente} errors={errors} />}
                 {step === 5 && (
                   <StepReview
-                    tour={tour!}
+                    exp={exp!}
                     vehicle={vehicle!}
                     date={date!}
                     time={time!}
@@ -269,8 +293,8 @@ function ReservarPage() {
                 </button>
               ) : (
                 <button onClick={confirm} disabled={submitting} type="button" className="btn-brand text-xs disabled:opacity-60 disabled:cursor-not-allowed">
-                  {submitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <CreditCard className="h-4 w-4" />}
-                  {submitting ? "Gerando pagamento..." : "Pagar agora"}
+                  {submitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <MessageCircle className="h-4 w-4" />}
+                  {submitting ? "Enviando solicitação..." : "Solicitar reserva pelo WhatsApp"}
                 </button>
               )}
             </div>
@@ -279,11 +303,11 @@ function ReservarPage() {
           <aside className="lg:sticky lg:top-28 p-6 rounded-2xl border border-border/60 bg-card">
             <p className="eyebrow mb-4">Resumo</p>
             <dl className="space-y-3 text-sm">
-              <Row k="Passeio" v={tour?.name ?? "—"} />
+              <Row k="Experiência" v={exp?.name ?? "—"} />
               <Row k="Veículo" v={vehicle?.name ?? "—"} />
               <Row k="Data" v={date ? format(date, "dd/MM/yyyy") : "—"} />
               <Row k="Horário" v={time ?? "—"} />
-              <Row k="Duração" v={tour ? `${hours}h` : "—"} />
+              <Row k="Duração" v={exp ? `${hours}h` : "—"} />
               <Row k="Participantes" v={vehicle ? `Até ${vehicle.capacity}` : "—"} />
 
               <Row k="Valor por hora" v={pricePerHour > 0 ? brl(pricePerHour) : "—"} />
@@ -313,15 +337,21 @@ function Row({ k, v }: { k: string; v: string }) {
 }
 
 /* ---------- Steps ---------- */
-function StepTour({ selected, onSelect }: { selected: Tour | null; onSelect: (t: Tour) => void }) {
+function StepExperience({
+  selected,
+  onSelect,
+}: {
+  selected: Experience | null;
+  onSelect: (e: Experience) => void;
+}) {
   const { data, isLoading } = useQuery({
-    queryKey: ["tours", "public"],
-    queryFn: () => TourService.list(),
+    queryKey: ["experiences", "published"],
+    queryFn: () => ExperienceService.listPublished(),
     staleTime: 60_000,
   });
   return (
     <div>
-      <h2 className="font-display text-3xl uppercase">Escolha o passeio</h2>
+      <h2 className="font-display text-3xl uppercase">Escolha a experiência</h2>
       {isLoading ? (
         <div className="mt-6 grid gap-4 sm:grid-cols-2">
           {[0, 1, 2, 3].map((i) => <Skeleton key={i} className="h-48 rounded-2xl" />)}
@@ -330,6 +360,7 @@ function StepTour({ selected, onSelect }: { selected: Tour | null; onSelect: (t:
         <div className="mt-6 grid gap-4 sm:grid-cols-2">
           {(data ?? []).map((t) => {
             const isActive = selected?.slug === t.slug;
+            const img = t.horizontal_image_url || t.cover_image_url;
             return (
               <button
                 key={t.slug}
@@ -340,8 +371,8 @@ function StepTour({ selected, onSelect }: { selected: Tour | null; onSelect: (t:
                 )}
               >
                 <div className="relative aspect-[16/10]">
-                  {t.image_url ? (
-                    <img src={t.image_url} alt={t.name} loading="lazy" className="h-full w-full object-cover" />
+                  {img ? (
+                    <img src={img} alt={t.name} loading="lazy" className="h-full w-full object-cover" />
                   ) : (
                     <div className="h-full w-full bg-muted" />
                   )}
@@ -352,8 +383,8 @@ function StepTour({ selected, onSelect }: { selected: Tour | null; onSelect: (t:
                       <p className="text-xs text-foreground/80 mt-1">{t.level}</p>
                     </div>
                     <div className="text-right">
-                      <span className="font-display text-brand text-lg block leading-none">{brlCents(t.price_per_hour_cents)}</span>
-                      <span className="text-[10px] font-mono uppercase text-foreground/70">/ hora</span>
+                      <span className="font-display text-brand text-lg block leading-none">{brlCents(t.price_cents)}</span>
+                      <span className="text-[10px] font-mono uppercase text-foreground/70">{t.duration_hours}h</span>
                     </div>
                   </div>
                 </div>
@@ -369,18 +400,44 @@ function StepTour({ selected, onSelect }: { selected: Tour | null; onSelect: (t:
 function StepVehicle({
   selected,
   onSelect,
+  allowedTypeIds,
 }: {
   selected: Vehicle | null;
   onSelect: (v: Vehicle) => void;
+  allowedTypeIds: string[];
 }) {
   const { data, isLoading, error } = useVehicles();
+  const { data: types } = useQuery({
+    queryKey: ["experience-vehicle-types"],
+    queryFn: () => ExperienceService.listVehicleTypes(),
+    staleTime: 300_000,
+  });
+
+  // Filtra os veículos pelos tipos permitidos na experiência.
+  // O casamento é feito por slug (ou nome normalizado) do tipo.
+  const list = useMemo(() => {
+    const vehicles = data ?? [];
+    if (!allowedTypeIds.length || !types?.length) return vehicles;
+    const allowed = new Set(
+      types
+        .filter((t) => allowedTypeIds.includes(t.id))
+        .flatMap((t) => [t.slug, slugify(t.name)]),
+    );
+    if (!allowed.size) return vehicles;
+    const filtered = vehicles.filter((v) =>
+      [v.slug, slugify(v.name), slugify(v.type)].some((k) => allowed.has(k)),
+    );
+    // Fallback seguro: se nada casar, não bloqueia a reserva.
+    return filtered.length ? filtered : vehicles;
+  }, [data, types, allowedTypeIds]);
+
   return (
     <div>
       <h2 className="font-display text-3xl uppercase flex items-center gap-2">
         <Car className="h-6 w-6 text-brand" /> Escolha o veículo
       </h2>
       <p className="mt-2 text-sm text-muted-foreground">
-        Cada veículo tem apenas 1 unidade disponível. A capacidade máxima já está inclusa no passeio.
+        Cada veículo tem apenas 1 unidade disponível. A capacidade máxima já está inclusa na experiência.
       </p>
 
       {isLoading && (
@@ -393,7 +450,7 @@ function StepVehicle({
       )}
       {data && (
         <div className="mt-6 grid gap-4 sm:grid-cols-3">
-          {data.map((v) => {
+          {list.map((v) => {
             const isActive = selected?.id === v.id;
             return (
               <button
@@ -417,6 +474,7 @@ function StepVehicle({
     </div>
   );
 }
+
 
 function StepDate({
   date,
@@ -587,16 +645,16 @@ function Field({ label, error, children }: { label: string; error?: string; chil
 }
 
 function StepReview({
-  tour, vehicle, date, time, quantity, total, cliente,
+  exp, vehicle, date, time, quantity, total, cliente,
 }: {
-  tour: Tour; vehicle: Vehicle; date: Date; time: string; quantity: number; total: number; cliente: Cliente;
+  exp: Experience; vehicle: Vehicle; date: Date; time: string; quantity: number; total: number; cliente: Cliente;
 }) {
   return (
     <div>
       <h2 className="font-display text-3xl uppercase">Revise sua reserva</h2>
       <div className="mt-6 p-6 rounded-2xl border border-brand/50 bg-card">
         <div className="grid gap-6 sm:grid-cols-2">
-          <Detail label="Passeio" value={tour.name} />
+          <Detail label="Experiência" value={exp.name} />
           <Detail label="Veículo" value={vehicle.name} />
           <Detail label="Data" value={format(date, "dd 'de' MMMM 'de' yyyy", { locale: ptBR })} />
           <Detail label="Horário" value={time} />
@@ -607,16 +665,52 @@ function StepReview({
           {cliente.observacoes && <Detail label="Observações" value={cliente.observacoes} />}
         </div>
         <div className="mt-8 pt-6 border-t border-border/60 flex items-center justify-between">
-          <span className="font-mono text-xs uppercase tracking-widest text-muted-foreground">Valor do passeio</span>
+          <span className="font-mono text-xs uppercase tracking-widest text-muted-foreground">Valor da experiência</span>
           <span className="font-display text-4xl text-brand">{brl(total)}</span>
         </div>
       </div>
       <p className="mt-4 text-xs text-muted-foreground">
-        Ao confirmar, você será redirecionado para o checkout seguro da InfinitePay.
+        Ao confirmar, sua solicitação fica registrada como <strong>aguardando confirmação</strong> e
+        o WhatsApp da equipe abre com todos os dados para finalizar o combinado.
       </p>
     </div>
   );
 }
+
+/** Monta a mensagem de WhatsApp com todos os dados da solicitação de reserva. */
+function buildWhatsAppMessage(p: {
+  experienceName: string;
+  vehicleName: string;
+  date: Date;
+  time: string;
+  hours: number;
+  quantity: number;
+  totalCents: number;
+  cliente: Cliente;
+}) {
+  const lines = [
+    "*NOVA SOLICITAÇÃO DE RESERVA — Rolezin Frontin Off Road*",
+    "",
+    `*Experiência:* ${p.experienceName}`,
+    `*Veículo:* ${p.vehicleName}`,
+    `*Data:* ${format(p.date, "dd/MM/yyyy", { locale: ptBR })}`,
+    `*Horário:* ${p.time}`,
+    `*Duração:* ${p.hours}h`,
+    `*Participantes:* até ${p.quantity}`,
+    `*Valor:* ${brlCents(p.totalCents)}`,
+    "",
+    "*DADOS DO CLIENTE*",
+    `Nome: ${p.cliente.nome}`,
+    `Telefone: ${p.cliente.telefone}`,
+    `WhatsApp: ${p.cliente.whatsapp}`,
+    `E-mail: ${p.cliente.email}`,
+    `Cidade/UF: ${p.cliente.cidade} / ${p.cliente.estado.toUpperCase()}`,
+  ];
+  if (p.cliente.observacoes) lines.push(`Observações: ${p.cliente.observacoes}`);
+  lines.push("", "_Status: aguardando confirmação da equipe._");
+  return lines.join("\n");
+}
+
 
 function Detail({ label, value }: { label: string; value: string }) {
   return (

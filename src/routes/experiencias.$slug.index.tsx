@@ -170,7 +170,7 @@ function ExperienceDetail() {
           <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
             <Link
               to="/reservar"
-              search={exp.tour_slug ? { tour: exp.tour_slug } : {}}
+              search={{ experience: exp.slug }}
               className="inline-flex h-[54px] items-center justify-center gap-2 rounded-md bg-brand px-6 font-mono text-xs font-bold uppercase tracking-widest text-brand-foreground transition hover:brightness-110"
             >
               <CalendarDays className="h-4 w-4" /> Reservar esta experiência
@@ -211,7 +211,7 @@ function ExperienceDetail() {
               )}
               <Link
                 to="/reservar"
-                search={exp.tour_slug ? { tour: exp.tour_slug } : {}}
+                search={{ experience: exp.slug }}
                 className="ml-auto inline-flex h-11 items-center rounded-md bg-brand px-4 font-mono text-[11px] font-bold uppercase tracking-widest text-brand-foreground transition hover:brightness-110"
               >
                 Reservar agora
@@ -428,7 +428,7 @@ function ExperienceDetail() {
             <div className="flex w-full flex-col gap-3 sm:flex-row md:w-auto">
               <Link
                 to="/reservar"
-                search={exp.tour_slug ? { tour: exp.tour_slug } : {}}
+                search={{ experience: exp.slug }}
                 className="inline-flex h-[54px] items-center justify-center gap-2 rounded-md bg-brand px-6 font-mono text-xs font-bold uppercase tracking-widest text-brand-foreground transition hover:brightness-110"
               >
                 <CalendarDays className="h-4 w-4" /> Reservar agora

@@ -144,7 +144,7 @@ function VideoPage() {
           </div>
           <Link
             to="/reservar"
-            search={exp.tour_slug ? { tour: exp.tour_slug } : {}}
+            search={{ experience: exp.slug }}
             className="btn-brand shrink-0 px-4 py-2 text-[11px]"
           >
             Reservar
@@ -314,7 +314,7 @@ function VideoPage() {
           )}
           <Link
             to="/reservar"
-            search={exp.tour_slug ? { tour: exp.tour_slug } : {}}
+            search={{ experience: exp.slug }}
             className="btn-brand w-full justify-center text-xs"
           >
             Reservar esta experiência
