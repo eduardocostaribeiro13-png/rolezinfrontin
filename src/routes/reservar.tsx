@@ -78,20 +78,22 @@ function toISODate(d: Date) {
 }
 
 function ReservarPage() {
-  const { tour: initialSlug } = Route.useSearch();
-  const [step, setStep] = useState(0);
-  const { data: tours } = useQuery({
-    queryKey: ["tours", "public"],
-    queryFn: () => TourService.list(),
+  const { experience: initialSlug } = Route.useSearch();
+  const [step, setStep] = useState(initialSlug ? 1 : 0);
+  const [exp, setExp] = useState<Experience | null>(null);
+
+  // Pré-seleção via ?experience=slug — carrega a experiência completa
+  // (inclui vehicle_type_ids para filtrar os veículos).
+  const { data: preselected } = useQuery({
+    queryKey: ["experience", "by-slug", initialSlug],
+    queryFn: () => ExperienceService.getBySlug(initialSlug!),
+    enabled: !!initialSlug,
     staleTime: 60_000,
   });
-  const [tour, setTour] = useState<Tour | null>(null);
   useEffect(() => {
-    if (!tour && initialSlug && tours) {
-      const t = tours.find((x) => x.slug === initialSlug);
-      if (t) setTour(t);
-    }
-  }, [initialSlug, tours, tour]);
+    if (!exp && preselected && preselected.status === "PUBLISHED") setExp(preselected);
+  }, [preselected, exp]);
+
   const [vehicle, setVehicle] = useState<Vehicle | null>(null);
   const [date, setDate] = useState<Date | undefined>();
   const [time, setTime] = useState<string | null>(null);
@@ -104,18 +106,23 @@ function ReservarPage() {
     setTime(null);
   }, [vehicle?.id, date]);
 
-  // Single source of truth for pricing: the tour's price per hour × tour duration (from DB).
-  const pricePerHour = useMemo(() => {
-    if (tour) return tour.price_per_hour_cents / 100;
-    if (vehicle && vehicle.price_cents > 0) return vehicle.price_cents / 100;
-    return 0;
-  }, [vehicle, tour]);
-  const hours = tour?.duration_hours ?? 1;
-  const total = useMemo(() => pricePerHour * hours, [pricePerHour, hours]);
-  const quantity = vehicle?.capacity ?? tour?.max_people ?? 1;
+  const { data: settings } = useQuery({
+    queryKey: ["site-settings", "public"],
+    queryFn: () => AdminService.getSettings(),
+    staleTime: 300_000,
+  });
+
+  // Fonte única de preço/duração: a própria experiência (dados do banco).
+  const hours = exp?.duration_hours ?? 1;
+  const total = useMemo(() => (exp ? exp.price_cents / 100 : 0), [exp]);
+  const pricePerHour = useMemo(
+    () => (hours > 0 ? total / hours : 0),
+    [total, hours],
+  );
+  const quantity = vehicle?.capacity ?? exp?.max_people ?? 1;
 
   const canAdvance = () => {
-    if (step === 0) return !!tour;
+    if (step === 0) return !!exp;
     if (step === 1) return !!vehicle;
     if (step === 2) return !!date;
     if (step === 3) return !!time;
@@ -136,60 +143,64 @@ function ReservarPage() {
   const next = () => canAdvance() && setStep((s) => Math.min(s + 1, STEPS.length - 1));
   const back = () => setStep((s) => Math.max(s - 1, 0));
 
-  const submitCheckout = useServerFn(createCheckout);
+  const submitRequest = useServerFn(requestReservation);
   const [submitting, setSubmitting] = useState(false);
 
   const confirm = async () => {
     if (submitting) return;
-    if (!tour || !vehicle || !date || !time) {
-      console.warn("[checkout] dados incompletos", { tour, vehicle, date, time });
-      toast.error("Complete todas as etapas antes de pagar.");
+    if (!exp || !vehicle || !date || !time) {
+      toast.error("Complete todas as etapas antes de solicitar.");
       return;
     }
     setSubmitting(true);
-    const payload = {
-      vehicle_id: vehicle.id,
-      tour_slug: tour.slug,
-      tour_name: tour.name,
-      reservation_date: toISODate(date),
-      reservation_time: time,
-      adults: quantity,
-      kids: 0,
-      duration_hours: hours,
-      price_per_hour: pricePerHour,
-      total_price: total,
-      customer_name: cliente.nome,
-      customer_email: cliente.email,
-      customer_phone: cliente.telefone,
-      customer_whatsapp: cliente.whatsapp,
-      customer_city: cliente.cidade,
-      customer_state: cliente.estado,
-      notes: cliente.observacoes,
-    };
-    console.log("[checkout] enviando payload", payload);
     try {
-      const res = await submitCheckout({ data: payload });
-      console.log("[checkout] resposta", res);
-      if (!res?.url) {
-        toast.error("Não foi possível iniciar o pagamento. Tente novamente.");
-        setSubmitting(false);
-        return;
-      }
-      // Redireciona para a URL externa da InfinitePay (não usar router interno).
-      window.location.assign(res.url);
+      const res = await submitRequest({
+        data: {
+          experience_slug: exp.slug,
+          vehicle_id: vehicle.id,
+          reservation_date: toISODate(date),
+          reservation_time: time,
+          customer_name: cliente.nome,
+          customer_email: cliente.email,
+          customer_phone: cliente.telefone,
+          customer_whatsapp: cliente.whatsapp,
+          customer_city: cliente.cidade,
+          customer_state: cliente.estado,
+          notes: cliente.observacoes,
+        },
+      });
+
+      const message = buildWhatsAppMessage({
+        experienceName: res.experience_name,
+        vehicleName: res.vehicle_name,
+        date,
+        time,
+        hours: res.duration_hours,
+        quantity: res.quantity,
+        totalCents: res.total_cents,
+        cliente,
+      });
+      const phone = (settings?.whatsapp || WHATSAPP_NUMBER).replace(/\D/g, "");
+      toast.success("Solicitação registrada! Aguardando confirmação da equipe.");
+      window.open(
+        `https://wa.me/${phone}?text=${encodeURIComponent(message)}`,
+        "_blank",
+        "noopener,noreferrer",
+      );
+      setSubmitting(false);
     } catch (e) {
       const msg = e instanceof Error ? e.message : String(e);
-      console.error("[checkout] erro", e);
       if (msg.includes("acabou de ser reservado") || msg.includes("indisponível")) {
         toast.error(msg);
         setTime(null);
         setStep(3);
       } else {
-        toast.error("Não foi possível iniciar o pagamento. Tente novamente.");
+        toast.error("Não foi possível registrar a solicitação. Tente novamente.");
       }
       setSubmitting(false);
     }
   };
+
 
   return (
     <div className="pt-32 pb-24">
