@@ -241,8 +241,14 @@ function ReservarPage() {
                 exit={{ opacity: 0, y: -16 }}
                 transition={{ duration: 0.3 }}
               >
-                {step === 0 && <StepTour selected={tour} onSelect={setTour} />}
-                {step === 1 && <StepVehicle selected={vehicle} onSelect={setVehicle} />}
+                {step === 0 && <StepExperience selected={exp} onSelect={setExp} />}
+                {step === 1 && (
+                  <StepVehicle
+                    selected={vehicle}
+                    onSelect={setVehicle}
+                    allowedTypeIds={exp?.vehicle_type_ids ?? []}
+                  />
+                )}
                 {step === 2 && (
                   <StepDate
                     date={date}
@@ -261,7 +267,7 @@ function ReservarPage() {
                 {step === 4 && <StepClient value={cliente} onChange={setCliente} errors={errors} />}
                 {step === 5 && (
                   <StepReview
-                    tour={tour!}
+                    exp={exp!}
                     vehicle={vehicle!}
                     date={date!}
                     time={time!}
@@ -287,8 +293,8 @@ function ReservarPage() {
                 </button>
               ) : (
                 <button onClick={confirm} disabled={submitting} type="button" className="btn-brand text-xs disabled:opacity-60 disabled:cursor-not-allowed">
-                  {submitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <CreditCard className="h-4 w-4" />}
-                  {submitting ? "Gerando pagamento..." : "Pagar agora"}
+                  {submitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <MessageCircle className="h-4 w-4" />}
+                  {submitting ? "Enviando solicitação..." : "Solicitar reserva pelo WhatsApp"}
                 </button>
               )}
             </div>
@@ -297,11 +303,11 @@ function ReservarPage() {
           <aside className="lg:sticky lg:top-28 p-6 rounded-2xl border border-border/60 bg-card">
             <p className="eyebrow mb-4">Resumo</p>
             <dl className="space-y-3 text-sm">
-              <Row k="Passeio" v={tour?.name ?? "—"} />
+              <Row k="Experiência" v={exp?.name ?? "—"} />
               <Row k="Veículo" v={vehicle?.name ?? "—"} />
               <Row k="Data" v={date ? format(date, "dd/MM/yyyy") : "—"} />
               <Row k="Horário" v={time ?? "—"} />
-              <Row k="Duração" v={tour ? `${hours}h` : "—"} />
+              <Row k="Duração" v={exp ? `${hours}h` : "—"} />
               <Row k="Participantes" v={vehicle ? `Até ${vehicle.capacity}` : "—"} />
 
               <Row k="Valor por hora" v={pricePerHour > 0 ? brl(pricePerHour) : "—"} />
