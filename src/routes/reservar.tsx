@@ -645,16 +645,16 @@ function Field({ label, error, children }: { label: string; error?: string; chil
 }
 
 function StepReview({
-  tour, vehicle, date, time, quantity, total, cliente,
+  exp, vehicle, date, time, quantity, total, cliente,
 }: {
-  tour: Tour; vehicle: Vehicle; date: Date; time: string; quantity: number; total: number; cliente: Cliente;
+  exp: Experience; vehicle: Vehicle; date: Date; time: string; quantity: number; total: number; cliente: Cliente;
 }) {
   return (
     <div>
       <h2 className="font-display text-3xl uppercase">Revise sua reserva</h2>
       <div className="mt-6 p-6 rounded-2xl border border-brand/50 bg-card">
         <div className="grid gap-6 sm:grid-cols-2">
-          <Detail label="Passeio" value={tour.name} />
+          <Detail label="Experiência" value={exp.name} />
           <Detail label="Veículo" value={vehicle.name} />
           <Detail label="Data" value={format(date, "dd 'de' MMMM 'de' yyyy", { locale: ptBR })} />
           <Detail label="Horário" value={time} />
@@ -665,16 +665,52 @@ function StepReview({
           {cliente.observacoes && <Detail label="Observações" value={cliente.observacoes} />}
         </div>
         <div className="mt-8 pt-6 border-t border-border/60 flex items-center justify-between">
-          <span className="font-mono text-xs uppercase tracking-widest text-muted-foreground">Valor do passeio</span>
+          <span className="font-mono text-xs uppercase tracking-widest text-muted-foreground">Valor da experiência</span>
           <span className="font-display text-4xl text-brand">{brl(total)}</span>
         </div>
       </div>
       <p className="mt-4 text-xs text-muted-foreground">
-        Ao confirmar, você será redirecionado para o checkout seguro da InfinitePay.
+        Ao confirmar, sua solicitação fica registrada como <strong>aguardando confirmação</strong> e
+        o WhatsApp da equipe abre com todos os dados para finalizar o combinado.
       </p>
     </div>
   );
 }
+
+/** Monta a mensagem de WhatsApp com todos os dados da solicitação de reserva. */
+function buildWhatsAppMessage(p: {
+  experienceName: string;
+  vehicleName: string;
+  date: Date;
+  time: string;
+  hours: number;
+  quantity: number;
+  totalCents: number;
+  cliente: Cliente;
+}) {
+  const lines = [
+    "*NOVA SOLICITAÇÃO DE RESERVA — Rolezin Frontin Off Road*",
+    "",
+    `*Experiência:* ${p.experienceName}`,
+    `*Veículo:* ${p.vehicleName}`,
+    `*Data:* ${format(p.date, "dd/MM/yyyy", { locale: ptBR })}`,
+    `*Horário:* ${p.time}`,
+    `*Duração:* ${p.hours}h`,
+    `*Participantes:* até ${p.quantity}`,
+    `*Valor:* ${brlCents(p.totalCents)}`,
+    "",
+    "*DADOS DO CLIENTE*",
+    `Nome: ${p.cliente.nome}`,
+    `Telefone: ${p.cliente.telefone}`,
+    `WhatsApp: ${p.cliente.whatsapp}`,
+    `E-mail: ${p.cliente.email}`,
+    `Cidade/UF: ${p.cliente.cidade} / ${p.cliente.estado.toUpperCase()}`,
+  ];
+  if (p.cliente.observacoes) lines.push(`Observações: ${p.cliente.observacoes}`);
+  lines.push("", "_Status: aguardando confirmação da equipe._");
+  return lines.join("\n");
+}
+
 
 function Detail({ label, value }: { label: string; value: string }) {
   return (
