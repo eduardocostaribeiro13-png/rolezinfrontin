@@ -337,15 +337,21 @@ function Row({ k, v }: { k: string; v: string }) {
 }
 
 /* ---------- Steps ---------- */
-function StepTour({ selected, onSelect }: { selected: Tour | null; onSelect: (t: Tour) => void }) {
+function StepExperience({
+  selected,
+  onSelect,
+}: {
+  selected: Experience | null;
+  onSelect: (e: Experience) => void;
+}) {
   const { data, isLoading } = useQuery({
-    queryKey: ["tours", "public"],
-    queryFn: () => TourService.list(),
+    queryKey: ["experiences", "published"],
+    queryFn: () => ExperienceService.listPublished(),
     staleTime: 60_000,
   });
   return (
     <div>
-      <h2 className="font-display text-3xl uppercase">Escolha o passeio</h2>
+      <h2 className="font-display text-3xl uppercase">Escolha a experiência</h2>
       {isLoading ? (
         <div className="mt-6 grid gap-4 sm:grid-cols-2">
           {[0, 1, 2, 3].map((i) => <Skeleton key={i} className="h-48 rounded-2xl" />)}
@@ -354,6 +360,7 @@ function StepTour({ selected, onSelect }: { selected: Tour | null; onSelect: (t:
         <div className="mt-6 grid gap-4 sm:grid-cols-2">
           {(data ?? []).map((t) => {
             const isActive = selected?.slug === t.slug;
+            const img = t.horizontal_image_url || t.cover_image_url;
             return (
               <button
                 key={t.slug}
@@ -364,8 +371,8 @@ function StepTour({ selected, onSelect }: { selected: Tour | null; onSelect: (t:
                 )}
               >
                 <div className="relative aspect-[16/10]">
-                  {t.image_url ? (
-                    <img src={t.image_url} alt={t.name} loading="lazy" className="h-full w-full object-cover" />
+                  {img ? (
+                    <img src={img} alt={t.name} loading="lazy" className="h-full w-full object-cover" />
                   ) : (
                     <div className="h-full w-full bg-muted" />
                   )}
@@ -376,8 +383,8 @@ function StepTour({ selected, onSelect }: { selected: Tour | null; onSelect: (t:
                       <p className="text-xs text-foreground/80 mt-1">{t.level}</p>
                     </div>
                     <div className="text-right">
-                      <span className="font-display text-brand text-lg block leading-none">{brlCents(t.price_per_hour_cents)}</span>
-                      <span className="text-[10px] font-mono uppercase text-foreground/70">/ hora</span>
+                      <span className="font-display text-brand text-lg block leading-none">{brlCents(t.price_cents)}</span>
+                      <span className="text-[10px] font-mono uppercase text-foreground/70">{t.duration_hours}h</span>
                     </div>
                   </div>
                 </div>
@@ -393,18 +400,44 @@ function StepTour({ selected, onSelect }: { selected: Tour | null; onSelect: (t:
 function StepVehicle({
   selected,
   onSelect,
+  allowedTypeIds,
 }: {
   selected: Vehicle | null;
   onSelect: (v: Vehicle) => void;
+  allowedTypeIds: string[];
 }) {
   const { data, isLoading, error } = useVehicles();
+  const { data: types } = useQuery({
+    queryKey: ["experience-vehicle-types"],
+    queryFn: () => ExperienceService.listVehicleTypes(),
+    staleTime: 300_000,
+  });
+
+  // Filtra os veículos pelos tipos permitidos na experiência.
+  // O casamento é feito por slug (ou nome normalizado) do tipo.
+  const list = useMemo(() => {
+    const vehicles = data ?? [];
+    if (!allowedTypeIds.length || !types?.length) return vehicles;
+    const allowed = new Set(
+      types
+        .filter((t) => allowedTypeIds.includes(t.id))
+        .flatMap((t) => [t.slug, slugify(t.name)]),
+    );
+    if (!allowed.size) return vehicles;
+    const filtered = vehicles.filter((v) =>
+      [v.slug, slugify(v.name), slugify(v.type)].some((k) => allowed.has(k)),
+    );
+    // Fallback seguro: se nada casar, não bloqueia a reserva.
+    return filtered.length ? filtered : vehicles;
+  }, [data, types, allowedTypeIds]);
+
   return (
     <div>
       <h2 className="font-display text-3xl uppercase flex items-center gap-2">
         <Car className="h-6 w-6 text-brand" /> Escolha o veículo
       </h2>
       <p className="mt-2 text-sm text-muted-foreground">
-        Cada veículo tem apenas 1 unidade disponível. A capacidade máxima já está inclusa no passeio.
+        Cada veículo tem apenas 1 unidade disponível. A capacidade máxima já está inclusa na experiência.
       </p>
 
       {isLoading && (
@@ -417,7 +450,7 @@ function StepVehicle({
       )}
       {data && (
         <div className="mt-6 grid gap-4 sm:grid-cols-3">
-          {data.map((v) => {
+          {list.map((v) => {
             const isActive = selected?.id === v.id;
             return (
               <button
@@ -441,6 +474,7 @@ function StepVehicle({
     </div>
   );
 }
+
 
 function StepDate({
   date,
