@@ -1,7 +1,7 @@
 import { memo, useState } from "react";
 import { motion } from "framer-motion";
 import { Link } from "@tanstack/react-router";
-import { Clock, MapPin, Mountain, Play } from "lucide-react";
+import { Clock, MapPin, Mountain } from "lucide-react";
 import type { Experience } from "@/lib/experiences";
 import { cn } from "@/lib/utils";
 
@@ -62,14 +62,6 @@ function ExperienceCardBase({ exp, index = 0 }: Props) {
             </span>
           )}
 
-          <div
-            className={cn(
-              "absolute inset-x-4 bottom-4 flex items-center justify-center gap-2 rounded-full bg-[#FFC107] py-2.5 text-[11px] font-bold uppercase tracking-[0.2em] text-black transition-all duration-300",
-              hover ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0",
-            )}
-          >
-            <Play className="h-3.5 w-3.5 fill-black" /> Assistir preview
-          </div>
         </div>
 
         <div className="p-4">
