@@ -13,19 +13,22 @@ import {
   ChevronLeft,
   ChevronRight,
   Clock,
-  CreditCard,
   Loader2,
+  MessageCircle,
 } from "lucide-react";
-import { brl, brlCents, type Tour } from "@/lib/tours";
+import { brl, brlCents } from "@/lib/tours";
 import { useQuery } from "@tanstack/react-query";
-import { TourService } from "@/lib/services/tour-service";
+import { ExperienceService } from "@/lib/services/experience-service";
+import { AdminService } from "@/lib/services/admin-service";
+import { slugify, type Experience } from "@/lib/experiences";
 import { Calendar } from "@/components/ui/calendar";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
-import { createCheckout } from "@/lib/checkout.functions";
+import { requestReservation } from "@/lib/reservation-request.functions";
+import { WHATSAPP_NUMBER } from "@/lib/whatsapp";
 import {
   useFullyBookedDates,
   useTakenTimes,
@@ -34,16 +37,19 @@ import {
 } from "@/lib/hooks/use-availability";
 import type { Vehicle } from "@/lib/services/vehicle-service";
 
-const searchSchema = z.object({ tour: z.string().optional() });
+const searchSchema = z.object({
+  experience: z.string().optional(),
+  tour: z.string().optional(),
+});
 
 export const Route = createFileRoute("/reservar")({
   head: () => ({
     meta: [
-      { title: "Reservar Passeio — Rolezin Frontin Off Road" },
+      { title: "Reservar Experiência — Rolezin Frontin Off Road" },
       {
         name: "description",
         content:
-          "Reserve seu passeio de quadriciclo ou UTV em Engenheiro Paulo de Frontin. Escolha veículo, data e horário em tempo real.",
+          "Reserve sua experiência off-road em Engenheiro Paulo de Frontin. Escolha veículo, data e horário e finalize pelo WhatsApp.",
       },
     ],
     links: [{ rel: "canonical", href: "/reservar" }],
@@ -52,7 +58,8 @@ export const Route = createFileRoute("/reservar")({
   component: ReservarPage,
 });
 
-const STEPS = ["Passeio", "Veículo", "Data", "Horário", "Dados", "Revisão"] as const;
+const STEPS = ["Experiência", "Veículo", "Data", "Horário", "Dados", "Revisão"] as const;
+
 
 const clientSchema = z.object({
   nome: z.string().trim().min(3, "Informe seu nome completo").max(100),
