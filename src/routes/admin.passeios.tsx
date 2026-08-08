@@ -211,6 +211,60 @@ function AdminPasseios() {
         </div>
       )}
 
+      <div className="pt-4">
+        <div className="flex items-end justify-between gap-3 flex-wrap">
+          <div>
+            <p className="eyebrow">Catálogo</p>
+            <h2 className="font-display text-3xl uppercase leading-none mt-2">Experiências</h2>
+            <p className="mt-2 text-sm text-muted-foreground">
+              Experiências cadastradas no Centro de Experiências. Edite pela aba Experiências.
+            </p>
+          </div>
+        </div>
+
+        {loadingExp ? (
+          <Skeleton className="mt-4 h-48 rounded-2xl" />
+        ) : (
+          <div className="mt-4 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+            {(experiences ?? []).map((e) => (
+              <div key={e.id} className="rounded-2xl border border-border/60 bg-card overflow-hidden">
+                {e.cover_image_url ? (
+                  <img src={e.cover_image_url} alt={e.name} className="w-full h-40 object-cover" loading="lazy" />
+                ) : (
+                  <div className="w-full h-40 bg-muted" />
+                )}
+                <div className="p-5">
+                  <div className="flex items-start justify-between gap-2">
+                    <div>
+                      <p className="font-display text-xl uppercase leading-none">{e.name}</p>
+                      <p className="mt-1 text-xs font-mono uppercase tracking-widest text-muted-foreground">
+                        {e.category?.name ?? "—"} · {e.level}
+                      </p>
+                    </div>
+                    <StatusPill status={e.status === "PUBLISHED" ? "ACTIVE" : "INACTIVE"} />
+                  </div>
+                  {e.short_description && (
+                    <p className="mt-3 text-xs text-foreground/70 line-clamp-2">{e.short_description}</p>
+                  )}
+                  <p className="mt-4 font-display text-brand text-2xl">{brlCents(e.price_cents)}</p>
+                  <div className="mt-4">
+                    <Link
+                      to="/admin/experiencias/$id"
+                      params={{ id: e.id }}
+                      className="btn-outline-brand text-xs w-full justify-center"
+                    >
+                      Editar experiência
+                    </Link>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+
+
       <Dialog open={!!editing} onOpenChange={(o) => !o && setEditing(null)}>
         <DialogContent className="max-w-xl max-h-[90dvh] overflow-y-auto">
           <DialogHeader>
