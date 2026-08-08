@@ -23,17 +23,11 @@ export const Route = createFileRoute("/passeios")({
 
 function PasseiosPage() {
   const [level, setLevel] = useState<(typeof LEVELS)[number]>("Todos");
-  const { data, isLoading } = useQuery({
-    queryKey: ["tours", "public"],
-    queryFn: () => TourService.list(),
-    staleTime: 60_000,
-  });
   const { data: experiences, isLoading: loadingExp } = useQuery({
     queryKey: ["exp", "list", "passeios"],
     queryFn: () => ExperienceService.listPublished({ sort: "recent" }),
     staleTime: 60_000,
   });
-  const list = (data ?? []).filter((t) => level === "Todos" || t.level === level);
   const expList = (experiences ?? []).filter((e) => level === "Todos" || e.level === level);
 
 
