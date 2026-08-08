@@ -2,6 +2,8 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { TourService } from "@/lib/services/tour-service";
+import { ExperienceService } from "@/lib/services/experience-service";
+import { ExperienceCard } from "@/components/experiences/ExperienceCard";
 import { Skeleton } from "@/components/ui/skeleton";
 import { TourCard } from "@/routes/index";
 
@@ -26,7 +28,14 @@ function PasseiosPage() {
     queryFn: () => TourService.list(),
     staleTime: 60_000,
   });
+  const { data: experiences, isLoading: loadingExp } = useQuery({
+    queryKey: ["exp", "list", "passeios"],
+    queryFn: () => ExperienceService.listPublished({ sort: "recent" }),
+    staleTime: 60_000,
+  });
   const list = (data ?? []).filter((t) => level === "Todos" || t.level === level);
+  const expList = (experiences ?? []).filter((e) => level === "Todos" || e.level === level);
+
 
   return (
     <div className="pt-32 pb-24">
