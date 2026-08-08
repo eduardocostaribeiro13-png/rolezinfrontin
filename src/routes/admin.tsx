@@ -39,7 +39,7 @@ type NavItem = {
   to:
     | "/admin"
     | "/admin/reservas"
-    | "/admin/passeios"
+    
     | "/admin/experiencias"
     | "/admin/veiculos"
     | "/admin/galeria"
