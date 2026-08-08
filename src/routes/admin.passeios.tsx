@@ -6,7 +6,7 @@ import { Plus, Trash2 } from "lucide-react";
 import { TourService } from "@/lib/services/tour-service";
 import { ExperienceService } from "@/lib/services/experience-service";
 import { Link } from "@tanstack/react-router";
-import { brlCents as brlCentsExp } from "@/lib/tours";
+
 
 import { StorageService } from "@/lib/services/storage-service";
 import { ImageUpload } from "@/components/admin/ImageUpload";
