@@ -1,11 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { TourService } from "@/lib/services/tour-service";
 import { ExperienceService } from "@/lib/services/experience-service";
 import { ExperienceCard } from "@/components/experiences/ExperienceCard";
 import { Skeleton } from "@/components/ui/skeleton";
-import { TourCard } from "@/routes/index";
 
 const LEVELS = ["Todos", "Leve", "Intermediário", "Radical"] as const;
 
