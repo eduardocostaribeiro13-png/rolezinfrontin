@@ -74,8 +74,13 @@ function AdminPasseios() {
     queryKey: ["admin", "tours"],
     queryFn: () => TourService.listAll(),
   });
+  const { data: experiences, isLoading: loadingExp } = useQuery({
+    queryKey: ["admin", "experiences", "passeios"],
+    queryFn: () => ExperienceService.listAllAdmin(),
+  });
   const [editing, setEditing] = useState<FormState | null>(null);
   const [deleting, setDeleting] = useState<Tour | null>(null);
+
 
   const invalidate = () => {
     qc.invalidateQueries({ queryKey: ["admin", "tours"] });
