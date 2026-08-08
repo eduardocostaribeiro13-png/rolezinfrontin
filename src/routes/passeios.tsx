@@ -2,6 +2,8 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { TourService } from "@/lib/services/tour-service";
+import { ExperienceService } from "@/lib/services/experience-service";
+import { ExperienceCard } from "@/components/experiences/ExperienceCard";
 import { Skeleton } from "@/components/ui/skeleton";
 import { TourCard } from "@/routes/index";
 
@@ -26,7 +28,14 @@ function PasseiosPage() {
     queryFn: () => TourService.list(),
     staleTime: 60_000,
   });
+  const { data: experiences, isLoading: loadingExp } = useQuery({
+    queryKey: ["exp", "list", "passeios"],
+    queryFn: () => ExperienceService.listPublished({ sort: "recent" }),
+    staleTime: 60_000,
+  });
   const list = (data ?? []).filter((t) => level === "Todos" || t.level === level);
+  const expList = (experiences ?? []).filter((e) => level === "Todos" || e.level === level);
+
 
   return (
     <div className="pt-32 pb-24">
@@ -56,17 +65,36 @@ function PasseiosPage() {
           ))}
         </div>
 
+        {loadingExp ? (
+          <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {[0, 1, 2].map((i) => <Skeleton key={i} className="h-64 rounded-2xl" />)}
+          </div>
+        ) : expList.length > 0 ? (
+          <div className="mt-10">
+            <span className="eyebrow mb-4 block">Experiências</span>
+            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {expList.map((e, i) => (
+                <ExperienceCard key={e.id} exp={e} index={i} />
+              ))}
+            </div>
+          </div>
+        ) : null}
+
         {isLoading ? (
           <div className="mt-10 grid gap-6 md:grid-cols-2">
             {[0, 1, 2, 3].map((i) => <Skeleton key={i} className="h-96 rounded-3xl" />)}
           </div>
-        ) : (
-          <div className="mt-10 grid gap-6 md:grid-cols-2">
-            {list.map((t, i) => (
-              <TourCard key={t.slug} tour={t} index={i} />
-            ))}
+        ) : list.length > 0 ? (
+          <div className="mt-14">
+            <span className="eyebrow mb-4 block">Passeios</span>
+            <div className="grid gap-6 md:grid-cols-2">
+              {list.map((t, i) => (
+                <TourCard key={t.slug} tour={t} index={i} />
+              ))}
+            </div>
           </div>
-        )}
+        ) : null}
+
       </div>
     </div>
   );
