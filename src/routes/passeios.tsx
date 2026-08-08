@@ -80,20 +80,8 @@ function PasseiosPage() {
           </div>
         ) : null}
 
-        {isLoading ? (
-          <div className="mt-10 grid gap-6 md:grid-cols-2">
-            {[0, 1, 2, 3].map((i) => <Skeleton key={i} className="h-96 rounded-3xl" />)}
-          </div>
-        ) : list.length > 0 ? (
-          <div className="mt-14">
-            <span className="eyebrow mb-4 block">Passeios</span>
-            <div className="grid gap-6 md:grid-cols-2">
-              {list.map((t, i) => (
-                <TourCard key={t.slug} tour={t} index={i} />
-              ))}
-            </div>
-          </div>
-        ) : null}
+
+
 
       </div>
     </div>
