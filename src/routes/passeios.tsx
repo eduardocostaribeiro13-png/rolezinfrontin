@@ -65,17 +65,36 @@ function PasseiosPage() {
           ))}
         </div>
 
+        {loadingExp ? (
+          <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {[0, 1, 2].map((i) => <Skeleton key={i} className="h-64 rounded-2xl" />)}
+          </div>
+        ) : expList.length > 0 ? (
+          <div className="mt-10">
+            <span className="eyebrow mb-4 block">Experiências</span>
+            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {expList.map((e, i) => (
+                <ExperienceCard key={e.id} exp={e} index={i} />
+              ))}
+            </div>
+          </div>
+        ) : null}
+
         {isLoading ? (
           <div className="mt-10 grid gap-6 md:grid-cols-2">
             {[0, 1, 2, 3].map((i) => <Skeleton key={i} className="h-96 rounded-3xl" />)}
           </div>
-        ) : (
-          <div className="mt-10 grid gap-6 md:grid-cols-2">
-            {list.map((t, i) => (
-              <TourCard key={t.slug} tour={t} index={i} />
-            ))}
+        ) : list.length > 0 ? (
+          <div className="mt-14">
+            <span className="eyebrow mb-4 block">Passeios</span>
+            <div className="grid gap-6 md:grid-cols-2">
+              {list.map((t, i) => (
+                <TourCard key={t.slug} tour={t} index={i} />
+              ))}
+            </div>
           </div>
-        )}
+        ) : null}
+
       </div>
     </div>
   );
