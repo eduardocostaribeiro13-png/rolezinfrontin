@@ -20,8 +20,6 @@ import ctaImg from "@/assets/cta.jpg";
 import sobreImg from "@/assets/sobre.jpg";
 import heroTitleImg from "@/assets/hero-title.png";
 import { brlCents, type Tour } from "@/lib/tours";
-import { useQuery } from "@tanstack/react-query";
-import { Skeleton } from "@/components/ui/skeleton";
 import { waQuickBooking } from "@/lib/whatsapp";
 
 const HOME_TITLE = "Rolezin Frontin Off Road — Quadriciclo no RJ";
