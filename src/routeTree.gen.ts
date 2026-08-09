@@ -24,7 +24,6 @@ import { Route as AdminAgendaRouteImport } from './routes/admin.agenda'
 import { Route as AdminClientesRouteImport } from './routes/admin.clientes'
 import { Route as AdminConfiguracoesRouteImport } from './routes/admin.configuracoes'
 import { Route as AdminGaleriaRouteImport } from './routes/admin.galeria'
-import { Route as AdminPasseiosRouteImport } from './routes/admin.passeios'
 import { Route as AdminReservasRouteImport } from './routes/admin.reservas'
 import { Route as AdminVeiculosRouteImport } from './routes/admin.veiculos'
 import { Route as ExperienciasIndexRouteImport } from './routes/experiencias.index'
@@ -112,11 +111,6 @@ const AdminGaleriaRoute = AdminGaleriaRouteImport.update({
   path: '/galeria',
   getParentRoute: () => AdminRoute,
 } as any)
-const AdminPasseiosRoute = AdminPasseiosRouteImport.update({
-  id: '/passeios',
-  path: '/passeios',
-  getParentRoute: () => AdminRoute,
-} as any)
 const AdminReservasRoute = AdminReservasRouteImport.update({
   id: '/reservas',
   path: '/reservas',
@@ -189,7 +183,6 @@ export interface FileRoutesByFullPath {
   '/admin/clientes': typeof AdminClientesRoute
   '/admin/configuracoes': typeof AdminConfiguracoesRoute
   '/admin/galeria': typeof AdminGaleriaRoute
-  '/admin/passeios': typeof AdminPasseiosRoute
   '/admin/reservas': typeof AdminReservasRoute
   '/admin/veiculos': typeof AdminVeiculosRoute
   '/experiencias/$slug': typeof ExperienciasSlugRouteWithChildren
@@ -216,7 +209,6 @@ export interface FileRoutesByTo {
   '/admin/clientes': typeof AdminClientesRoute
   '/admin/configuracoes': typeof AdminConfiguracoesRoute
   '/admin/galeria': typeof AdminGaleriaRoute
-  '/admin/passeios': typeof AdminPasseiosRoute
   '/admin/reservas': typeof AdminReservasRoute
   '/admin/veiculos': typeof AdminVeiculosRoute
   '/pagamento/cancelado': typeof PagamentoCanceladoRoute
@@ -245,7 +237,6 @@ export interface FileRoutesById {
   '/admin/clientes': typeof AdminClientesRoute
   '/admin/configuracoes': typeof AdminConfiguracoesRoute
   '/admin/galeria': typeof AdminGaleriaRoute
-  '/admin/passeios': typeof AdminPasseiosRoute
   '/admin/reservas': typeof AdminReservasRoute
   '/admin/veiculos': typeof AdminVeiculosRoute
   '/experiencias/$slug': typeof ExperienciasSlugRouteWithChildren
@@ -276,7 +267,6 @@ export interface FileRouteTypes {
     | '/admin/clientes'
     | '/admin/configuracoes'
     | '/admin/galeria'
-    | '/admin/passeios'
     | '/admin/reservas'
     | '/admin/veiculos'
     | '/experiencias/$slug'
@@ -303,7 +293,6 @@ export interface FileRouteTypes {
     | '/admin/clientes'
     | '/admin/configuracoes'
     | '/admin/galeria'
-    | '/admin/passeios'
     | '/admin/reservas'
     | '/admin/veiculos'
     | '/pagamento/cancelado'
@@ -331,7 +320,6 @@ export interface FileRouteTypes {
     | '/admin/clientes'
     | '/admin/configuracoes'
     | '/admin/galeria'
-    | '/admin/passeios'
     | '/admin/reservas'
     | '/admin/veiculos'
     | '/experiencias/$slug'
@@ -469,13 +457,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminGaleriaRouteImport
       parentRoute: typeof AdminRoute
     }
-    '/admin/passeios': {
-      id: '/admin/passeios'
-      path: '/passeios'
-      fullPath: '/admin/passeios'
-      preLoaderRoute: typeof AdminPasseiosRouteImport
-      parentRoute: typeof AdminRoute
-    }
     '/admin/reservas': {
       id: '/admin/reservas'
       path: '/reservas'
@@ -561,7 +542,6 @@ interface AdminRouteChildren {
   AdminClientesRoute: typeof AdminClientesRoute
   AdminConfiguracoesRoute: typeof AdminConfiguracoesRoute
   AdminGaleriaRoute: typeof AdminGaleriaRoute
-  AdminPasseiosRoute: typeof AdminPasseiosRoute
   AdminReservasRoute: typeof AdminReservasRoute
   AdminVeiculosRoute: typeof AdminVeiculosRoute
   AdminIndexRoute: typeof AdminIndexRoute
@@ -574,7 +554,6 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminClientesRoute: AdminClientesRoute,
   AdminConfiguracoesRoute: AdminConfiguracoesRoute,
   AdminGaleriaRoute: AdminGaleriaRoute,
-  AdminPasseiosRoute: AdminPasseiosRoute,
   AdminReservasRoute: AdminReservasRoute,
   AdminVeiculosRoute: AdminVeiculosRoute,
   AdminIndexRoute: AdminIndexRoute,
