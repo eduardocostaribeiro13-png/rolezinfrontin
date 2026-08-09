@@ -126,7 +126,7 @@ function Hero() {
   return (
     <section ref={sectionRef} className="hero-section relative h-[220vh] md:h-[240vh] w-full">
       <div className="sticky top-0 h-dvh min-h-[560px] w-full overflow-hidden">
-        <ScrollScrubVideo src={HERO_VIDEO_URL} poster={heroImg} sectionRef={sectionRef} />
+        <ScrollScrubVideo src={HERO_VIDEO_URL} poster={heroImg} sectionRef={sectionRef} onProgress={handleProgress} />
 
         {/* Overlays cinematográficos: gradiente + vignette + grain discreto */}
         <div className="hero-overlay pointer-events-none absolute inset-0 bg-gradient-to-b from-black/20 via-black/25 to-black/75" />
