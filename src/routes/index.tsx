@@ -1,5 +1,6 @@
+import { useCallback, useRef, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import {
   ChevronDown,
   Mountain,
@@ -21,6 +22,7 @@ import sobreImg from "@/assets/sobre.jpg";
 import heroTitleImg from "@/assets/hero-title.png";
 import { brlCents, type Tour } from "@/lib/tours";
 import { waQuickBooking } from "@/lib/whatsapp";
+import { ScrollScrubVideo } from "@/components/site/ScrollScrubVideo";
 
 const HOME_TITLE = "Rolezin Frontin Off Road — Quadriciclo no RJ";
 const HOME_DESC =
@@ -86,69 +88,121 @@ function HomePage() {
   );
 }
 
-/* -------- HERO -------- */
+/* -------- HERO CINEMATOGRÁFICO (scroll-scrub) -------- */
+const HERO_VIDEO_URL =
+  "https://sadcwojjixddpoqwoufl.supabase.co/storage/v1/object/public/ROLEZIN/CRIE_O_VIDEO_PARA_FAZER_O_EFEI.mp4";
+
+/** Narrativa controlada pela timeline do Hero. */
+const heroStages: { from: number; to: number; line?: string }[] = [
+  { from: 0, to: 0.2 },
+  { from: 0.2, to: 0.45, line: "Trilhas que você não esquece." },
+  { from: 0.45, to: 0.7, line: "Serra • Natureza • Adrenalina" },
+  { from: 0.7, to: 0.9, line: "Viva Frontin Off Road" },
+  { from: 0.9, to: 1, line: "Pronto para o seu rolê?" },
+];
+
+function stageForProgress(p: number) {
+  const index = heroStages.findIndex((s) => p >= s.from && p < s.to);
+  return index === -1 ? heroStages.length - 1 : index;
+}
+
 function Hero() {
+  const sectionRef = useRef<HTMLElement>(null);
+  const [stage, setStage] = useState(0);
+  const [hintVisible, setHintVisible] = useState(true);
+
+  const handleProgress = useCallback((p: number) => {
+    const next = stageForProgress(p);
+    setStage((current) => (current === next ? current : next));
+    setHintVisible((current) => {
+      const shouldShow = p < 0.15;
+      return current === shouldShow ? current : shouldShow;
+    });
+  }, []);
+
+  const showMain = stage === 0;
+  const showFinal = stage === heroStages.length - 1;
+
   return (
-    <section className="hero-section relative h-dvh min-h-[560px] md:min-h-[640px] max-h-[900px] w-full overflow-hidden">
-      <div className="absolute inset-0 animate-ken-burns">
-        <img
-          src={heroImg}
-          alt="Quadriciclo amarelo em trilha off road nas montanhas de Engenheiro Paulo de Frontin"
-          className="h-full w-full object-cover object-[65%_center] md:object-center"
-          width={1717}
-          height={916}
-          loading="eager"
-          decoding="async"
-          fetchPriority="high"
-        />
-      </div>
-      <div className="hero-overlay absolute inset-0 bg-gradient-to-b from-black/55 via-black/30 to-black md:from-black/70 md:via-black/40" />
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_40%,black_100%)] opacity-70 md:opacity-100" />
+    <section ref={sectionRef} className="hero-section relative h-[220vh] md:h-[240vh] w-full">
+      <div className="sticky top-0 h-dvh min-h-[560px] w-full overflow-hidden">
+        <ScrollScrubVideo src={HERO_VIDEO_URL} poster={heroImg} sectionRef={sectionRef} onProgress={handleProgress} />
 
-      <div className="relative z-10 h-full container-x flex flex-col justify-end md:justify-center pt-24 pb-24 md:pt-24 md:pb-24">
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
-          className="max-w-3xl"
+        {/* Overlays cinematográficos: gradiente + vignette + grain discreto */}
+        <div className="hero-overlay pointer-events-none absolute inset-0 bg-gradient-to-b from-black/20 via-black/25 to-black/75" />
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_45%,rgba(0,0,0,0.85)_100%)]" />
+        <div className="pointer-events-none absolute inset-0 bg-grain" />
+
+        <div className="relative z-10 h-full container-x flex flex-col justify-end md:justify-center pt-24 pb-24 md:pt-24 md:pb-24">
+          <AnimatePresence mode="wait">
+            {showMain || showFinal ? (
+              <motion.div
+                key="hero-main"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -12 }}
+                transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+                className="max-w-3xl"
+              >
+                <span className="eyebrow mb-3 sm:mb-6"></span>
+                <h1 className="hero-title -mx-2 sm:mx-0">
+                  <span className="sr-only">A aventura começa aqui.</span>
+                  <img
+                    src={heroTitleImg}
+                    alt="A aventura começa aqui"
+                    width={1400}
+                    height={933}
+                    loading="eager"
+                    decoding="async"
+                    fetchPriority="high"
+                    className="w-full max-w-[36rem] sm:max-w-[42rem] md:max-w-[52rem] lg:max-w-[60rem] h-auto select-none drop-shadow-[0_20px_40px_rgba(0,0,0,0.6)]"
+                    draggable={false}
+                  />
+                </h1>
+                <p className="mt-3 sm:mt-6 max-w-[34ch] sm:max-w-xl text-[0.95rem] sm:text-lg leading-relaxed text-foreground/85">
+                  {showFinal
+                    ? "Pronto para o seu rolê? Garanta sua data e viva a aventura com a gente."
+                    : "Descubra as trilhas mais incríveis de Engenheiro Paulo de Frontin em passeios de quadriciclo e UTV guiados por profissionais."}
+                </p>
+                <div className="mt-5 sm:mt-8 flex flex-col sm:flex-row flex-wrap gap-3">
+                  <Link to="/reservar" className="btn-brand w-full sm:w-auto">
+                    Reservar Agora <ArrowRight className="h-4 w-4" />
+                  </Link>
+                  <Link to="/passeios" className="btn-outline-brand w-full sm:w-auto">
+                    Conheça os passeios
+                  </Link>
+                </div>
+              </motion.div>
+            ) : (
+              <motion.div
+                key={`hero-stage-${stage}`}
+                initial={{ opacity: 0, y: 18, filter: "blur(6px)" }}
+                animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+                exit={{ opacity: 0, y: -12, filter: "blur(6px)" }}
+                transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+                className="max-w-3xl"
+              >
+                <p className="font-display text-4xl sm:text-6xl md:text-7xl uppercase leading-[0.95] drop-shadow-[0_16px_36px_rgba(0,0,0,0.7)]">
+                  {heroStages[stage].line}
+                </p>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+
+        <div
+          className={`hero-scroll-hint absolute bottom-5 left-1/2 -translate-x-1/2 z-10 hidden sm:flex flex-col items-center gap-2 text-foreground/70 transition-opacity duration-500 ${
+            hintVisible ? "opacity-100" : "opacity-0"
+          }`}
         >
-          <span className="eyebrow mb-3 sm:mb-6"></span>
-          <h1 className="hero-title -mx-2 sm:mx-0">
-            <span className="sr-only">A aventura começa aqui.</span>
-            <img
-              src={heroTitleImg}
-              alt="A aventura começa aqui"
-              width={1400}
-              height={933}
-              loading="eager"
-              decoding="async"
-              fetchPriority="high"
-              className="w-full max-w-[36rem] sm:max-w-[42rem] md:max-w-[52rem] lg:max-w-[60rem] h-auto select-none drop-shadow-[0_20px_40px_rgba(0,0,0,0.6)]"
-              draggable={false}
-            />
-          </h1>
-          <p className="mt-3 sm:mt-6 max-w-[34ch] sm:max-w-xl text-[0.95rem] sm:text-lg leading-relaxed text-foreground/85">
-            Descubra as trilhas mais incríveis de Engenheiro Paulo de Frontin em passeios de quadriciclo e UTV guiados
-            por profissionais.
-          </p>
-          <div className="mt-5 sm:mt-8 flex flex-col sm:flex-row flex-wrap gap-3">
-            <Link to="/reservar" className="btn-brand w-full sm:w-auto">
-              Reservar Agora <ArrowRight className="h-4 w-4" />
-            </Link>
-            <Link to="/passeios" className="btn-outline-brand w-full sm:w-auto">
-              Conheça os passeios
-            </Link>
-          </div>
-        </motion.div>
-      </div>
-
-      <div className="hero-scroll-hint absolute bottom-5 left-1/2 -translate-x-1/2 z-10 hidden sm:flex flex-col items-center gap-2 text-foreground/70">
-        <span className="font-mono text-[10px] uppercase tracking-[0.3em]">Role a página</span>
-        <ChevronDown className="h-5 w-5 animate-scroll-hint" />
+          <span className="font-mono text-[10px] uppercase tracking-[0.3em]">Role a página</span>
+          <ChevronDown className="h-5 w-5 animate-scroll-hint" />
+        </div>
       </div>
     </section>
   );
 }
+
 
 /* -------- SOBRE -------- */
 function Sobre() {
