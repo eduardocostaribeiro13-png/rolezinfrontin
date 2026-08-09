@@ -21,7 +21,6 @@ import sobreImg from "@/assets/sobre.jpg";
 import heroTitleImg from "@/assets/hero-title.png";
 import { brlCents, type Tour } from "@/lib/tours";
 import { useQuery } from "@tanstack/react-query";
-import { TourService } from "@/lib/services/tour-service";
 import { Skeleton } from "@/components/ui/skeleton";
 import { waQuickBooking } from "@/lib/whatsapp";
 
@@ -80,7 +79,6 @@ function HomePage() {
       <Hero />
       <Sobre />
       <Diferenciais />
-      <Passeios />
       <Estatisticas />
       <ComoFunciona />
       <Depoimentos />
