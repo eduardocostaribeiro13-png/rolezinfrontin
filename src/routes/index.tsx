@@ -255,44 +255,6 @@ function Diferenciais() {
   );
 }
 
-/* -------- PASSEIOS -------- */
-function Passeios() {
-  const { data, isLoading } = useQuery({
-    queryKey: ["tours", "public"],
-    queryFn: () => TourService.list(),
-    staleTime: 60_000,
-  });
-  return (
-    <section className="section-pad">
-      <div className="container-x">
-        <div className="flex flex-wrap items-end justify-between gap-6 mb-12">
-          <div className="max-w-2xl">
-            <span className="eyebrow mb-4">Nossos passeios</span>
-            <h2 className="font-display text-5xl md:text-6xl uppercase leading-none">
-              Escolha sua <span className="text-brand">trilha.</span>
-            </h2>
-          </div>
-          <Link to="/passeios" className="btn-outline-brand text-xs">
-            Ver todos <ArrowRight className="h-4 w-4" />
-          </Link>
-        </div>
-        {isLoading ? (
-          <div className="grid gap-6 md:grid-cols-2">
-            {[0, 1, 2, 3].map((i) => (
-              <Skeleton key={i} className="h-96 rounded-3xl" />
-            ))}
-          </div>
-        ) : (
-          <div className="grid gap-6 md:grid-cols-2">
-            {(data ?? []).map((t, i) => (
-              <TourCard key={t.slug} tour={t} index={i} />
-            ))}
-          </div>
-        )}
-      </div>
-    </section>
-  );
-}
 
 function fmtDuration(h: number) {
   if (Number.isInteger(h)) return `${h}h`;
