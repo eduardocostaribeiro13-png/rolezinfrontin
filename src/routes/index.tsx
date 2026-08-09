@@ -1,5 +1,6 @@
+import { useCallback, useRef, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import {
   ChevronDown,
   Mountain,
@@ -21,6 +22,7 @@ import sobreImg from "@/assets/sobre.jpg";
 import heroTitleImg from "@/assets/hero-title.png";
 import { brlCents, type Tour } from "@/lib/tours";
 import { waQuickBooking } from "@/lib/whatsapp";
+import { ScrollScrubVideo } from "@/components/site/ScrollScrubVideo";
 
 const HOME_TITLE = "Rolezin Frontin Off Road — Quadriciclo no RJ";
 const HOME_DESC =
@@ -91,13 +93,13 @@ const HERO_VIDEO_URL =
   "https://sadcwojjixddpoqwoufl.supabase.co/storage/v1/object/public/ROLEZIN/CRIE_O_VIDEO_PARA_FAZER_O_EFEI.mp4";
 
 /** Narrativa controlada pela timeline do Hero. */
-const heroStages = [
+const heroStages: { from: number; to: number; line?: string }[] = [
   { from: 0, to: 0.2 },
   { from: 0.2, to: 0.45, line: "Trilhas que você não esquece." },
   { from: 0.45, to: 0.7, line: "Serra • Natureza • Adrenalina" },
   { from: 0.7, to: 0.9, line: "Viva Frontin Off Road" },
   { from: 0.9, to: 1, line: "Pronto para o seu rolê?" },
-] as const;
+];
 
 function stageForProgress(p: number) {
   const index = heroStages.findIndex((s) => p >= s.from && p < s.to);
