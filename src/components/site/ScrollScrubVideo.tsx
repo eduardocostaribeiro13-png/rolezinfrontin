@@ -11,10 +11,8 @@ export interface ScrollScrubVideoProps {
   className?: string;
 }
 
-/** Smoothing factor for the scroll -> video interpolation. */
-const SMOOTHING = 0.12;
 /** Minimum delta before issuing a seek, avoids hammering the decoder. */
-const SEEK_EPSILON = 0.025;
+const SEEK_EPSILON = 0.02;
 
 function clamp01(value: number) {
   return value < 0 ? 0 : value > 1 ? 1 : value;
@@ -23,12 +21,12 @@ function clamp01(value: number) {
 /**
  * Global background video for the Home page. Fixed to the viewport and driven
  * exclusively by the total page scroll: no autoplay, no loop, no play().
- * Scrolling down advances the film, scrolling up rewinds it, stopping freezes it.
+ * The mapping is strictly 1:1 (no lerp/spring) — the real page position is the
+ * single source of truth, and the black footer is excluded from the timeline.
  */
 export function ScrollScrubVideo({ src, poster, onProgress, className }: ScrollScrubVideoProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const targetRef = useRef(0);
-  const smoothedRef = useRef(0);
   const [ready, setReady] = useState(false);
   const [reducedMotion, setReducedMotion] = useState(false);
 
@@ -44,8 +42,11 @@ export function ScrollScrubVideo({ src, poster, onProgress, className }: ScrollS
   useEffect(() => {
     // Progress is always recomputed from the live scrollHeight, so late-loading
     // images/fonts that change the page height cannot freeze the mapping.
+    // The footer is subtracted so the film ends as the footer enters.
     const readTarget = () => {
-      const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+      const footer = document.querySelector("footer");
+      const footerHeight = footer ? footer.getBoundingClientRect().height : 0;
+      const maxScroll = document.documentElement.scrollHeight - footerHeight - window.innerHeight;
       return maxScroll > 0 ? clamp01(window.scrollY / maxScroll) : 0;
     };
 
@@ -54,7 +55,6 @@ export function ScrollScrubVideo({ src, poster, onProgress, className }: ScrollS
     };
 
     targetRef.current = readTarget();
-    smoothedRef.current = targetRef.current;
 
     window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("resize", onScroll, { passive: true });
@@ -64,16 +64,12 @@ export function ScrollScrubVideo({ src, poster, onProgress, className }: ScrollS
 
     const tick = () => {
       if (disposed) return;
-      const target = targetRef.current;
-      let smoothed = smoothedRef.current;
-      smoothed += (target - smoothed) * SMOOTHING;
-      if (Math.abs(target - smoothed) < 0.0005) smoothed = target;
-      smoothedRef.current = smoothed;
+      const progress = targetRef.current;
 
       const video = videoRef.current;
       const duration = video?.duration;
       if (video && !reducedMotion && Number.isFinite(duration) && (duration as number) > 0) {
-        const targetTime = smoothed * Math.max((duration as number) - 0.05, 0);
+        const targetTime = progress * Math.max((duration as number) - 0.05, 0);
         if (Math.abs(video.currentTime - targetTime) > SEEK_EPSILON) {
           try {
             video.currentTime = targetTime;
@@ -83,7 +79,7 @@ export function ScrollScrubVideo({ src, poster, onProgress, className }: ScrollS
         }
       }
 
-      onProgress?.(smoothed);
+      onProgress?.(progress);
       frame = window.requestAnimationFrame(tick);
     };
 
@@ -95,6 +91,7 @@ export function ScrollScrubVideo({ src, poster, onProgress, className }: ScrollS
       window.removeEventListener("resize", onScroll);
     };
   }, [onProgress, reducedMotion]);
+
 
   return (
     <div
