@@ -395,26 +395,30 @@ function ComoFunciona() {
     { n: "05", t: "Viva a aventura", d: "Chegue, pilote e leve pra casa memórias inesquecíveis." },
   ];
   return (
-    <section className="section-pad">
-      <div className="container-x">
+    <section className="section-pad relative overflow-hidden">
+      <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/40 via-black/25 to-black/55" />
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-[62%] bg-gradient-to-t from-black/70 via-black/45 to-transparent" />
+
+      <div className="container-x relative">
         <div className="mb-12 max-w-2xl">
           <span className="eyebrow mb-4">Como funciona</span>
-          <h2 className="font-display text-5xl md:text-6xl uppercase leading-none">
+          <h2 className="font-display text-5xl md:text-6xl uppercase leading-none text-cine-strong">
             Simples como <span className="text-brand">acelerar.</span>
           </h2>
         </div>
         <ol className="relative grid gap-4 md:grid-cols-5">
-          {steps.map((s) => (
+          {steps.map((s, i) => (
             <motion.li
               key={s.n}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="relative p-6 rounded-2xl border border-border/60 bg-card/60 backdrop-blur-md"
+              transition={{ duration: 0.5, delay: i * 0.05 }}
+              className="surface-1 relative p-6 hover:border-brand/35"
             >
-              <span className="font-display text-5xl text-brand/40 leading-none">{s.n}</span>
-              <h3 className="mt-4 font-display text-xl uppercase">{s.t}</h3>
-              <p className="mt-2 text-sm text-muted-foreground">{s.d}</p>
+              <span className="font-display text-5xl leading-none text-brand/70">{s.n}</span>
+              <h3 className="mt-4 font-display text-xl uppercase text-foreground">{s.t}</h3>
+              <p className="mt-2 text-sm text-foreground/75 leading-relaxed">{s.d}</p>
             </motion.li>
           ))}
         </ol>
@@ -422,6 +426,7 @@ function ComoFunciona() {
     </section>
   );
 }
+
 
 /* -------- DEPOIMENTOS -------- */
 const testimonials = [
