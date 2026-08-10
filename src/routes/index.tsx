@@ -76,6 +76,14 @@ function HomePage() {
     <div className="relative min-h-screen bg-black">
       <ScrollScrubVideo src={HERO_VIDEO_URL} poster={heroImg} />
 
+      {/* Camada 2 — tratamento global discreto do vídeo (leve + vinheta + grain) */}
+      <div className="pointer-events-none fixed inset-0 z-[1] bg-black/15" aria-hidden />
+      <div
+        className="pointer-events-none fixed inset-0 z-[1] bg-[radial-gradient(ellipse_at_center,transparent_30%,rgba(0,0,0,0.38)_100%)]"
+        aria-hidden
+      />
+      <div className="pointer-events-none fixed inset-0 z-[1] bg-grain opacity-70" aria-hidden />
+
       <div className="relative z-10">
         <Hero />
         <Sobre />
@@ -89,6 +97,7 @@ function HomePage() {
     </div>
   );
 }
+
 
 /* -------- HERO (conteúdo sobre o vídeo global scroll-scrub) -------- */
 const HERO_VIDEO_URL = "https://abtrgriijmcbavcdddzg.supabase.co/storage/v1/object/public/VIDEO/BACKGROUND%201.mp4";
