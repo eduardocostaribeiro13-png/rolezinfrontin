@@ -105,10 +105,11 @@ const HERO_VIDEO_URL = "https://abtrgriijmcbavcdddzg.supabase.co/storage/v1/obje
 function Hero() {
   return (
     <section className="hero-section relative min-h-dvh w-full overflow-hidden">
-      {/* Overlays cinematográficos: gradiente + vignette + grain discreto */}
-      <div className="hero-overlay pointer-events-none absolute inset-0 bg-gradient-to-b from-black/20 via-black/25 to-black/60" />
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_45%,rgba(0,0,0,0.8)_100%)]" />
-      <div className="pointer-events-none absolute inset-0 bg-grain" />
+      {/* Overlays contextuais: escurecimento à esquerda (texto) + base + vinheta */}
+      <div className="hero-overlay pointer-events-none absolute inset-0 bg-gradient-to-b from-black/25 via-black/20 to-black/80" />
+      <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-black/70 via-black/25 to-transparent md:from-black/65 md:via-black/20" />
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_40%,rgba(0,0,0,0.55)_100%)]" />
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-40 bg-gradient-to-b from-transparent via-black/25 to-black/55" />
 
       <div className="relative z-10 min-h-dvh container-x flex flex-col justify-end md:justify-center pt-24 pb-24 md:pt-24 md:pb-24">
         <motion.div
@@ -128,11 +129,11 @@ function Hero() {
               loading="eager"
               decoding="async"
               fetchPriority="high"
-              className="w-full max-w-[36rem] sm:max-w-[42rem] md:max-w-[52rem] lg:max-w-[60rem] h-auto select-none drop-shadow-[0_20px_40px_rgba(0,0,0,0.6)]"
+              className="w-full max-w-[36rem] sm:max-w-[42rem] md:max-w-[52rem] lg:max-w-[60rem] h-auto select-none drop-shadow-[0_18px_38px_rgba(0,0,0,0.75)]"
               draggable={false}
             />
           </h1>
-          <p className="mt-3 sm:mt-6 max-w-[34ch] sm:max-w-xl text-[0.95rem] sm:text-lg leading-relaxed text-foreground/85">
+          <p className="mt-3 sm:mt-6 max-w-[34ch] sm:max-w-xl text-[0.95rem] sm:text-lg leading-relaxed text-foreground/85 text-cine">
             Descubra as trilhas mais incríveis de Engenheiro Paulo de Frontin em passeios de quadriciclo e UTV guiados
             por profissionais.
           </p>
@@ -147,10 +148,11 @@ function Hero() {
         </motion.div>
       </div>
 
-      <div className="hero-scroll-hint absolute bottom-5 left-1/2 -translate-x-1/2 z-10 hidden sm:flex flex-col items-center gap-2 text-foreground/70">
-        <span className="font-mono text-[10px] uppercase tracking-[0.3em]">Role a página</span>
-        <ChevronDown className="h-5 w-5 animate-scroll-hint" />
+      <div className="hero-scroll-hint absolute bottom-5 left-1/2 -translate-x-1/2 z-10 hidden sm:flex flex-col items-center gap-2 text-foreground/60">
+        <span className="font-mono text-[10px] uppercase tracking-[0.3em] text-cine">Role a página</span>
+        <ChevronDown className="h-5 w-5 animate-scroll-hint text-brand/80" />
       </div>
+
     </section>
   );
 }
