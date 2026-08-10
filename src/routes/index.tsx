@@ -244,11 +244,16 @@ const diffs = [
 
 function Diferenciais() {
   return (
-    <section className="section-pad border-y border-border/40 bg-black/40 backdrop-blur-sm">
-      <div className="container-x">
+    <section className="section-pad relative overflow-hidden">
+      {/* Topo mais limpo, centro (cards) mais escuro, laterais com presença do vídeo */}
+      <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/25 via-black/65 to-black/45" />
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_70%_60%_at_50%_60%,rgba(0,0,0,0.55),transparent_75%)]" />
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-white/10" />
+
+      <div className="container-x relative">
         <div className="mb-14 max-w-2xl">
           <span className="eyebrow mb-4">Por que escolher</span>
-          <h2 className="font-display text-5xl md:text-6xl uppercase leading-none">
+          <h2 className="font-display text-5xl md:text-6xl uppercase leading-none text-cine-strong">
             Feito pra quem <span className="text-brand">vive de verdade.</span>
           </h2>
         </div>
@@ -260,12 +265,12 @@ function Diferenciais() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-80px" }}
               transition={{ duration: 0.5, delay: i * 0.05 }}
-              className="group relative p-8 rounded-2xl border border-border/60 bg-card/60 backdrop-blur-md hover:border-brand/60 transition-colors overflow-hidden"
+              className="group surface-2 relative overflow-hidden rounded-2xl p-8 hover:-translate-y-0.5 hover:border-brand/40 hover:bg-black/65"
             >
-              <div className="absolute -top-16 -right-16 h-40 w-40 rounded-full bg-brand/5 blur-2xl opacity-0 group-hover:opacity-100 transition-opacity" />
+              <div className="absolute -top-16 -right-16 h-40 w-40 rounded-full bg-brand/10 blur-2xl opacity-0 group-hover:opacity-100 transition-opacity" />
               <d.icon className="h-8 w-8 text-brand" strokeWidth={1.5} />
               <h3 className="mt-5 text-lg font-semibold leading-relaxed text-foreground">{d.title}</h3>
-              <p className="mt-2 text-sm text-muted-foreground leading-relaxed">{d.desc}</p>
+              <p className="mt-2 text-sm text-foreground/75 leading-relaxed">{d.desc}</p>
             </motion.div>
           ))}
         </div>
@@ -273,6 +278,7 @@ function Diferenciais() {
     </section>
   );
 }
+
 
 
 function fmtDuration(h: number) {
