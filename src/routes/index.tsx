@@ -162,8 +162,13 @@ function Hero() {
 /* -------- SOBRE -------- */
 function Sobre() {
   return (
-    <section className="section-pad bg-black/30 backdrop-blur-sm bg-grain">
-      <div className="container-x grid gap-12 md:grid-cols-2 md:items-center">
+    <section className="section-pad relative overflow-hidden">
+      {/* Overlay contextual: forte na coluna de texto, aberto sobre a imagem */}
+      <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-black/85 via-black/55 to-black/20 md:to-transparent" />
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-black/55 via-black/25 to-transparent" />
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-black/45 to-transparent" />
+
+      <div className="container-x relative grid gap-12 md:grid-cols-2 md:items-center">
         <motion.div
           initial="hidden"
           whileInView="visible"
@@ -171,10 +176,10 @@ function Sobre() {
           variants={fadeUp}
         >
           <span className="eyebrow mb-4">Sobre nós</span>
-          <h2 className="font-display text-5xl md:text-6xl uppercase leading-none">
+          <h2 className="font-display text-5xl md:text-6xl uppercase leading-none text-cine-strong">
             Aventura com <span className="text-brand">alma off road.</span>
           </h2>
-          <p className="mt-6 text-foreground/80 leading-relaxed">
+          <p className="mt-6 text-foreground/85 leading-relaxed text-cine">
             Somos apaixonados por trilhas, natureza e adrenalina. Há anos guiamos turistas, casais, famílias e grupos de
             amigos pelas paisagens mais incríveis de Engenheiro Paulo de Frontin, no Rio de Janeiro, com foco total em
             segurança, diversão e memórias inesquecíveis.
@@ -186,7 +191,7 @@ function Sobre() {
               "Atendimento personalizado do início ao fim",
               "Fotos e vídeos do seu rolê inclusos",
             ].map((item) => (
-              <li key={item} className="flex items-center gap-3 text-foreground/85">
+              <li key={item} className="flex items-center gap-3 text-foreground/85 text-cine">
                 <span className="h-1.5 w-1.5 rounded-full bg-brand" />
                 {item}
               </li>
@@ -198,24 +203,33 @@ function Sobre() {
           whileInView={{ opacity: 1, scale: 1 }}
           viewport={{ once: true }}
           transition={{ duration: 0.9 }}
-          className="relative aspect-[4/5] overflow-hidden rounded-3xl border border-border/60"
+          className="relative"
         >
-          <img
-            src={sobreImg}
-            alt="Passeio ao pôr do sol com quadriciclo em Frontin"
-            loading="lazy"
-            className="h-full w-full object-cover"
+          {/* Brilho quente muito discreto atrás da fotografia editorial */}
+          <div
+            aria-hidden
+            className="pointer-events-none absolute -inset-6 rounded-[2rem] bg-brand/10 blur-3xl opacity-60"
           />
-          <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-black to-transparent" />
-          <div className="absolute bottom-6 left-6 right-6">
-            <p className="font-display text-3xl uppercase leading-none">Serra do RJ</p>
-            <p className="mt-1 text-sm text-foreground/80">Trilhas exclusivas por natureza intocada.</p>
+          <div className="relative aspect-[4/5] overflow-hidden rounded-3xl border border-white/10 shadow-[0_30px_80px_rgba(0,0,0,0.55)]">
+            <img
+              src={sobreImg}
+              alt="Passeio ao pôr do sol com quadriciclo em Frontin"
+              loading="lazy"
+              className="h-full w-full object-cover"
+            />
+            <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_45%,rgba(0,0,0,0.5)_100%)]" />
+            <div className="absolute inset-x-0 bottom-0 h-2/5 bg-gradient-to-t from-black via-black/45 to-transparent" />
+            <div className="absolute bottom-6 left-6 right-6">
+              <p className="font-display text-3xl uppercase leading-none text-cine-strong">Serra do RJ</p>
+              <p className="mt-1 text-sm text-foreground/85 text-cine">Trilhas exclusivas por natureza intocada.</p>
+            </div>
           </div>
         </motion.div>
       </div>
     </section>
   );
 }
+
 
 /* -------- DIFERENCIAIS -------- */
 const diffs = [
