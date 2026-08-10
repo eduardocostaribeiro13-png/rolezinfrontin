@@ -524,24 +524,28 @@ const faqs = [
 
 function FAQ() {
   return (
-    <section className="section-pad">
-      <div className="container-x grid gap-12 md:grid-cols-[1fr_1.4fr]">
+    <section className="section-pad relative overflow-hidden">
+      {/* Seção de leitura: pode escurecer mais, priorizando clareza */}
+      <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/75 via-black/65 to-black/50" />
+      <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-black/60 via-black/40 to-black/55" />
+
+      <div className="container-x relative grid gap-12 md:grid-cols-[1fr_1.4fr]">
         <div>
           <span className="eyebrow mb-4">Perguntas frequentes</span>
-          <h2 className="font-display text-5xl md:text-6xl uppercase leading-none tracking-[0.1em]">
+          <h2 className="font-display text-5xl md:text-6xl uppercase leading-none tracking-[0.1em] text-cine-strong">
             Tira as dúvidas <span className="text-brand">e bora.</span>
           </h2>
-          <p className="mt-6 text-muted-foreground max-w-sm">
+          <p className="mt-6 text-foreground/75 max-w-sm text-cine">
             Não achou o que procurava? Chama a gente no WhatsApp que resolvemos rapidinho.
           </p>
           <a href={waQuickBooking()} target="_blank" rel="noreferrer" className="btn-outline-brand mt-6 text-xs">
             Falar no WhatsApp
           </a>
         </div>
-        <Accordion type="single" collapsible className="w-full">
+        <Accordion type="single" collapsible className="w-full surface-2 rounded-2xl px-5 sm:px-7">
           {faqs.map((f, i) => (
-            <AccordionItem key={i} value={`item-${i}`} className="border-border/60">
-              <AccordionTrigger className="font-display text-lg uppercase tracking-wide hover:no-underline hover:text-brand">
+            <AccordionItem key={i} value={`item-${i}`} className="border-white/10 last:border-b-0">
+              <AccordionTrigger className="font-display text-lg uppercase tracking-wide hover:no-underline hover:text-brand data-[state=open]:text-brand">
                 {f.q}
               </AccordionTrigger>
               <AccordionContent className="text-foreground/80 leading-relaxed">{f.a}</AccordionContent>
@@ -552,6 +556,7 @@ function FAQ() {
     </section>
   );
 }
+
 
 /* -------- CTA FINAL -------- */
 function CTAFinal() {
