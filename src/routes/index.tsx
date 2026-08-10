@@ -360,12 +360,20 @@ function Estatisticas() {
     { value: "8", label: "Anos de estrada" },
   ];
   return (
-    <section className="section-pad relative overflow-hidden bg-brand/85 backdrop-blur-sm text-brand-foreground">
+    <section className="section-pad relative overflow-hidden text-brand-foreground">
+      {/* Identidade amarela como gradiente da marca, conectada às seções vizinhas */}
+      <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(120deg,color-mix(in_oklab,var(--color-brand)_92%,transparent)_0%,color-mix(in_oklab,var(--color-brand)_78%,transparent)_55%,color-mix(in_oklab,var(--color-brand)_88%,black)_100%)] backdrop-blur-[2px]" />
+      <div className="pointer-events-none absolute inset-0 bg-grain opacity-80 mix-blend-multiply" />
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-20 bg-gradient-to-b from-black/45 to-transparent" />
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-black/45 to-transparent" />
+
       <div className="container-x relative">
         <div className="grid gap-x-16 gap-y-16 sm:gap-x-16 md:gap-x-30 lg:gap-x-38 grid-cols-2 sm:grid-cols-3 md:grid-cols-5 text-center">
           {stats.map((s) => (
             <div key={s.label} className="flex flex-col items-center justify-center text-center w-full">
-              <p className="font-display text-4xl sm:text-5xl md:text-6xl leading-none">{s.value}</p>
+              <p className="font-display text-4xl sm:text-5xl md:text-6xl leading-none drop-shadow-[0_2px_10px_rgba(0,0,0,0.18)]">
+                {s.value}
+              </p>
 
               <p className="mt-2 text-[11px] sm:text-xs font-mono uppercase tracking-widest opacity-80">{s.label}</p>
             </div>
@@ -375,6 +383,7 @@ function Estatisticas() {
     </section>
   );
 }
+
 
 /* -------- COMO FUNCIONA -------- */
 function ComoFunciona() {
