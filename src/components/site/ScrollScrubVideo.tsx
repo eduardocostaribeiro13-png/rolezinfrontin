@@ -1,37 +1,34 @@
-import { useEffect, useRef, useState, type RefObject } from "react";
+import { useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
 
 export interface ScrollScrubVideoProps {
-  /** Absolute URL of the MP4 that will be scrubbed by the scroll position. */
+  /** Absolute URL of the MP4 scrubbed by the page scroll position. */
   src: string;
-  /** Static image shown before the video is ready (and under reduced motion). */
+  /** Static image shown until the first real video frame is available. */
   poster: string;
-  /** Element that defines the cinematic scroll area (heroStart -> heroEnd). */
-  sectionRef: RefObject<HTMLElement | null>;
-  /**
-   * Called on every animation frame with the smoothed progress (0..1).
-   * Keep the handler cheap: it runs at frame rate.
-   */
+  /** Optional callback with the smoothed page progress (0..1). Runs at frame rate. */
   onProgress?: (progress: number) => void;
   className?: string;
 }
 
-/** Smoothing factor for the scroll -> video interpolation (0.08 – 0.16). */
+/** Smoothing factor for the scroll -> video interpolation. */
 const SMOOTHING = 0.12;
 /** Minimum delta before issuing a seek, avoids hammering the decoder. */
-const SEEK_EPSILON = 0.04;
+const SEEK_EPSILON = 0.025;
 
 function clamp01(value: number) {
   return value < 0 ? 0 : value > 1 ? 1 : value;
 }
 
 /**
- * Background video whose playhead is driven exclusively by the scroll position
- * inside `sectionRef`. No autoplay, no loop: scrolling down advances the film,
- * scrolling up rewinds it, stopping freezes it.
+ * Global background video for the Home page. Fixed to the viewport and driven
+ * exclusively by the total page scroll: no autoplay, no loop, no play().
+ * Scrolling down advances the film, scrolling up rewinds it, stopping freezes it.
  */
-export function ScrollScrubVideo({ src, poster, sectionRef, onProgress, className }: ScrollScrubVideoProps) {
+export function ScrollScrubVideo({ src, poster, onProgress, className }: ScrollScrubVideoProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
+  const targetRef = useRef(0);
+  const smoothedRef = useRef(0);
   const [ready, setReady] = useState(false);
   const [reducedMotion, setReducedMotion] = useState(false);
 
@@ -45,32 +42,38 @@ export function ScrollScrubVideo({ src, poster, sectionRef, onProgress, classNam
   }, []);
 
   useEffect(() => {
-    const video = videoRef.current;
-    const section = sectionRef.current;
-    if (!video || !section) return;
+    // Progress is always recomputed from the live scrollHeight, so late-loading
+    // images/fonts that change the page height cannot freeze the mapping.
+    const readTarget = () => {
+      const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+      return maxScroll > 0 ? clamp01(window.scrollY / maxScroll) : 0;
+    };
+
+    const onScroll = () => {
+      targetRef.current = readTarget();
+    };
+
+    targetRef.current = readTarget();
+    smoothedRef.current = targetRef.current;
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll, { passive: true });
 
     let frame = 0;
-    let smoothed = 0;
-    let target = 0;
     let disposed = false;
-
-    const readTarget = () => {
-      const rect = section.getBoundingClientRect();
-      // Scrollable distance inside the cinematic area.
-      const travel = rect.height - window.innerHeight;
-      if (travel <= 0) return 0;
-      return clamp01(-rect.top / travel);
-    };
 
     const tick = () => {
       if (disposed) return;
-      target = readTarget();
+      const target = targetRef.current;
+      let smoothed = smoothedRef.current;
       smoothed += (target - smoothed) * SMOOTHING;
       if (Math.abs(target - smoothed) < 0.0005) smoothed = target;
+      smoothedRef.current = smoothed;
 
-      const duration = video.duration;
-      if (Number.isFinite(duration) && duration > 0 && !reducedMotion) {
-        const targetTime = smoothed * Math.max(duration - 0.05, 0);
+      const video = videoRef.current;
+      const duration = video?.duration;
+      if (video && !reducedMotion && Number.isFinite(duration) && (duration as number) > 0) {
+        const targetTime = smoothed * Math.max((duration as number) - 0.05, 0);
         if (Math.abs(video.currentTime - targetTime) > SEEK_EPSILON) {
           try {
             video.currentTime = targetTime;
@@ -88,15 +91,23 @@ export function ScrollScrubVideo({ src, poster, sectionRef, onProgress, classNam
     return () => {
       disposed = true;
       window.cancelAnimationFrame(frame);
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
     };
-  }, [sectionRef, onProgress, reducedMotion]);
+  }, [onProgress, reducedMotion]);
 
   return (
-    <div className={cn("absolute inset-0 overflow-hidden", className)} aria-hidden="true">
+    <div
+      className={cn("pointer-events-none fixed inset-0 z-0 h-dvh w-full overflow-hidden bg-black", className)}
+      aria-hidden="true"
+    >
       <img
         src={poster}
         alt=""
-        className="absolute inset-0 h-full w-full object-cover object-[65%_center] md:object-center"
+        className={cn(
+          "absolute inset-0 h-full w-full object-cover object-[65%_center] transition-opacity duration-500 md:object-center",
+          ready && !reducedMotion ? "opacity-0" : "opacity-100",
+        )}
         loading="eager"
         decoding="async"
         fetchPriority="high"
@@ -111,8 +122,10 @@ export function ScrollScrubVideo({ src, poster, sectionRef, onProgress, classNam
           disablePictureInPicture
           tabIndex={-1}
           onLoadedData={() => setReady(true)}
+          onCanPlay={() => setReady(true)}
+          onSeeked={() => setReady(true)}
           className={cn(
-            "absolute inset-0 h-full w-full object-cover object-[60%_center] md:object-center transition-opacity duration-500",
+            "absolute inset-0 h-full w-full object-cover object-[60%_center] transition-opacity duration-500 md:object-center",
             ready ? "opacity-100" : "opacity-0",
           )}
         />

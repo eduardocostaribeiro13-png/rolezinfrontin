@@ -1,6 +1,5 @@
-import { useCallback, useRef, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { AnimatePresence, motion } from "framer-motion";
+import { motion } from "framer-motion";
 import {
   ChevronDown,
   Mountain,
@@ -17,7 +16,6 @@ import {
   ArrowRight,
 } from "lucide-react";
 import heroImg from "@/assets/hero.jpg";
-import ctaImg from "@/assets/cta.jpg";
 import sobreImg from "@/assets/sobre.jpg";
 import heroTitleImg from "@/assets/hero-title.png";
 import { brlCents, type Tour } from "@/lib/tours";
@@ -75,139 +73,85 @@ const fadeUp = {
 
 function HomePage() {
   return (
-    <>
-      <Hero />
-      <Sobre />
-      <Diferenciais />
-      <Estatisticas />
-      <ComoFunciona />
-      <Depoimentos />
-      <FAQ />
-      <CTAFinal />
-    </>
+    <div className="relative min-h-screen bg-black">
+      <ScrollScrubVideo src={HERO_VIDEO_URL} poster={heroImg} />
+
+      <div className="relative z-10">
+        <Hero />
+        <Sobre />
+        <Diferenciais />
+        <Estatisticas />
+        <ComoFunciona />
+        <Depoimentos />
+        <FAQ />
+        <CTAFinal />
+      </div>
+    </div>
   );
 }
 
-/* -------- HERO CINEMATOGRÁFICO (scroll-scrub) -------- */
-const HERO_VIDEO_URL =
-  "https://sadcwojjixddpoqwoufl.supabase.co/storage/v1/object/public/ROLEZIN/CRIE_O_VIDEO_PARA_FAZER_O_EFEI.mp4";
-
-/** Narrativa controlada pela timeline do Hero. */
-const heroStages: { from: number; to: number; line?: string }[] = [
-  { from: 0, to: 0.2 },
-  { from: 0.2, to: 0.45, line: "Trilhas que você não esquece." },
-  { from: 0.45, to: 0.7, line: "Serra • Natureza • Adrenalina" },
-  { from: 0.7, to: 0.9, line: "Viva Frontin Off Road" },
-  { from: 0.9, to: 1, line: "Pronto para o seu rolê?" },
-];
-
-function stageForProgress(p: number) {
-  const index = heroStages.findIndex((s) => p >= s.from && p < s.to);
-  return index === -1 ? heroStages.length - 1 : index;
-}
+/* -------- HERO (conteúdo sobre o vídeo global scroll-scrub) -------- */
+const HERO_VIDEO_URL = "https://abtrgriijmcbavcdddzg.supabase.co/storage/v1/object/public/VIDEO/BACKGROUND%201.mp4";
 
 function Hero() {
-  const sectionRef = useRef<HTMLElement>(null);
-  const [stage, setStage] = useState(0);
-  const [hintVisible, setHintVisible] = useState(true);
-
-  const handleProgress = useCallback((p: number) => {
-    const next = stageForProgress(p);
-    setStage((current) => (current === next ? current : next));
-    setHintVisible((current) => {
-      const shouldShow = p < 0.15;
-      return current === shouldShow ? current : shouldShow;
-    });
-  }, []);
-
-  const showMain = stage === 0;
-  const showFinal = stage === heroStages.length - 1;
-
   return (
-    <section ref={sectionRef} className="hero-section relative h-[220vh] md:h-[240vh] w-full">
-      <div className="sticky top-0 h-dvh min-h-[560px] w-full overflow-hidden">
-        <ScrollScrubVideo src={HERO_VIDEO_URL} poster={heroImg} sectionRef={sectionRef} onProgress={handleProgress} />
+    <section className="hero-section relative min-h-dvh w-full overflow-hidden">
+      {/* Overlays cinematográficos: gradiente + vignette + grain discreto */}
+      <div className="hero-overlay pointer-events-none absolute inset-0 bg-gradient-to-b from-black/20 via-black/25 to-black/60" />
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_45%,rgba(0,0,0,0.8)_100%)]" />
+      <div className="pointer-events-none absolute inset-0 bg-grain" />
 
-        {/* Overlays cinematográficos: gradiente + vignette + grain discreto */}
-        <div className="hero-overlay pointer-events-none absolute inset-0 bg-gradient-to-b from-black/20 via-black/25 to-black/75" />
-        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_45%,rgba(0,0,0,0.85)_100%)]" />
-        <div className="pointer-events-none absolute inset-0 bg-grain" />
-
-        <div className="relative z-10 h-full container-x flex flex-col justify-end md:justify-center pt-24 pb-24 md:pt-24 md:pb-24">
-          <AnimatePresence mode="wait">
-            {showMain || showFinal ? (
-              <motion.div
-                key="hero-main"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -12 }}
-                transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-                className="max-w-3xl"
-              >
-                <span className="eyebrow mb-3 sm:mb-6"></span>
-                <h1 className="hero-title -mx-2 sm:mx-0">
-                  <span className="sr-only">A aventura começa aqui.</span>
-                  <img
-                    src={heroTitleImg}
-                    alt="A aventura começa aqui"
-                    width={1400}
-                    height={933}
-                    loading="eager"
-                    decoding="async"
-                    fetchPriority="high"
-                    className="w-full max-w-[36rem] sm:max-w-[42rem] md:max-w-[52rem] lg:max-w-[60rem] h-auto select-none drop-shadow-[0_20px_40px_rgba(0,0,0,0.6)]"
-                    draggable={false}
-                  />
-                </h1>
-                <p className="mt-3 sm:mt-6 max-w-[34ch] sm:max-w-xl text-[0.95rem] sm:text-lg leading-relaxed text-foreground/85">
-                  {showFinal
-                    ? "Pronto para o seu rolê? Garanta sua data e viva a aventura com a gente."
-                    : "Descubra as trilhas mais incríveis de Engenheiro Paulo de Frontin em passeios de quadriciclo e UTV guiados por profissionais."}
-                </p>
-                <div className="mt-5 sm:mt-8 flex flex-col sm:flex-row flex-wrap gap-3">
-                  <Link to="/reservar" className="btn-brand w-full sm:w-auto">
-                    Reservar Agora <ArrowRight className="h-4 w-4" />
-                  </Link>
-                  <Link to="/passeios" className="btn-outline-brand w-full sm:w-auto">
-                    Conheça os passeios
-                  </Link>
-                </div>
-              </motion.div>
-            ) : (
-              <motion.div
-                key={`hero-stage-${stage}`}
-                initial={{ opacity: 0, y: 18, filter: "blur(6px)" }}
-                animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-                exit={{ opacity: 0, y: -12, filter: "blur(6px)" }}
-                transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-                className="max-w-3xl"
-              >
-                <p className="font-display text-4xl sm:text-6xl md:text-7xl uppercase leading-[0.95] drop-shadow-[0_16px_36px_rgba(0,0,0,0.7)]">
-                  {heroStages[stage].line}
-                </p>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
-
-        <div
-          className={`hero-scroll-hint absolute bottom-5 left-1/2 -translate-x-1/2 z-10 hidden sm:flex flex-col items-center gap-2 text-foreground/70 transition-opacity duration-500 ${
-            hintVisible ? "opacity-100" : "opacity-0"
-          }`}
+      <div className="relative z-10 min-h-dvh container-x flex flex-col justify-end md:justify-center pt-24 pb-24 md:pt-24 md:pb-24">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+          className="max-w-3xl"
         >
-          <span className="font-mono text-[10px] uppercase tracking-[0.3em]">Role a página</span>
-          <ChevronDown className="h-5 w-5 animate-scroll-hint" />
-        </div>
+          <span className="eyebrow mb-3 sm:mb-6"></span>
+          <h1 className="hero-title -mx-2 sm:mx-0">
+            <span className="sr-only">A aventura começa aqui.</span>
+            <img
+              src={heroTitleImg}
+              alt="A aventura começa aqui"
+              width={1400}
+              height={933}
+              loading="eager"
+              decoding="async"
+              fetchPriority="high"
+              className="w-full max-w-[36rem] sm:max-w-[42rem] md:max-w-[52rem] lg:max-w-[60rem] h-auto select-none drop-shadow-[0_20px_40px_rgba(0,0,0,0.6)]"
+              draggable={false}
+            />
+          </h1>
+          <p className="mt-3 sm:mt-6 max-w-[34ch] sm:max-w-xl text-[0.95rem] sm:text-lg leading-relaxed text-foreground/85">
+            Descubra as trilhas mais incríveis de Engenheiro Paulo de Frontin em passeios de quadriciclo e UTV guiados
+            por profissionais.
+          </p>
+          <div className="mt-5 sm:mt-8 flex flex-col sm:flex-row flex-wrap gap-3">
+            <Link to="/reservar" className="btn-brand w-full sm:w-auto">
+              Reservar Agora <ArrowRight className="h-4 w-4" />
+            </Link>
+            <Link to="/passeios" className="btn-outline-brand w-full sm:w-auto">
+              Conheça os passeios
+            </Link>
+          </div>
+        </motion.div>
+      </div>
+
+      <div className="hero-scroll-hint absolute bottom-5 left-1/2 -translate-x-1/2 z-10 hidden sm:flex flex-col items-center gap-2 text-foreground/70">
+        <span className="font-mono text-[10px] uppercase tracking-[0.3em]">Role a página</span>
+        <ChevronDown className="h-5 w-5 animate-scroll-hint" />
       </div>
     </section>
   );
 }
 
 
+
 /* -------- SOBRE -------- */
 function Sobre() {
   return (
-    <section className="section-pad bg-grain">
+    <section className="section-pad bg-black/30 backdrop-blur-sm bg-grain">
       <div className="container-x grid gap-12 md:grid-cols-2 md:items-center">
         <motion.div
           initial="hidden"
@@ -275,7 +219,7 @@ const diffs = [
 
 function Diferenciais() {
   return (
-    <section className="section-pad border-y border-border/40 bg-[oklch(0.11_0_0)]">
+    <section className="section-pad border-y border-border/40 bg-black/40 backdrop-blur-sm">
       <div className="container-x">
         <div className="mb-14 max-w-2xl">
           <span className="eyebrow mb-4">Por que escolher</span>
@@ -291,7 +235,7 @@ function Diferenciais() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-80px" }}
               transition={{ duration: 0.5, delay: i * 0.05 }}
-              className="group relative p-8 rounded-2xl border border-border/60 bg-card hover:border-brand/60 transition-colors overflow-hidden"
+              className="group relative p-8 rounded-2xl border border-border/60 bg-card/60 backdrop-blur-md hover:border-brand/60 transition-colors overflow-hidden"
             >
               <div className="absolute -top-16 -right-16 h-40 w-40 rounded-full bg-brand/5 blur-2xl opacity-0 group-hover:opacity-100 transition-opacity" />
               <d.icon className="h-8 w-8 text-brand" strokeWidth={1.5} />
@@ -385,7 +329,7 @@ function Estatisticas() {
     { value: "8", label: "Anos de estrada" },
   ];
   return (
-    <section className="section-pad relative overflow-hidden bg-brand text-brand-foreground">
+    <section className="section-pad relative overflow-hidden bg-brand/85 backdrop-blur-sm text-brand-foreground">
       <div className="container-x relative">
         <div className="grid gap-x-16 gap-y-16 sm:gap-x-16 md:gap-x-30 lg:gap-x-38 grid-cols-2 sm:grid-cols-3 md:grid-cols-5 text-center">
           {stats.map((s) => (
@@ -426,7 +370,7 @@ function ComoFunciona() {
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="relative p-6 rounded-2xl border border-border/60 bg-card"
+              className="relative p-6 rounded-2xl border border-border/60 bg-card/60 backdrop-blur-md"
             >
               <span className="font-display text-5xl text-brand/40 leading-none">{s.n}</span>
               <h3 className="mt-4 font-display text-xl uppercase">{s.t}</h3>
@@ -465,7 +409,7 @@ const testimonials = [
 
 function Depoimentos() {
   return (
-    <section className="section-pad bg-[oklch(0.11_0_0)] border-y border-border/40">
+    <section className="section-pad bg-black/40 backdrop-blur-sm border-y border-border/40">
       <div className="container-x">
         <div className="mb-12 max-w-2xl">
           <span className="eyebrow mb-4">Depoimentos</span>
@@ -481,7 +425,7 @@ function Depoimentos() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: i * 0.05 }}
-              className="p-6 rounded-2xl border border-border/60 bg-card"
+              className="p-6 rounded-2xl border border-border/60 bg-card/60 backdrop-blur-md"
             >
               <div className="flex gap-1 mb-4 text-brand">
                 {Array.from({ length: 5 }).map((_, k) => (
@@ -563,7 +507,6 @@ function FAQ() {
 function CTAFinal() {
   return (
     <section className="relative overflow-hidden">
-      <img src={ctaImg} alt="" loading="lazy" className="absolute inset-0 h-full w-full object-cover" />
       <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/60 to-black/90" />
       <div className="relative container-x py-20 sm:py-28 md:py-36 text-center">
         <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
