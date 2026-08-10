@@ -1,6 +1,5 @@
-import { useCallback, useRef, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { AnimatePresence, motion } from "framer-motion";
+import { motion } from "framer-motion";
 import {
   ChevronDown,
   Mountain,
@@ -17,7 +16,6 @@ import {
   ArrowRight,
 } from "lucide-react";
 import heroImg from "@/assets/hero.jpg";
-import ctaImg from "@/assets/cta.jpg";
 import sobreImg from "@/assets/sobre.jpg";
 import heroTitleImg from "@/assets/hero-title.png";
 import { brlCents, type Tour } from "@/lib/tours";
@@ -153,7 +151,7 @@ function Hero() {
 /* -------- SOBRE -------- */
 function Sobre() {
   return (
-    <section className="section-pad bg-grain">
+    <section className="section-pad bg-black/30 backdrop-blur-sm bg-grain">
       <div className="container-x grid gap-12 md:grid-cols-2 md:items-center">
         <motion.div
           initial="hidden"
@@ -221,7 +219,7 @@ const diffs = [
 
 function Diferenciais() {
   return (
-    <section className="section-pad border-y border-border/40 bg-[oklch(0.11_0_0)]">
+    <section className="section-pad border-y border-border/40 bg-black/40 backdrop-blur-sm">
       <div className="container-x">
         <div className="mb-14 max-w-2xl">
           <span className="eyebrow mb-4">Por que escolher</span>
@@ -237,7 +235,7 @@ function Diferenciais() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-80px" }}
               transition={{ duration: 0.5, delay: i * 0.05 }}
-              className="group relative p-8 rounded-2xl border border-border/60 bg-card hover:border-brand/60 transition-colors overflow-hidden"
+              className="group relative p-8 rounded-2xl border border-border/60 bg-card/60 backdrop-blur-md hover:border-brand/60 transition-colors overflow-hidden"
             >
               <div className="absolute -top-16 -right-16 h-40 w-40 rounded-full bg-brand/5 blur-2xl opacity-0 group-hover:opacity-100 transition-opacity" />
               <d.icon className="h-8 w-8 text-brand" strokeWidth={1.5} />
@@ -331,7 +329,7 @@ function Estatisticas() {
     { value: "8", label: "Anos de estrada" },
   ];
   return (
-    <section className="section-pad relative overflow-hidden bg-brand text-brand-foreground">
+    <section className="section-pad relative overflow-hidden bg-brand/85 backdrop-blur-sm text-brand-foreground">
       <div className="container-x relative">
         <div className="grid gap-x-16 gap-y-16 sm:gap-x-16 md:gap-x-30 lg:gap-x-38 grid-cols-2 sm:grid-cols-3 md:grid-cols-5 text-center">
           {stats.map((s) => (
@@ -372,7 +370,7 @@ function ComoFunciona() {
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="relative p-6 rounded-2xl border border-border/60 bg-card"
+              className="relative p-6 rounded-2xl border border-border/60 bg-card/60 backdrop-blur-md"
             >
               <span className="font-display text-5xl text-brand/40 leading-none">{s.n}</span>
               <h3 className="mt-4 font-display text-xl uppercase">{s.t}</h3>
@@ -411,7 +409,7 @@ const testimonials = [
 
 function Depoimentos() {
   return (
-    <section className="section-pad bg-[oklch(0.11_0_0)] border-y border-border/40">
+    <section className="section-pad bg-black/40 backdrop-blur-sm border-y border-border/40">
       <div className="container-x">
         <div className="mb-12 max-w-2xl">
           <span className="eyebrow mb-4">Depoimentos</span>
@@ -427,7 +425,7 @@ function Depoimentos() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: i * 0.05 }}
-              className="p-6 rounded-2xl border border-border/60 bg-card"
+              className="p-6 rounded-2xl border border-border/60 bg-card/60 backdrop-blur-md"
             >
               <div className="flex gap-1 mb-4 text-brand">
                 {Array.from({ length: 5 }).map((_, k) => (
@@ -509,7 +507,6 @@ function FAQ() {
 function CTAFinal() {
   return (
     <section className="relative overflow-hidden">
-      <img src={ctaImg} alt="" loading="lazy" className="absolute inset-0 h-full w-full object-cover" />
       <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/60 to-black/90" />
       <div className="relative container-x py-20 sm:py-28 md:py-36 text-center">
         <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
