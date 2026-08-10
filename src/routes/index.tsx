@@ -454,11 +454,15 @@ const testimonials = [
 
 function Depoimentos() {
   return (
-    <section className="section-pad bg-black/40 backdrop-blur-sm border-y border-border/40">
-      <div className="container-x">
+    <section className="section-pad relative overflow-hidden">
+      <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/50 via-black/60 to-black/55" />
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_75%_60%_at_50%_65%,rgba(0,0,0,0.5),transparent_80%)]" />
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-white/10" />
+
+      <div className="container-x relative">
         <div className="mb-12 max-w-2xl">
           <span className="eyebrow mb-4">Depoimentos</span>
-          <h2 className="font-display text-5xl md:text-6xl uppercase leading-none">
+          <h2 className="font-display text-5xl md:text-6xl uppercase leading-none text-cine-strong">
             Quem viveu, <span className="text-brand">recomenda.</span>
           </h2>
         </div>
@@ -470,7 +474,7 @@ function Depoimentos() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: i * 0.05 }}
-              className="p-6 rounded-2xl border border-border/60 bg-card/60 backdrop-blur-md"
+              className="surface-1 p-6 hover:border-brand/35"
             >
               <div className="flex gap-1 mb-4 text-brand">
                 {Array.from({ length: 5 }).map((_, k) => (
@@ -480,7 +484,7 @@ function Depoimentos() {
               <blockquote className="text-sm text-foreground/85 leading-relaxed">"{t.text}"</blockquote>
               <figcaption className="mt-5">
                 <p className="font-display text-lg uppercase leading-none">{t.name}</p>
-                <p className="text-xs text-muted-foreground font-mono uppercase tracking-widest mt-1">{t.city}</p>
+                <p className="text-xs text-foreground/60 font-mono uppercase tracking-widest mt-1">{t.city}</p>
               </figcaption>
             </motion.figure>
           ))}
@@ -489,6 +493,7 @@ function Depoimentos() {
     </section>
   );
 }
+
 
 /* -------- FAQ -------- */
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
