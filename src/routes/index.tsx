@@ -562,16 +562,20 @@ function FAQ() {
 function CTAFinal() {
   return (
     <section className="relative overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/60 to-black/90" />
+      {/* Clímax: vinheta + fade progressivo até o preto do rodapé */}
+      <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/30 via-black/50 to-black" />
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_25%,rgba(0,0,0,0.7)_100%)]" />
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-40 bg-gradient-to-b from-transparent via-black/80 to-black" />
+
       <div className="relative container-x py-20 sm:py-28 md:py-36 text-center">
         <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
           <span className="eyebrow mb-6 justify-center">Bora?</span>
-          <h2 className="font-display text-4xl sm:text-5xl md:text-8xl uppercase leading-[0.9]">
+          <h2 className="font-display text-4xl sm:text-5xl md:text-8xl uppercase leading-[0.9] text-cine-strong">
             Pronto pra uma aventura
             <br />
             <span className="text-gradient-brand">inesquecível?</span>
           </h2>
-          <p className="mt-6 max-w-xl mx-auto text-foreground/85">
+          <p className="mt-6 max-w-xl mx-auto text-foreground/85 text-cine">
             Reserve agora e garanta seu lugar nas trilhas mais incríveis de Engenheiro Paulo de Frontin.
           </p>
           <div className="mt-8 flex flex-col sm:flex-row flex-wrap justify-center gap-3">
@@ -582,7 +586,7 @@ function CTAFinal() {
               Falar no WhatsApp
             </a>
           </div>
-          <p className="mt-6 text-xs font-mono uppercase tracking-widest text-muted-foreground flex items-center justify-center gap-2">
+          <p className="mt-6 text-xs font-mono uppercase tracking-widest text-foreground/65 flex items-center justify-center gap-2">
             <MapPin className="h-3.5 w-3.5 text-brand" /> Engenheiro Paulo de Frontin - RJ
           </p>
         </motion.div>
@@ -590,3 +594,4 @@ function CTAFinal() {
     </section>
   );
 }
+
